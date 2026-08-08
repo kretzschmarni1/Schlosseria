@@ -8,17 +8,25 @@
     }
 
 .cUeberUns{
-    width: 800px;
-    padding: 20px 20px 20px 20px;
-
+    width: 900px;
+    padding: 30px;
     font-size: 18px;
-    display: block;
-    border-color: black;
-    border-width: 3px;
-    border-style: none;
-    border-radius: 16px;
-
+    display: flex;
     align-items: center;
-    justify-content: center;
-    background-color:rgb(211, 211, 211, 0.85);
+    gap: 30px;
+    border-radius: 16px;
+    background-color: rgba(211, 211, 211, 0.85);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+.cUeberUnsImage {
+    width: 280px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    object-fit: cover;
+    }
+
+.cUeberUnsText {
+    text-align: left;
+    line-height: 1.7;
     }
