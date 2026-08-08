@@ -201,11 +201,13 @@ canvas {
           }
           
         .cSubmitSub{
-          top: 600px; 
-          left: 100px;
-          display: flex;
-          background-position: center center;
-     
+          position: absolute;
+          bottom: 20px;
+          left: 50%;
+          transform: translateX(-50%);
+          min-width: 210px;
+          font-size: 16px;
+          z-index: 6;
         }
   
           .cTrash{

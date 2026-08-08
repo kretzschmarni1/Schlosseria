@@ -285,9 +285,14 @@ add.addEventListener('click', () => {
     }
   };
 
-  // Thumbnail vom 3D-Canvas erstellen
+  // Thumbnail vom 3D-Canvas erstellen (verkleinert fuer localStorage)
   renderer.render(scene, camera);
-  const thumbnail = renderer.domElement.toDataURL("image/png");
+  const thumbCanvas = document.createElement("canvas");
+  thumbCanvas.width = 200;
+  thumbCanvas.height = 200;
+  const thumbCtx = thumbCanvas.getContext("2d");
+  thumbCtx.drawImage(renderer.domElement, 0, 0, 200, 200);
+  const thumbnail = thumbCanvas.toDataURL("image/jpeg", 0.7);
 
   const currentConfig = {
       Streben: outputText,

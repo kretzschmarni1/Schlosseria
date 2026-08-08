@@ -69,3 +69,37 @@
   .dot.active {
     background: #333;
   }
+
+  .cInfoBlock {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    width: 60%;
+    min-width: 600px;
+    background-color: rgba(211, 211, 211, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 30px;
+  }
+
+  .cInfoImage {
+    width: 280px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    object-fit: cover;
+  }
+
+  .cInfoText {
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  .cInfoText h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+
+  .cInfoText p {
+    margin: 0 0 10px 0;
+  }

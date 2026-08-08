@@ -115,8 +115,9 @@
   }
 
   .cDifned1::before, .cDifned2::before, .cDifned3::before, .cDifned4::before {
-    content: "*";
+    content: "+";
     position: absolute;
+    z-index: 2;
     top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0, 0, 0, 0.35);
     color: rgba(255, 255, 255, 0.7);
@@ -133,6 +134,7 @@
   .cDifned1::after, .cDifned2::after, .cDifned3::after, .cDifned4::after {
     content: "Konfigurieren";
     position: absolute;
+    z-index: 2;
     left: 0; right: 0;
     top: 60%;
     color: white;
