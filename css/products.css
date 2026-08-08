@@ -109,22 +109,45 @@
     image-rendering: crisp-edges;
   }
   
-  .cDifned1:hover {
-    border-width: 5px;
-    z-index: 1;
+  .cDifned1, .cDifned2, .cDifned3, .cDifned4 {
+    position: relative;
+    overflow: hidden;
   }
-  
-  .cDifned2:hover {
-    border-width: 5px;
-    z-index: 1;
+
+  .cDifned1::before, .cDifned2::before, .cDifned3::before, .cDifned4::before {
+    content: "*";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.35);
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 50px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
   }
-  
-  .cDifned3:hover {
-    border-width: 5px;
-    z-index: 1;
+
+  .cDifned1::after, .cDifned2::after, .cDifned3::after, .cDifned4::after {
+    content: "Konfigurieren";
+    position: absolute;
+    left: 0; right: 0;
+    top: 60%;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    text-align: center;
+    letter-spacing: 2px;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
   }
-  
-  .cDifned4:hover {
-    border-width: 5px;
-    z-index: 1;
+
+  .cDifned1:hover::before, .cDifned2:hover::before,
+  .cDifned3:hover::before, .cDifned4:hover::before,
+  .cDifned1:hover::after, .cDifned2:hover::after,
+  .cDifned3:hover::after, .cDifned4:hover::after {
+    opacity: 1;
   }

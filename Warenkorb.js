@@ -53,16 +53,23 @@ const displayConfigurations = () => {
     container.classList.add("configurations-container");
 
     storedConfigurations.forEach((config, index) => {
-      const paragraph = document.createElement("p");
-      paragraph.classList.add("cList");
+      const item = document.createElement("div");
+      item.classList.add("cCartItem");
 
-      paragraph.innerHTML = `
-        Möbelstück ${index + 1}:<br>
-        B/T/H: ${config.width}, ${config.deepth}, ${config.hight},<br>
-        Preis: ${parseFloat(config.total).toFixed(2)} €<br>
-        Versand: ${config.versand} €,<br>
+      const thumbHTML = config.thumbnail
+        ? `<img src="${config.thumbnail}" class="cCartThumb" alt="Möbelstück ${index + 1}">`
+        : '';
+
+      item.innerHTML = `
+        ${thumbHTML}
+        <div class="cCartDetails">
+          <b>Möbelstück ${index + 1}:</b><br>
+          B/T/H: ${config.width}, ${config.deepth}, ${config.hight}<br>
+          Preis: ${parseFloat(config.total).toFixed(2)} &euro;<br>
+          Versand: ${config.versand} &euro;
+        </div>
       `;
-      container.appendChild(paragraph);
+      container.appendChild(item);
     });
 
     const accessoriesSection = document.querySelector(".accessories");

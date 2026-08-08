@@ -56,3 +56,26 @@ flex-wrap: wrap;
       border-color: lightgray;
       margin: 10px;
     }
+
+    .cCartItem {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.15);
+      text-align: left;
+    }
+
+    .cCartThumb {
+      width: 120px;
+      height: 120px;
+      object-fit: contain;
+      border-radius: 8px;
+      background: rgba(211,211,211,0.5);
+      flex-shrink: 0;
+    }
+
+    .cCartDetails {
+      font-size: 14px;
+      line-height: 1.6;
+    }

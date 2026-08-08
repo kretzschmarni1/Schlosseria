@@ -285,7 +285,10 @@ add.addEventListener('click', () => {
     }
   };
 
-  // Create  object mit aktuellen configuration
+  // Thumbnail vom 3D-Canvas erstellen
+  renderer.render(scene, camera);
+  const thumbnail = renderer.domElement.toDataURL("image/png");
+
   const currentConfig = {
       Streben: outputText,
       dicke: material,
@@ -297,7 +300,8 @@ add.addEventListener('click', () => {
       total: Total,
       versand: PricePauschal,
       widthWood: woodWidth,
-      deepthWood: woodDeepth
+      deepthWood: woodDeepth,
+      thumbnail: thumbnail
       };
 
 if (takenWidth > 0 || takenDeepth > 0 || takenHight > 0) {

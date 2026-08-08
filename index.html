@@ -78,21 +78,21 @@
 
 
 <h1>DIE.SCHLOSSERIA </h1>
-<h3>Stahlmanufactur aus dem Chiemgau</h3> 
+<h3>Stahlmanufactur aus dem Chiemgau. Moderne Stahlmöbel auswählen, kundenspezifisch anpassen und sofort bestellen.</h3> 
 
 <div class="slider-container">
   <div class="slider-inner" id="slider">
     <div class="slide">
       <br>
-    <h3>Möbel auswählen und konfigurieren</h3><br>
+    <h3 id="typeHeading"></h3><br>
     <div style="text-align: start;">
     <ul style="list-style-type: disc; list-style-position: inside; margin: 0; padding: 0;">
-        <li style="list-style-position: inside;">Wunsch-Möbel auswählen</li>
-        <li style="list-style-position: inside;">im Creator anpassen</li>
-        <li style="list-style-position: inside;">Und Bestellen</li>
+        <li id="typeLine1" style="list-style-position: inside;"></li>
+        <li id="typeLine2" style="list-style-position: inside;"></li>
+        <li id="typeLine3" style="list-style-position: inside;"></li>
     </ul><br><br>
     <div style="text-align: center;">
-      <a href="ProduktExamples.html" class="cIndexButton">
+      <a href="ProduktExamples.html" class="cIndexButton" id="typeButton" style="opacity: 0; transition: opacity 0.6s;">
         <span>zu den Produkten</span>
       </a>
     </div>
@@ -147,8 +147,43 @@
     </div>
 </footer>  
 
+<script>
+(function() {
+  const steps = [
+    { id: "typeHeading", text: "Möbel auswählen und konfigurieren", speed: 45 },
+    { id: "typeLine1",   text: "Wunsch-Möbel auswählen",           speed: 40 },
+    { id: "typeLine2",   text: "im Creator anpassen",              speed: 40 },
+    { id: "typeLine3",   text: "Und Bestellen",                    speed: 40 },
+  ];
 
+  function typeText(el, text, speed) {
+    return new Promise(resolve => {
+      let i = 0;
+      const interval = setInterval(() => {
+        el.textContent += text[i];
+        i++;
+        if (i >= text.length) { clearInterval(interval); resolve(); }
+      }, speed);
+    });
+  }
 
+  async function run() {
+    for (const step of steps) {
+      const el = document.getElementById(step.id);
+      if (el) await typeText(el, step.text, step.speed);
+      await new Promise(r => setTimeout(r, 250));
+    }
+    const btn = document.getElementById("typeButton");
+    if (btn) btn.style.opacity = "1";
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", run);
+  } else {
+    run();
+  }
+})();
+</script>
 
 </body>
 </html>

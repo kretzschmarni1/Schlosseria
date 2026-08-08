@@ -93,7 +93,8 @@ camera.lookAt(0, 0, 0);
 
 const renderer = new THREE.WebGLRenderer({ 
     antialias: true, 
-    alpha: true // Transparenz für den Hintergrund aktivieren
+    alpha: true,
+    preserveDrawingBuffer: true
 });
 
 scene.background = null; // Hintergrund auf transparent setzen
