@@ -25,4 +25,12 @@ document.addEventListener("DOMContentLoaded", function () {
 if (window.innerWidth < 500) {
     document.body.style.zoom = window.innerWidth / 500;   
 }
+
+if (!localStorage.getItem("creatorUnlocked")) {
+    document.querySelectorAll('#menu a, #iDropdownMenu a').forEach(function(link) {
+      if (link.textContent.trim() === 'Creator') {
+        link.style.display = 'none';
+      }
+    });
+  }
 });

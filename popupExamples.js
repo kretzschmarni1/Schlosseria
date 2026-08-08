@@ -30,35 +30,12 @@ function loadFromLocalStorage() {    //Wenn accessories noch nicht vorhanden im 
   });
 }   
 
-// VARIABLEN
-const popups = [
-  {
-    showButtonId: 'iShowPopup1',
-    overlayId: 'popupOverlay1',
-    closeButtonId: 'iClosePopup1',
-  },
-  {
-    showButtonId: 'iShowPopup2',
-    overlayId: 'popupOverlay2',
-    closeButtonId: 'iClosePopup2',
-  },
-  {
-    showButtonId: 'iShowPopup3',
-    overlayId: 'popupOverlay3',
-    closeButtonId: 'iClosePopup3',
-  },
-  {
-    showButtonId: 'iShowPopup4',
-    overlayId: 'popupOverlay4',
-    closeButtonId: 'iClosePopup4',
-  },
-];
-
-const Ids = [
-  { IdCreator: "iToCreator1" },
-  { IdCreator: "iToCreator2" },
-  { IdCreator: "iToCreator3" },
-  { IdCreator: "iToCreator4" }
+// Direkt-Mapping: Produkt-Button → Creator-Konfig-ID
+const directButtons = [
+  { showButtonId: 'iShowPopup1', configId: 'iToCreator1' },
+  { showButtonId: 'iShowPopup2', configId: 'iToCreator2' },
+  { showButtonId: 'iShowPopup3', configId: 'iToCreator3' },
+  { showButtonId: 'iShowPopup4', configId: 'iToCreator4' },
 ];
 
 const buttonStates = {};
@@ -183,69 +160,33 @@ localStorage.setItem("iAddBoard", addedBoard);
 
   }
 
-//Funktionen
-function popup() {
-  const togglePopup = (popup) => {
-    const showButton = document.getElementById(popup.showButtonId);
-    const overlay = document.getElementById(popup.overlayId);
-    const closeButton = document.getElementById(popup.closeButtonId);
+function navigateToCreator(configId) {
+  localStorage.setItem("creatorUnlocked", "true");
 
-    if (showButton && overlay && closeButton) {
-      // Öffnen des Popups
-      showButton.addEventListener('click', () => {
-        overlay.style.display = 'block';
-      });
+  const config = productConfigurations.find(c => c.ids.includes(configId));
+  if (config) {
+    PreConfigDesign(...config.parameters);
+  }
 
-      // Schließen mit der Schließen-Taste
-      closeButton.addEventListener('click', () => {
-        overlay.style.display = 'none';
-      });
+  const recommendation = productAccessories[configId];
+  if (recommendation) {
+    localStorage.setItem("pendingAccessories", JSON.stringify(recommendation));
+  } else {
+    localStorage.removeItem("pendingAccessories");
+  }
 
-    } else {
-      console.warn(`Fehlende Elemente für Popup:`, popup);
-    }
-  };
-
-  // Alle Popups initialisieren
-  popups.forEach(togglePopup);
+  window.location.href = 'Creator.html';
 }
 
-function initializeIds() {
-
-  Ids.forEach(({ IdCreator }) => {
-    const element = document.getElementById(IdCreator);
-    if (element) {
-      element.addEventListener("click", () => {
-
-        // Passende Konfiguration setzen (vor dem Seitenwechsel, damit sie gespeichert ist)
-        const config = productConfigurations.find(c => c.ids.includes(IdCreator));
-        if (config) {
-          PreConfigDesign(...config.parameters);
-        }
-
-        // Empfohlenes Zubehör vormerken -> Abfrage erfolgt im Creator
-        // nachdem "Zum Warenkorb hinzufügen" bestätigt wurde
-        const recommendation = productAccessories[IdCreator];
-        if (recommendation) {
-          localStorage.setItem("pendingAccessories", JSON.stringify(recommendation));
-        } else {
-          localStorage.removeItem("pendingAccessories");
-        }
-
-        window.location.href = 'Creator.html';
-      });
-    } else {
-      console.warn(`Element mit ID ${IdCreator} nicht gefunden.`);
+function initializeDirectButtons() {
+  directButtons.forEach(({ showButtonId, configId }) => {
+    const btn = document.getElementById(showButtonId);
+    if (btn) {
+      btn.addEventListener("click", () => navigateToCreator(configId));
     }
   });
 }
 
-
-// Das Zubehör wird jetzt erst im Creator übernommen
-// -> siehe js/FrameCreator/AccessoryPopup.js
-
-// Initialisierungen ausführen
 document.addEventListener("DOMContentLoaded", () => {
-  popup();
-  initializeIds();
+  initializeDirectButtons();
 });

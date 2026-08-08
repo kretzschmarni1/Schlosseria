@@ -84,25 +84,7 @@
   <div class="slider-inner" id="slider">
     <div class="slide">
       <br>
-    <h3>KREIERE DEIN EIGENES STAHLMÖBEL (Custom Möbel erstellen)</h3><br>
-    <div style="text-align: start;">
-        <ul style="list-style-type: disc; list-style-position: inside; margin: 0; padding: 0;">
-        <li style="list-style-position: inside;">Design bestimmen</li>
-        <li style="list-style-position: inside;">Maße anpassen</li>
-        <li style="list-style-position: inside;">Alternativ mit Holzplatte</li>
-        <li style="list-style-position: inside;">Und Bestellen</li>
-    </ul><br><br>
-    <div style="text-align: center;">
-     <a href="Creator.html" class="cIndexButton">
-      <span>zum Creator</span>
-     </a>
-    </div>      
-    </div>
-    </div>
-
-    <div class="slide">
-      <br>
-    <h3>Möbel auswählen und konfigurieren</h5><br>
+    <h3>Möbel auswählen und konfigurieren</h3><br>
     <div style="text-align: start;">
     <ul style="list-style-type: disc; list-style-position: inside; margin: 0; padding: 0;">
         <li style="list-style-position: inside;">Wunsch-Möbel auswählen</li>
@@ -116,11 +98,6 @@
     </div>
     </div>
     </div>
-
-  </div>
-  <div class="dots">
-    <div class="dot active" onclick="goToSlide(0)"></div>
-    <div class="dot" onclick="goToSlide(1)"></div>
   </div>
 </div>
 
@@ -172,45 +149,6 @@
 
 
 
-<script>
-    const slider = document.getElementById('slider');
-    const dots = document.querySelectorAll('.dot');
-    let currentIndex = 0;
-    const totalSlides = dots.length;
-  
-    let slideInterval;
-  
-    function goToSlide(index) {
-      slider.style.transform = `translateX(-${index * 100}%)`;
-      dots.forEach(dot => dot.classList.remove('active'));
-      dots[index].classList.add('active');
-      currentIndex = index;
-  
-      // Speicher den Index im localStorage
-      localStorage.setItem("currentSlideIndex", index);
-  
-      // Reset Interval
-      resetInterval();
-    }
-  
-    function nextSlide() {
-      const nextIndex = (currentIndex + 1) % totalSlides;
-      goToSlide(nextIndex);
-    }
-  
-    function resetInterval() {
-      clearInterval(slideInterval);
-      slideInterval = setInterval(nextSlide, 7000);
-    }
-  
-    // Initialisierung bei Seitenaufruf
-    window.addEventListener("load", () => {
-      // Versuche, vorherigen Index aus dem localStorage zu laden
-      const savedIndex = parseInt(localStorage.getItem("currentSlideIndex")) || 0;
-      goToSlide(savedIndex);
-      resetInterval();
-    });
-  </script>
 
 </body>
 </html>
