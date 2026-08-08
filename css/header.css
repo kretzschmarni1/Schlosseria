@@ -56,6 +56,27 @@
   color: black;
 }
 
+.cCartBadge {
+  position: absolute;
+  top: -8px;
+  right: -10px;
+  background: #c02121;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  line-height: 20px;
+  text-align: center;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 1;
+}
+
 .cHome {
     font-weight: 600;
     font-size: 20px;

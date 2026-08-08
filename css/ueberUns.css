@@ -8,7 +8,7 @@
     }
 
 .cUeberUns{
-    width: 900px;
+    width: 1050px;
     padding: 30px;
     font-size: 18px;
     display: flex;
@@ -20,7 +20,7 @@
     }
 
 .cUeberUnsImage {
-    width: 280px;
+    width: 196px;
     flex-shrink: 0;
     border-radius: 12px;
     object-fit: cover;

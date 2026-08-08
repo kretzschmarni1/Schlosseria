@@ -33,4 +33,30 @@ if (!localStorage.getItem("creatorUnlocked")) {
       }
     });
   }
+
+  // Warenkorb-Badge
+  var cartImg = document.querySelector('.cWare');
+  var cartLink = cartImg ? cartImg.parentElement : null;
+  if (cartLink) {
+    cartLink.style.position = 'relative';
+    cartLink.style.overflow = 'visible';
+    cartLink.style.display = 'inline-block';
+    var badge = document.createElement('span');
+    badge.className = 'cCartBadge';
+    cartLink.appendChild(badge);
+
+    function updateBadge() {
+      var configs = JSON.parse(localStorage.getItem('configurations')) || [];
+      if (configs.length > 0) {
+        badge.textContent = configs.length;
+        badge.style.display = 'block';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    updateBadge();
+    window.addEventListener('storage', updateBadge);
+    setInterval(updateBadge, 2000);
+  }
 });
