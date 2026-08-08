@@ -116,7 +116,13 @@
   <input type="email" id="email" name="email" placeholder="name@domain.com" required><br><br> 
 
   <label for="message">Ihre Nachricht:</label><br>
-  <textarea id="message" name="message" placeholder="Schreibe uns deine Wünsche"></textarea><br><br><br>
+  <textarea id="message" name="message" placeholder="Schreibe uns deine Wünsche"></textarea><br><br>
+
+  <label>Bezahlmethode:</label><br>
+  <div style="display: flex; gap: 15px; margin: 8px 0 20px 0;">
+    <label style="cursor: pointer; font-weight: normal;"><input type="radio" name="payment" value="Rechnung" required> auf Rechnung</label>
+    <label style="cursor: pointer; font-weight: normal;"><input type="radio" name="payment" value="PayPal"> PayPal</label>
+  </div>
   
   <button id="iSubmit" type="submit">Bestellen</button>
 </form>

@@ -28,7 +28,8 @@ if (window.innerWidth < 500) {
 
 if (!localStorage.getItem("creatorUnlocked")) {
     document.querySelectorAll('#menu a, #iDropdownMenu a').forEach(function(link) {
-      if (link.textContent.trim() === 'Creator') {
+      var text = link.textContent.trim();
+      if (text === 'Creator' || text === 'Accessoires') {
         link.style.display = 'none';
       }
     });

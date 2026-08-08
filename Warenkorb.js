@@ -146,6 +146,8 @@ document.getElementById("emailForm").addEventListener("submit", function (e) {
   const city = document.getElementById("city").value;
   const email = document.getElementById("email").value;
   const message = document.getElementById("message").value;
+  const paymentEl = document.querySelector('input[name="payment"]:checked');
+  const payment = paymentEl ? paymentEl.value : "nicht ausgewählt";
  
   const accessoriesData = Object.keys(savedData).map((id) => {
     const accessory = savedData[id];
@@ -161,6 +163,7 @@ document.getElementById("emailForm").addEventListener("submit", function (e) {
     Adresse: ${street} ${houseNumber}, ${zip} ${city}
     E-Mail: ${email}
     Nachricht: ${message}
+    Bezahlmethode: ${payment}
     Zubehör: ${accessoriesData}
     Konfigurationen: ${configurationsData}
   `;
