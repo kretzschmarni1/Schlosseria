@@ -78,7 +78,7 @@
 
 
 <h1>DIE.SCHLOSSERIA </h1>
-<h3>Stahlmanufactur aus dem Chiemgau. Moderne Stahlmöbel auswählen, kundenspezifisch anpassen und sofort bestellen.</h3> 
+<h3>Stahlmanufaktur aus dem Chiemgau.<br>Moderne Stahlmöbel auswählen, kundenspezifisch anpassen und sofort bestellen.</h3> 
 
 <div class="slider-container">
   <div class="slider-inner" id="slider">
@@ -87,9 +87,9 @@
     <h3 id="typeHeading"></h3><br>
     <div style="text-align: start;">
     <ul style="list-style-type: disc; list-style-position: inside; margin: 0; padding: 0;">
-        <li id="typeLine1" style="list-style-position: inside;"></li>
-        <li id="typeLine2" style="list-style-position: inside;"></li>
-        <li id="typeLine3" style="list-style-position: inside;"></li>
+        <li id="typeLine1" style="list-style-position: inside; visibility: hidden;"></li>
+        <li id="typeLine2" style="list-style-position: inside; visibility: hidden;"></li>
+        <li id="typeLine3" style="list-style-position: inside; visibility: hidden;"></li>
     </ul><br><br>
     <div style="text-align: center;">
       <a href="ProduktExamples.html" class="cIndexButton" id="typeButton" style="opacity: 0; transition: opacity 0.6s;">
@@ -170,7 +170,9 @@
   async function run() {
     for (const step of steps) {
       const el = document.getElementById(step.id);
-      if (el) await typeText(el, step.text, step.speed);
+      if (!el) continue;
+      if (el.style.visibility === "hidden") el.style.visibility = "visible";
+      await typeText(el, step.text, step.speed);
       await new Promise(r => setTimeout(r, 250));
     }
     const btn = document.getElementById("typeButton");
