@@ -262,12 +262,25 @@
    <!--<h4 class="Letter2"> Anzahl Zubehör ges:   </h4>
    <output id="outExtra"></output>-->
    <button id="iAdd"> hinzufügen </button>
-  
+
    </div>
   </div>
-  
+
+   <!--___________________POPUP_ZUBEHOER_____________________-->
+   <div class="cOverlay" id="popupOverlayAcc">
+   <div class="cPopup" id="popupContentAcc">
+   <button class="cClosePopup" id="iCloseAccPopup">X</button>
+   <h4 class="cPopupHeadline"> Wir empfehlen folgende Accessoires: </h4><br><br>
+   <div id="outAccList"></div><br>
+   <h4 class="cLetter2">Möchten Sie die Accessoires zum Warenkorb hinzufügen?</h4><br><br>
+   <button id="iAccYes">Ja</button>
+   <button id="iAccNo">Nein</button>
+   </div>
+  </div>
+
   <script src="js/FrameCreator/InputFC.js"></script>
   <script src="js/FrameCreator/PopUpFC.js"></script>
+  <script src="js/FrameCreator/AccessoryPopup.js"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="js/controls/OrbitControls.js"></script> 

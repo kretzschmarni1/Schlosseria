@@ -55,22 +55,10 @@ const popups = [
 ];
 
 const Ids = [
-  {
-    IdJ: "iDefined1j", // ID des Ja-Buttons
-    IdN: "iDefined1n", // ID des Nein-Buttons
-  },
-  {
-    IdJ: "iDefined2j", // ID des Ja-Buttons
-    IdN: "iDefined2n", // ID des Nein-Buttons
-  },
-  {
-    IdJ: "iDefined3j", // ID des Ja-Buttons
-    IdN: "iDefined3n", // ID des Nein-Buttons
-  },
-  {
-    IdJ: "iDefined4j", // ID des Ja-Buttons
-    IdN: "iDefined4n", // ID des Nein-Buttons
-  }
+  { IdCreator: "iToCreator1" },
+  { IdCreator: "iToCreator2" },
+  { IdCreator: "iToCreator3" },
+  { IdCreator: "iToCreator4" }
 ];
 
 const buttonStates = {};
@@ -84,29 +72,38 @@ let perspective;
 
 //Konfiguration Produktbeispiele  //siehe funktion productexamples
 const productConfigurations = [
-  { ids: ["iDefined1j", "iDefined1n"], parameters: [120, 110, 50, 50, 50, 20, 20, 1, 1 , 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, "true"]},
-  { ids: ["iDefined2j", "iDefined2n"], parameters: [80, 180, 90, 40, 90, 30, 30, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 , 0, 10, 5, "true"] },
-  { ids: ["iDefined3j", "iDefined3n"], parameters: [200,50, 150,100,25,25,25,     1, 1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,"false"] },
-  { ids: ["iDefined4j", "iDefined4n"], parameters: [40,30,120,20,15,60,20,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,0,0,1,5,5,"false"] }
+  { ids: ["iToCreator1"], parameters: [120, 110, 50, 50, 50, 20, 20, 1, 1 , 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, "true"]},
+  { ids: ["iToCreator2"], parameters: [80, 180, 90, 40, 90, 30, 30, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 , 0, 10, 5, "true"] },
+  { ids: ["iToCreator3"], parameters: [200,50, 150,100,25,25,25,     1, 1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,"false"] },
+  { ids: ["iToCreator4"], parameters: [40,30,120,20,15,60,20,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,0,0,1,5,5,"false"] }
 ];
 
-//Accesoires setzen
+//Accesoires-Empfehlung je Produkt
+//Wird nicht mehr hier abgefragt, sondern im Creator nach "Zum Warenkorb hinzufügen"
+//label = Anzeigetext im Popup, id/count/dimension = was ins localStorage geschrieben wird
+const productAccessories = {
   //Produkte 1
-  updateAccessoryBasedOnCondition("iDefined1j", "1", 4, 20);
-  updateAccessoryBasedOnCondition("iDefined1j", "3", 4, 20);
-
+  iToCreator1: [
+    { id: "1", name: "Tischbefestigung", label: "4 x Tischbefestigung", count: 4, dimension: 20 },
+    { id: "3", name: "Tischfuss", label: "4 x Tischfüße", count: 4, dimension: 20 }
+  ],
   //Produkte 2
-  updateAccessoryBasedOnCondition("iDefined2j", "1", 4, 30);
-  updateAccessoryBasedOnCondition("iDefined2j", "3", 4, 30);
-
+  iToCreator2: [
+    { id: "1", name: "Tischbefestigung", label: "4 x Tischbefestigung", count: 4, dimension: 30 },
+    { id: "3", name: "Tischfuss", label: "4 x Tischfüße", count: 4, dimension: 30 }
+  ],
   //Produkte 3
-  updateAccessoryBasedOnCondition("iDefined3j", "3", 4, 30);
-  updateAccessoryBasedOnCondition("iDefined3j", "4", 4, 40);
-  updateAccessoryBasedOnCondition("iDefined3j", "5", 4, 40);
-
+  iToCreator3: [
+    { id: "3", name: "Tischfuss", label: "4 x Filzüße", count: 4, dimension: 30 },
+    { id: "4", name: "Kleiderbügel", label: "4 x Kleiderbügel", count: 4, dimension: 40 },
+    { id: "5", name: "Kleiderhaken", label: "4 x Kleiderhaken", count: 4, dimension: 40 }
+  ],
   //Produkte 4
-  updateAccessoryBasedOnCondition("iDefined4j", "1", 4, 20);
-  updateAccessoryBasedOnCondition("iDefined4j", "3", 4, 20);
+  iToCreator4: [
+    { id: "1", name: "Tischbefestigung", label: "4 x Tischbefestigung", count: 4, dimension: 20 },
+    { id: "3", name: "Tischfuss", label: "4 x Tischfüße", count: 4, dimension: 20 }
+  ]
+};
 
 function getData(){
 width = localStorage.getItem("iWidth");
@@ -215,79 +212,37 @@ function popup() {
 
 function initializeIds() {
 
+  Ids.forEach(({ IdCreator }) => {
+    const element = document.getElementById(IdCreator);
+    if (element) {
+      element.addEventListener("click", () => {
 
-  Ids.forEach(({ IdJ, IdN }) => {
-    [IdJ, IdN].forEach(id => {
-      const element = document.getElementById(id);
-      if (element) {
-        element.addEventListener("click", () => {
-          localStorage.setItem(id, "true");
-           window.location.href = 'Creator.html';
+        // Passende Konfiguration setzen (vor dem Seitenwechsel, damit sie gespeichert ist)
+        const config = productConfigurations.find(c => c.ids.includes(IdCreator));
+        if (config) {
+          PreConfigDesign(...config.parameters);
+        }
 
-          productConfigurations.forEach(config => {
-            const isActive = config.ids.some(id => localStorage.getItem(id) === "true");
-            if (isActive) {
-              PreConfigDesign(...config.parameters);
-              config.ids.forEach(id => localStorage.setItem(id, "false"));
-            }
-          });
-        });
-      } else {
-        console.warn(`Element mit ID ${id} nicht gefunden.`);
-      }
-    });
+        // Empfohlenes Zubehör vormerken -> Abfrage erfolgt im Creator
+        // nachdem "Zum Warenkorb hinzufügen" bestätigt wurde
+        const recommendation = productAccessories[IdCreator];
+        if (recommendation) {
+          localStorage.setItem("pendingAccessories", JSON.stringify(recommendation));
+        } else {
+          localStorage.removeItem("pendingAccessories");
+        }
+
+        window.location.href = 'Creator.html';
+      });
+    } else {
+      console.warn(`Element mit ID ${IdCreator} nicht gefunden.`);
+    }
   });
 }
 
 
-function updateAccessoryBasedOnCondition(Button, IdAccessories, countAccessories, dimensionAccessories) {
-  const accessoryId = IdAccessories; // ID, die gerade bearbeiten sollte
-
-  const tButton = document.getElementById(Button);
-
-  tButton.addEventListener("click", () => {
-
-
-
-
-
-    console.log("test")
-    const taccessoriesRaw = localStorage.getItem("accessories");
-    const taccessories = taccessoriesRaw ? JSON.parse(taccessoriesRaw) : {};
-
-    if (typeof taccessories !== "object") {
-      console.error("accessories ist kein Objekt:", taccessories);
-      return;
-    }
-
-    // Hole das Accessoire mit der dynamischen ID
-    const accessory = taccessories[accessoryId];
-
-    if (accessory) {
-      accessory.dimension = dimensionAccessories;
-      accessory.quantity += countAccessories;
-      console.log(accessory.quantity);
-      // Aktualisiere das Dropdown (falls vorhanden)
-      const dropdownElement = document.getElementById(accessory.dropdownId);
-      const quantityElement = document.getElementById(accessory.quantityId);
-
-      if (dropdownElement) dropdownElement.value = accessory.dimension; // Dimension setzen
-      if (quantityElement) quantityElement.value = accessory.quantity; // Menge erhöhen
-
-      // Preisanzeige aktualisieren
-      //!!!!!!!!!! updatePriceDisplay(accessory);
-
-      // Speichere das aktualisierte accessories-Objekt zurück in localStorage
-      taccessories[accessoryId] = accessory; // Accessoire im Objekt aktualisieren
-      localStorage.setItem("accessories", JSON.stringify(taccessories)); // Speichere das ganze Objekt zurück
-    } else {
-      console.warn(`Accessoire mit ID '${accessoryId}' nicht gefunden.`);
-    }
-  
-
-  
-});
-}
+// Das Zubehör wird jetzt erst im Creator übernommen
+// -> siehe js/FrameCreator/AccessoryPopup.js
 
 // Initialisierungen ausführen
 document.addEventListener("DOMContentLoaded", () => {
