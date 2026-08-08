@@ -208,6 +208,8 @@ canvas {
           min-width: 210px;
           font-size: 16px;
           z-index: 6;
+          background-color: #1A1A1A;
+          color: #fff;
         }
 
         .cSubmitSub:hover {

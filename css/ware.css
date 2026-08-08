@@ -87,7 +87,7 @@ flex-wrap: wrap;
       height: 30px;
       border: none;
       border-radius: 50%;
-      background: rgba(192, 33, 33, 0.8);
+      background: #1A1A1A;
       color: white;
       font-size: 14px;
       cursor: pointer;
@@ -99,5 +99,5 @@ flex-wrap: wrap;
     }
 
     .cRemoveBtn:hover {
-      background: #c02121;
+      background: #333;
     }
