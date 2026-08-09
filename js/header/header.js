@@ -19,12 +19,7 @@ function toggleMenu() {
 
 
 
-//Seite auf 500px scalieren wenn kleiner
 document.addEventListener("DOMContentLoaded", function () {
-
-if (window.innerWidth < 500) {
-    document.body.style.zoom = window.innerWidth / 500;   
-}
 
 if (!localStorage.getItem("creatorUnlocked")) {
     document.querySelectorAll('#menu a, #iDropdownMenu a').forEach(function(link) {

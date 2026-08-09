@@ -114,7 +114,11 @@ function updateRendererSize() {
 }
 
 window.addEventListener("resize", updateRendererSize);
+window.addEventListener("orientationchange", function () {
+    setTimeout(updateRendererSize, 200);
+});
 updateRendererSize();
+setTimeout(updateRendererSize, 100);
 
 // --- Lighting ---
 const ambientLight = new THREE.AmbientLight(0x404040, 3);
@@ -256,24 +260,27 @@ window.addEventListener('mousemove', (event) => {
     }
 }, false);
 
-// --- Update Mouse Position ---
+// --- Update Mouse / Touch Position ---
 function getMousePosition(event) {
     const rect = container.getBoundingClientRect();
-    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    const point = (event.changedTouches && event.changedTouches[0]) || event;
+    mouse.x = ((point.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((point.clientY - rect.top) / rect.height) * 2 + 1;
 }
 
-window.addEventListener('click', (event) => {
+function handleLinePick(event) {
+    if (!container.contains(event.target)) return;
     getMousePosition(event);
     raycaster.setFromCamera(mouse, camera);
 
     const intersects = raycaster.intersectObjects(cubeGroup.children);
     if (intersects.length > 0) {
         const object = intersects[0].object;
-        // Nur reagieren, wenn die Linie noch nicht aktiv ist
         toggleLineVisibility(object.lineIndex);
     }
-}, false);
+}
+
+renderer.domElement.addEventListener('click', handleLinePick, false);
 
 // --- Toggle Button Funktion ---
 // Wir stellen sicher, dass die Opazität auf 1 gesetzt wird, wenn die Linie aktiviert ist
