@@ -340,7 +340,6 @@ input[type="range"]:focus::-moz-range-thumb{
   border: 2px solid #1A1A1A;
   border-radius: 10px;
   box-sizing: border-box;
-  color: #3B3B3B;
   cursor: pointer;
   display: inline-block;
   font-family: 'Rubik', sans-serif;
