@@ -51,6 +51,11 @@ flex-wrap: wrap;
   }
 
 
+    .cForm input,
+    .cForm textarea {
+      font-weight: 400;
+    }
+
     #message {
       background-color:rgb(211, 211, 211, 0.2) !important;
       min-width: 400px;
@@ -58,6 +63,7 @@ flex-wrap: wrap;
       text-align: center ;
       border-color: lightgray;
       margin: 10px;
+      resize: none;
     }
 
     .cCartItem {
