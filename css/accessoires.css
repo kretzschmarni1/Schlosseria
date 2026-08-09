@@ -1,16 +1,16 @@
 
 .dropdown {
-    width: 100%; /* Breite, z.B. 100% des Containers */
-    max-width: 500px; /* Maximale Breite */
-    height: 40px; /* Höhe des Eingabefeldes */
+    width: 100%;
+    max-width: 500px;
+    height: 40px;
     margin-top: 5px;
-    padding: 10px; /* Innenabstand für besseren Komfort */
-    font-size: 16px; /* Schriftgröße */
-    border: 2px solid black; /* Rahmenfarbe */
-    border-radius: 5px; /* Abgerundete Ecken */
-    box-sizing: border-box; /* Box-Modell für korrekte Brechnung */
-    opacity: 0.8;
-    background-color:rgb(211, 211, 211, 0.7);
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #1A1A1A;
+    border-radius: 10px;
+    box-sizing: border-box;
+    opacity: 1;
+    background-color: transparent;
     }
 
 
@@ -109,6 +109,10 @@
         object-fit: contain;
         display: block;
         margin: 0 auto;
+      }
+
+      .cZubehoerOwn > b:last-of-type {
+        margin-top: 15px;
       }
 
 

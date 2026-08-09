@@ -2,7 +2,7 @@
 .cWareBody{
 display: flex;
 flex-direction: row;
-align-items: center;
+align-items: stretch;
 justify-content: center;
 text-align: center;
 gap: clamp(0px, calc(8vw  - 80px), 200px);    
@@ -15,8 +15,7 @@ flex-wrap: wrap;
     left:350px;
     top: 200px ;
     min-width: 420px;
-    min-height: 650px; 
-    max-height: 750px;
+    min-height: 650px;
     background-color:rgb(211, 211, 211, 0.87);
     border: 10px;
     padding: 10px 10px 10px 10px;
@@ -83,21 +82,25 @@ flex-wrap: wrap;
 
     .cRemoveBtn {
       flex-shrink: 0;
-      width: 30px;
-      height: 30px;
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      min-height: 24px;
       border: none;
       border-radius: 50%;
       background: #1A1A1A;
       color: white;
-      font-size: 14px;
+      font-size: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0;
-      min-width: 30px;
+      line-height: 1;
     }
 
     .cRemoveBtn:hover {
       background: #333;
+      transform: none;
+      box-shadow: none;
     }
