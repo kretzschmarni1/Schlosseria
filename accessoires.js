@@ -15,12 +15,6 @@ document.addEventListener("DOMContentLoaded", function() {
     saveToLocalStorage(accessory.id, { name: accessory.name, quantity, dimension, totalPrice });
   }
 
-  // Zubehör löschen
-  function clearAccessoryData(accessory) {
-    document.getElementById(accessory.quantityId).value = 0;
-    updatePriceDisplay(accessory);
-  }
-
   // Speicherung in Local Storage
   function saveToLocalStorage(accessoryId, data) {
     let savedData = JSON.parse(localStorage.getItem("accessories")) || {};
@@ -40,10 +34,9 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-  // Event Listener für Add- und Clear-Buttons kombinieren
+  // Event Listener für Add-Buttons
   accessories.forEach((accessory) => {
     document.getElementById(`iFixAdd${accessory.id}`)?.addEventListener("click", () => updatePriceDisplay(accessory));
-    document.getElementById(`iClearAdd${accessory.id}`)?.addEventListener("click", () => clearAccessoryData(accessory));
   });
 
   // Daten aus Local Storage laden
