@@ -109,6 +109,10 @@ flex-wrap: wrap;
       box-shadow: none;
     }
 
+    input[type="radio"] {
+      accent-color: #1A1A1A;
+    }
+
     #iSubmit {
       background-color: #1A1A1A;
       color: #fff;
