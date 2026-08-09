@@ -1,11 +1,5 @@
 // Popup-Daten
 const popups = [
-  {
-    showButtonId: 'iShowPopup',
-    overlayId: 'popupOverlay',
-    closeButtonId: 'iClosePopup',
-    closeActionId: 'iAdd',
-  },
   //!!!!  {                                  //hier kann man zusätzliches Popup machen --> ID muss eingetragen werden usw. --> wie bei erstem
   //!!!!  showButtonId: 'showPopup3',
   //!!!!  overlayId: 'popupOverlay3',

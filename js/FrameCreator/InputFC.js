@@ -46,7 +46,6 @@ const middleHOutput = document.getElementById("iMiddleHOutput");
 const OversetLeRiOutput = document.getElementById("iOversetLeRiOutput");
 const OversetFoBaOutput = document.getElementById("iOversetFoBaOutput");
 
-const add = document.getElementById("iAdd");
 
 //Show
 let takenWidth;
@@ -330,16 +329,7 @@ if (lf) lf.textContent = TotalFrame;
 if (lw) lw.textContent = TotalWood;
 if (ls) ls.textContent = PricePauschal;
 if (ld) ld.textContent = delivery;
-});
-for (const id in buttonStates) {
-  if (buttonStates.hasOwnProperty(id)) {
-    const status = buttonStates[id];
-  }
-};
 
-//_________________________________FORMULAR_SENDEN____________________________________
-//save Object
-add.addEventListener('click', () => {
   for (const id in buttonStates) {
     if (buttonStates.hasOwnProperty(id)) {
       const status = buttonStates[id];
