@@ -61,7 +61,8 @@ function showAccessoryRecommendation() {
 
 function closeAccessoryPopup() {
   accOverlay.style.display = "none";
-  localStorage.removeItem("pendingAccessories"); // nur einmal fragen
+  localStorage.removeItem("pendingAccessories");
+  window.location.href = "Warenkorb.html";
 }
 
 accYes.addEventListener("click", () => {

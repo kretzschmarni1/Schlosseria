@@ -333,11 +333,12 @@ if (takenWidth > 0 || takenDeepth > 0 || takenHight > 0) {
   currentIndex++;
 
 localStorage.setItem('configurations', JSON.stringify(configurations));
-  alert("erfolgreich zum Warenkorb hinzugefügt.");
 
-  // Erst jetzt nach dem empfohlenen Zubehör fragen
-  if (typeof showAccessoryRecommendation === "function") {
+  // Nach empfohlenem Zubehör fragen, sonst direkt zum Warenkorb
+  if (typeof showAccessoryRecommendation === "function" && localStorage.getItem("pendingAccessories")) {
     showAccessoryRecommendation();
+  } else {
+    window.location.href = "Warenkorb.html";
   }
 
 } else {
