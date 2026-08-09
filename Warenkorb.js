@@ -79,7 +79,7 @@ function renderAccessories() {
       var pricePerItem = accessoryPrices[savedData[id].name]?.[savedData[id].dimension] || 0;
       row.innerHTML =
         '<div class="cCartDetails">' +
-          '<b>' + savedData[id].name + '</b> (' + savedData[id].dimension + 'mm)<br>' +
+          '<b>' + savedData[id].name + ' (' + savedData[id].dimension + 'mm)</b><br>' +
           'Stückpreis: ' + pricePerItem.toFixed(2) + ' €<br>' +
           'Gesamt: ' + parseFloat(savedData[id].totalPrice).toFixed(2) + ' €' +
         '</div>' +
