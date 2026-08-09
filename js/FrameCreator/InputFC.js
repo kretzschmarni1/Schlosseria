@@ -286,6 +286,14 @@ add.addEventListener('click', () => {
   };
 
   // Thumbnail vom 3D-Canvas erstellen (verkleinert fuer localStorage)
+  // Hilfslinien temporaer ausblenden
+  const savedOpacities = [];
+  if (typeof cubeGroup !== "undefined") {
+    cubeGroup.children.forEach((line, i) => {
+      savedOpacities[i] = line.material.opacity;
+      if (!line.isActive) line.material.opacity = 0;
+    });
+  }
   renderer.render(scene, camera);
   const thumbCanvas = document.createElement("canvas");
   thumbCanvas.width = 200;
@@ -293,6 +301,13 @@ add.addEventListener('click', () => {
   const thumbCtx = thumbCanvas.getContext("2d");
   thumbCtx.drawImage(renderer.domElement, 0, 0, 200, 200);
   const thumbnail = thumbCanvas.toDataURL("image/jpeg", 0.7);
+  // Hilfslinien wiederherstellen
+  if (typeof cubeGroup !== "undefined") {
+    cubeGroup.children.forEach((line, i) => {
+      line.material.opacity = savedOpacities[i];
+    });
+    renderer.render(scene, camera);
+  }
 
   const currentConfig = {
       Streben: outputText,
