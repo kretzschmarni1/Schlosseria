@@ -62,23 +62,23 @@ const productAccessories = {
   //Produkte 1
   iToCreator1: [
     { id: "1", name: "Tischbefestigung", label: "4 x Tischbefestigung", count: 4, dimension: 20 },
-    { id: "3", name: "Tischfuss", label: "4 x Tischfüße", count: 4, dimension: 20 }
+    { id: "3", name: "Filzfüße", label: "4 x Filzfüße", count: 4, dimension: 20 }
   ],
   //Produkte 2
   iToCreator2: [
     { id: "1", name: "Tischbefestigung", label: "4 x Tischbefestigung", count: 4, dimension: 30 },
-    { id: "3", name: "Tischfuss", label: "4 x Tischfüße", count: 4, dimension: 30 }
+    { id: "3", name: "Filzfüße", label: "4 x Filzfüße", count: 4, dimension: 30 }
   ],
   //Produkte 3
   iToCreator3: [
-    { id: "3", name: "Tischfuss", label: "4 x Filzüße", count: 4, dimension: 30 },
+    { id: "3", name: "Filzfüße", label: "4 x Filzfüße", count: 4, dimension: 30 },
     { id: "4", name: "Kleiderbügel", label: "4 x Kleiderbügel", count: 4, dimension: 40 },
     { id: "5", name: "Kleiderhaken", label: "4 x Kleiderhaken", count: 4, dimension: 40 }
   ],
   //Produkte 4
   iToCreator4: [
     { id: "1", name: "Tischbefestigung", label: "4 x Tischbefestigung", count: 4, dimension: 20 },
-    { id: "3", name: "Tischfuss", label: "4 x Tischfüße", count: 4, dimension: 20 }
+    { id: "3", name: "Filzfüße", label: "4 x Filzfüße", count: 4, dimension: 20 }
   ]
 };
 

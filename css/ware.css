@@ -89,6 +89,15 @@ flex-wrap: wrap;
       font-size: 14px;
       line-height: 1.6;
       flex: 1;
+      font-weight: 400;
+    }
+
+    .cCartDetails b {
+      font-weight: 700;
+    }
+
+    .cCartPriceLine {
+      font-weight: 400;
     }
 
     .cRemoveBtn {

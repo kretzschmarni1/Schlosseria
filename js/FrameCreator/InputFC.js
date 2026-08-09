@@ -85,7 +85,7 @@ function updateLivePrices() {
   var FH = calculateTotal(th, ["iFrontLeft", "iFrontRight", "iFrontMiddleLength", "iBackLeft", "iBackRight", "iBackMiddleLength"]);
   var FD = calculateTotal(td, ["iLeftBottom", "iLeftTop", "iLeftMiddleCross", "iRightBottom", "iRightTop", "iRightMiddleCross", "iTopMiddle", "iBottomMiddle", "iMiddleMiddle"]);
   var FL = ((FW) + (FH) + (FD)/100) * (mat/20);
-  var pp = FL > 0 ? PriceDelivery : 0;
+  var pp = (FL > 0 && del !== "Nur Abholung") ? PriceDelivery : 0;
 
   var tf = Math.round(FL/100 * PricePerMeter + trueCount * PricePerPeace);
   var twPrice = 0;
@@ -292,7 +292,7 @@ let FullWidth = calculateTotal(takenWidth, ["iFrontTop", "iFrontBottom", "iFront
 let FullHeight = calculateTotal(takenHight, ["iFrontLeft", "iFrontRight", "iFrontMiddleLength", "iBackLeft", "iBackRight", "iBackMiddleLength"]);
 let FullDepth = calculateTotal(takenDeepth, ["iLeftBottom", "iLeftTop", "iLeftMiddleCross", "iRightBottom", "iRightTop", "iRightMiddleCross", "iTopMiddle", "iBottomMiddle", "iMiddleMiddle"]);
 let Fulllength = ((FullWidth) + (FullHeight) + (FullDepth)/100) * (material/20); //Für 20mm Quadratrohr kalkuliert
-if (Fulllength > 0) { PricePauschal = PriceDelivery;} else {PricePauschal = 0;};
+if (Fulllength > 0 && delivery !== "Nur Abholung") { PricePauschal = PriceDelivery;} else {PricePauschal = 0;};
 
 TotalFrame = Math.round(Fulllength/100 * PricePerMeter + trueCount * PricePerPeace);
 

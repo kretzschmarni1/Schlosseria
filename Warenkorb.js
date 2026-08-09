@@ -70,18 +70,37 @@ function updateConfigQuantity(index, newQty) {
   refreshTotal();
 }
 
+const accessoryThumbs = {
+  "1": "images/accessoires/Befestigung1.png",
+  "2": "images/accessoires/Befestigung2.png",
+  "3": "images/accessoires/Filzfüße v2.png",
+  "4": "images/accessoires/Kleiderbügel v3.png",
+  "5": "images/accessoires/Kleiderhaken v2.png",
+  "6": "images/accessoires/sockel v2.png"
+};
+
 function renderAccessories() {
   outExtra1.innerHTML = "";
   Object.keys(savedData).forEach((id) => {
     if (savedData[id].quantity > 0) {
+      // Alten Namen "Tischfuss" auf "Filzfüße" migrieren
+      if (savedData[id].name === "Tischfuss") {
+        savedData[id].name = "Filzfüße";
+        localStorage.setItem("accessories", JSON.stringify(savedData));
+      }
       var row = document.createElement("div");
       row.classList.add("cCartItem");
       var pricePerItem = accessoryPrices[savedData[id].name]?.[savedData[id].dimension] || 0;
+      var thumbSrc = accessoryThumbs[id] || "";
+      var thumbHTML = thumbSrc
+        ? '<img src="' + thumbSrc + '" class="cCartThumb" alt="' + savedData[id].name + '">'
+        : "";
       row.innerHTML =
+        thumbHTML +
         '<div class="cCartDetails">' +
           '<b>' + savedData[id].name + ' (' + savedData[id].dimension + 'mm)</b><br>' +
-          'Stückpreis: ' + pricePerItem.toFixed(2) + ' €<br>' +
-          'Gesamt: ' + parseFloat(savedData[id].totalPrice).toFixed(2) + ' €' +
+          '<span class="cCartPriceLine">Stückpreis: ' + pricePerItem.toFixed(2) + ' €</span><br>' +
+          '<span class="cCartPriceLine">Gesamt: ' + parseFloat(savedData[id].totalPrice).toFixed(2) + ' €</span>' +
         '</div>' +
         '<div class="cCartQty">' +
           '<button class="cQtyBtn" data-acc-id="' + id + '" data-dir="-1">−</button>' +
