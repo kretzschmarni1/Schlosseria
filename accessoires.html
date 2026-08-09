@@ -26,10 +26,10 @@
     (function blockMobileUsers() {
         if (window.innerWidth < 768 || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
             document.documentElement.innerHTML = `
-                <h1 style="text-align:center; margin-top:20%; font-family:Arial;">? Mobile Version in Arbeit!</h1>
-                <p style="text-align:center; font-size:18px;">Wir arbeiten an einer optimierten Version für Smartphones.  
+                <h1 style="text-align:center; margin-top:20%; font-family:Arial;">âŒ Mobile Version in Arbeit!</h1>
+                <p style="text-align:center; font-size:18px;">Wir arbeiten an einer optimierten Version fÃ¼r Smartphones.  
                 Bitte nutze solange einen PC-Browser.</p>
-                <p style="text-align:center; font-size:16px; font-style:italic;">– Dein Schlosseria-Team</p>
+                <p style="text-align:center; font-size:16px; font-style:italic;">â€“ Dein Schlosseria-Team</p>
             `;
             setTimeout(() => { window.stop(); }, 100);
         }
@@ -40,30 +40,30 @@
     <a href="Creator.html">
       <img src="images/Logo.png" class="cLogo" alt="Logo">
     </a>
-    <!-- Neuer Wrapper für das Menü -->
+    <!-- Neuer Wrapper fÃ¼r das MenÃ¼ -->
     <div class="cHeadNavWrapper">
       <div class="cHeadLine" id="menu">
         <a class="cHome" href="index.html">Home</a>
         <a class="cExamples" href="ProduktExamples.html">Produkte</a>
         <a class="cHome" href="Creator.html">Creator</a>
         <a class="cAccessoires">Accessoires</a>
-        <a class="cWe" href="UeberUns.html">Über uns</a>
+        <a class="cWe" href="UeberUns.html">Ãœber uns</a>
         <a class="cContact" href="Contact.html">Kontakt</a>
       </div>
-      <!-- Hamburger Menü Button -->
-      <div class="cMenu-icon" onclick="toggleMenu()">?</div>
-      <!-- Dropdown-Menü -->
+      <!-- Hamburger MenÃ¼ Button -->
+      <div class="cMenu-icon" onclick="toggleMenu()">â˜°</div>
+      <!-- Dropdown-MenÃ¼ -->
       <div class="cDropdown-menu" id="iDropdownMenu" style="background-color: rgba(255, 0, 0, 0.2) !important  ;">
         <a class="cHome" href="index.html">Home</a>
         <a class="cExamples" href="ProduktExamples.html">Produkte</a>
         <a class="cHome" href="Creator.html">Creator</a>
         <a class="cAccessoires">Accessoires</a>
-        <a class="cWe" href="UeberUns.html">Über uns</a>
+        <a class="cWe" href="UeberUns.html">Ãœber uns</a>
         <a class="cContact" href="Contact.html">Kontakt</a>
       </div>
     </div>
     <div class="cRight">
-  <!--    <div class="cIntroVideo"><a href="#">? </a> Intro-Video</div> -->
+  <!--    <div class="cIntroVideo"><a href="#">â–· </a> Intro-Video</div> -->
       <a href="Warenkorb.html">
          <img src="images/shopping_bag.png" class="cWare" alt="Warenkorb">
       </a>
@@ -89,16 +89,16 @@
           <option value="30">30mm</option>
         </select>
       </div>
-      <button id="iFixAdd1" class="cAdd">Zum Warenkorb hinzufügen</button>
+      <button id="iFixAdd1" class="cAdd">Zum Warenkorb hinzufÃ¼gen</button>
       <b>Total:</b>
-      <output id="iPrice1">0 €</output>
+      <output id="iPrice1">0 â‚¬</output>
      
     </div>
 
     <div class="cZubehoerOwn">
       <img class="imgFix" src="images/accessoires/Befestigung2.png" alt="Decken/Wandbefestigung"><br>
       <b>Decken/Wandbefestigung</b>
-      <p>für die Montage des Metallrahmens an der Wand oder Decke</p>
+      <p>fÃ¼r die Montage des Metallrahmens an der Wand oder Decke</p>
       <input type="number" class="cFix" value="0" min="0" max="200" id="iFix2">
       <div class="cdropdown">
         <select id="myDropdown2" class="dropdown">
@@ -108,15 +108,15 @@
           <option value="30">30mm</option>
         </select>
       </div>
-      <button id="iFixAdd2" class="cAdd">Zum Warenkorb hinzufügen</button>
+      <button id="iFixAdd2" class="cAdd">Zum Warenkorb hinzufÃ¼gen</button>
       <b>Total:</b>
-      <output id="iPrice2">0 €</output>
+      <output id="iPrice2">0 â‚¬</output>
     </div>
 
   <div class="cZubehoerOwn">
-    <img class="imgFix" src="images/accessoires/Filzfüße v2.png" alt="Filzfuss"><br>
-    <b>Filzfüße</b>
-    <p>zum aufstecken auf der Rahmenunterseite. Für stabilen Halt</p>
+    <img class="imgFix" src="images/accessoires/Filzfuesse_v2.png" alt="Filzfuss"><br>
+    <b>FilzfÃ¼ÃŸe</b>
+    <p>zum aufstecken auf der Rahmenunterseite. FÃ¼r stabilen Halt</p>
     <input type="number" class="cFix" value="0" min="0" max="200" id="iFix3">
     <div class="cdropdown">
       <select id="myDropdown3" class="dropdown">
@@ -126,39 +126,39 @@
         <option value="30">30mm</option>
       </select>
     </div>
-    <button id="iFixAdd3" class="cAdd">Zum Warenkorb hinzufügen</button>
+    <button id="iFixAdd3" class="cAdd">Zum Warenkorb hinzufÃ¼gen</button>
     <b>Total:</b>
-    <output id="iPrice3">0 €</output>
+    <output id="iPrice3">0 â‚¬</output>
   </div>
 
 <div class="cZubehoerOwn">
-  <img class="imgFix" src="images/accessoires/Kleiderbügel v3.png" alt="Kleiderbügel"><br>
-  <b>Kleiderbügel</b>
-  <p>für Kleiderstangen<br>&nbsp;</p>
+  <img class="imgFix" src="images/accessoires/Kleiderbuegel_v3.png" alt="KleiderbÃ¼gel"><br>
+  <b>KleiderbÃ¼gel</b>
+  <p>fÃ¼r Kleiderstangen<br>&nbsp;</p>
   <input type="number" class="cFix" value="0" min="0" max="200" id="iFix4">
   <div class="cdropdown">
     <select id="myDropdown4" class="dropdown">
-      <option value="40">Größe M</option>
+      <option value="40">GrÃ¶ÃŸe M</option>
     </select>
   </div>
-  <button id="iFixAdd4" class="cAdd">Zum Warenkorb hinzufügen</button>
+  <button id="iFixAdd4" class="cAdd">Zum Warenkorb hinzufÃ¼gen</button>
   <b>Total:</b>
-  <output id="iPrice4">0 €</output>
+  <output id="iPrice4">0 â‚¬</output>
 </div>
 
 <div class="cZubehoerOwn">
   <img class="imgFix" src="images/accessoires/Kleiderhaken v2.png" alt="Kleiderhaken"><br>
   <b>Kleiderhaken</b>
-  <p>für Kleiderstangen<br>&nbsp;</p>
+  <p>fÃ¼r Kleiderstangen<br>&nbsp;</p>
   <input type="number" class="cFix" value="0" min="0" max="200" id="iFix5">
   <div class="cdropdown">
     <select id="myDropdown5" class="dropdown">
-      <option value="40">Größe M</option>
+      <option value="40">GrÃ¶ÃŸe M</option>
     </select>
   </div>
-  <button id="iFixAdd5" class="cAdd">Zum Warenkorb hinzufügen</button>
+  <button id="iFixAdd5" class="cAdd">Zum Warenkorb hinzufÃ¼gen</button>
   <b>Total:</b>
-  <output id="iPrice5">0 €</output>
+  <output id="iPrice5">0 â‚¬</output>
 </div>
 
 <div class="cZubehoerOwn">
@@ -168,12 +168,12 @@
   <input type="number" class="cFix" value="0" min="0" max="200" id="iFix6">
   <div class="cdropdown">
     <select id="myDropdown6" class="dropdown">
-      <option value="40">Größe M</option>
+      <option value="40">GrÃ¶ÃŸe M</option>
     </select>
   </div>
-  <button id="iFixAdd6" class="cAdd">Zum Warenkorb hinzufügen</button>
+  <button id="iFixAdd6" class="cAdd">Zum Warenkorb hinzufÃ¼gen</button>
   <b>Total:</b>
-  <output id="iPrice6">0 €</output>
+  <output id="iPrice6">0 â‚¬</output>
 </div>
 
 </div>
@@ -215,13 +215,13 @@
          <b>Bedingungen</b>
         <a href="agb.html#lieferbedingungen" style="color: white;"><span>Lieferbedingungen</span></a>
          <a href="agb.html#zahlungsbedingungen" style="color: white;"><span>Zahlungsbedingungen</span></a>
-         <a href="agb.html#gewaehrleistung" style="color: white;"><span>Gewährleistung</span></a>
+         <a href="agb.html#gewaehrleistung" style="color: white;"><span>GewÃ¤hrleistung</span></a>
          <br><br>
         </div>
       </div>
       <div class="cFooterRU">
         <div class="cFooterRU1">
-         <span>©All rights reserved Copyrights DIE.SCHLOSSERIA GBR 2025.</span>
+         <span>Â©All rights reserved Copyrights DIE.SCHLOSSERIA GBR 2025.</span>
         </div>
         <div class="cFooterRU2">
           <img src="images/LogoWhite.png" class="cLogo" alt="Logo">

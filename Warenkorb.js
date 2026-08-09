@@ -73,8 +73,8 @@ function updateConfigQuantity(index, newQty) {
 const accessoryThumbs = {
   "1": "images/accessoires/Befestigung1.png",
   "2": "images/accessoires/Befestigung2.png",
-  "3": "images/accessoires/Filzfüße v2.png",
-  "4": "images/accessoires/Kleiderbügel v3.png",
+  "3": "images/accessoires/Filzfuesse_v2.png",
+  "4": "images/accessoires/Kleiderbuegel_v3.png",
   "5": "images/accessoires/Kleiderhaken v2.png",
   "6": "images/accessoires/sockel v2.png"
 };
