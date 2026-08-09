@@ -64,6 +64,56 @@ const PricePerPeace = 20; //Für ABschnitt zusammenschweißen usw.
 const PriceDelivery = 35; // Versand etc.
 const PriceWood = 150; //Price pro Quadratmeter
 
+function updateLivePrices() {
+  var w = parseInt(localStorage.getItem("iWidth")) || 100;
+  var h = parseInt(localStorage.getItem("iHight")) || 100;
+  var d = parseInt(localStorage.getItem("iDeepth")) || 100;
+  var mat = parseInt(localStorage.getItem("iMaterial")) || 15;
+  var oLR = parseInt(localStorage.getItem("iOversetLeRi")) || 0;
+  var oFB = parseInt(localStorage.getItem("iOversetFoBa")) || 0;
+  var bs = JSON.parse(localStorage.getItem("buttonStates")) || {};
+  var board = localStorage.getItem("iAddBoard") === "true";
+
+  var tw = setValueToZero(["iFrontTop", "iFrontBottom", "iFrontMiddleCross", "iBackTop", "iBackBottom", "iBackMiddleCross"], w);
+  var th = setValueToZero(["iFrontLeft", "iFrontRight", "iFrontMiddleLength", "iBackLeft", "iBackRight", "iBackMiddleLength"], h);
+  var td = setValueToZero(["iLeftBottom", "iLeftTop", "iLeftMiddleCross", "iRightBottom", "iRightTop", "iRightMiddleCross", "iTopMiddle", "iBottomMiddle", "iMiddleMiddle"], d);
+
+  var del = (td > 150 || tw > 150 || th > 150) ? "Nur Abholung" : "Versand möglich";
+
+  var trueCount = Object.values(bs).filter(function(v) { return v === true; }).length;
+
+  var FW = calculateTotal(tw, ["iFrontTop", "iFrontBottom", "iFrontMiddleCross", "iBackTop", "iBackBottom", "iBackMiddleCross"]);
+  var FH = calculateTotal(th, ["iFrontLeft", "iFrontRight", "iFrontMiddleLength", "iBackLeft", "iBackRight", "iBackMiddleLength"]);
+  var FD = calculateTotal(td, ["iLeftBottom", "iLeftTop", "iLeftMiddleCross", "iRightBottom", "iRightTop", "iRightMiddleCross", "iTopMiddle", "iBottomMiddle", "iMiddleMiddle"]);
+  var FL = ((FW) + (FH) + (FD)/100) * (mat/20);
+  var pp = FL > 0 ? PriceDelivery : 0;
+
+  var tf = Math.round(FL/100 * PricePerMeter + trueCount * PricePerPeace);
+  var twPrice = 0;
+  if (board) {
+    var ww = parseInt(w) + parseInt(oLR * 2);
+    var wd = parseInt(d) + parseInt(oFB * 2);
+    twPrice = Math.round((ww * wd) / 10000 * PriceWood);
+  }
+
+  var lf = document.getElementById("liveFrame");
+  var lw = document.getElementById("liveWood");
+  var ls = document.getElementById("liveShipping");
+  var ld = document.getElementById("liveDelivery");
+  if (lf) lf.textContent = tf;
+  if (lw) lw.textContent = twPrice;
+  if (ls) ls.textContent = pp;
+  if (ld) ld.textContent = del;
+}
+
+// Live-Preise bei Streben-/Holzplatten-Änderungen updaten
+document.addEventListener("click", function(e) {
+  var t = e.target;
+  if (t && (t.id === "iAddBoard" || t.classList.contains("cCube-button"))) {
+    setTimeout(updateLivePrices, 100);
+  }
+});
+
 //______________________TEST_________________________
 
 //Eingabe Slider --> führt Input aus
@@ -98,7 +148,8 @@ middleH = updateInput("iMiddleH",MiddleInput, 5, limitMiddleH - 5);
 middleV = updateInput("iMiddleV",MiddleLengthInput, 5, limitMiddleV - 5);
 material = updateInput("iMaterial", MaterialInput, 15, 50);
 
-ActInput();  
+ActInput();
+updateLivePrices();
 
 }
 
@@ -204,6 +255,7 @@ window.onload = function() {
   getButtons();
   setData();
   getData();
+  updateLivePrices();
   };
 
 //____________________________POPUP_FENSTER______________________________________
