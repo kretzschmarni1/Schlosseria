@@ -269,18 +269,49 @@ function getMousePosition(event) {
 }
 
 function handleLinePick(event) {
-    if (!container.contains(event.target)) return;
     getMousePosition(event);
     raycaster.setFromCamera(mouse, camera);
 
-    const intersects = raycaster.intersectObjects(cubeGroup.children);
+    const intersects = raycaster.intersectObjects(cubeGroup.children, false);
     if (intersects.length > 0) {
         const object = intersects[0].object;
-        toggleLineVisibility(object.lineIndex);
+        if (object && object.lineIndex !== undefined) {
+            toggleLineVisibility(object.lineIndex);
+        }
     }
 }
 
-renderer.domElement.addEventListener('click', handleLinePick, false);
+// Tap-Erkennung: kurze Touches/Klicks waehlen Streben, Swipes drehen weiter die Kamera
+let pickPointerId = null;
+let pickStartX = 0;
+let pickStartY = 0;
+let pickMoved = false;
+
+renderer.domElement.addEventListener('pointerdown', function (event) {
+    pickPointerId = event.pointerId;
+    pickStartX = event.clientX;
+    pickStartY = event.clientY;
+    pickMoved = false;
+}, { capture: true });
+
+renderer.domElement.addEventListener('pointermove', function (event) {
+    if (pickPointerId !== event.pointerId) return;
+    const dx = event.clientX - pickStartX;
+    const dy = event.clientY - pickStartY;
+    if ((dx * dx + dy * dy) > 64) pickMoved = true; // > 8px = Drag
+}, { capture: true });
+
+renderer.domElement.addEventListener('pointerup', function (event) {
+    if (pickPointerId !== event.pointerId) return;
+    if (!pickMoved) handleLinePick(event);
+    pickPointerId = null;
+    pickMoved = false;
+}, { capture: true });
+
+renderer.domElement.addEventListener('pointercancel', function () {
+    pickPointerId = null;
+    pickMoved = false;
+}, { capture: true });
 
 // --- Toggle Button Funktion ---
 // Wir stellen sicher, dass die Opazität auf 1 gesetzt wird, wenn die Linie aktiviert ist
