@@ -56,10 +56,10 @@ const coordinates = {
   var addedBoard = false;
 
   addBoard.addEventListener("click", function () {
-    addedBoard = !addedBoard; // Toggle der Variable
+    addedBoard = !addedBoard;
     localStorage.setItem("iAddBoard", addedBoard);
-   
-    resetScene(); // Aktualisiert alle Linien basierend auf dem neuen Status
+    resetScene();
+    if (typeof updateLivePrices === "function") updateLivePrices();
   });
 
 
@@ -319,6 +319,7 @@ function updateAllLines() {
     });
     saveButtonStates(); // Speichern im LocalStorage
     updateWood();
+    if (typeof updateLivePrices === "function") updateLivePrices();
 }
 
 

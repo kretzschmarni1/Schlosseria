@@ -203,13 +203,12 @@ canvas {
         .cLiveSummary {
           position: absolute;
           bottom: 70px;
-          left: 50%;
-          transform: translateX(-50%);
+          left: 15px;
           text-align: left;
-          font-size: 16px;
-          line-height: 1.8;
+          font-size: 15px;
+          line-height: 2;
           z-index: 6;
-          width: 280px;
+          right: 15px;
         }
 
         .cSubmitSub{
