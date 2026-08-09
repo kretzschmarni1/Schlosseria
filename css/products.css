@@ -1,12 +1,10 @@
 .cProducts {
     min-height: calc(100vh - 120px) ;
-    max-height: 900px;
     margin: 30px;
     display: flex;
-    flex-wrap: wrap; /* WICHTIG für Umbruch */
+    flex-wrap: wrap;
     gap: 20px;
     justify-content: left;
-    overflow: auto;
 }
 
 .cContent{
