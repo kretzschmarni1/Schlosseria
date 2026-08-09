@@ -268,6 +268,16 @@ outTotalWare.textContent = TotalFrame + "€" ;
 outTotalWood.textContent = TotalWood + "€"
 outDeliv.textContent = delivery ;
 outTotalDel.textContent = PricePauschal + "€";
+
+// Live-Preisanzeige aktualisieren
+var lf = document.getElementById("liveFrame");
+var lw = document.getElementById("liveWood");
+var ls = document.getElementById("liveShipping");
+var ld = document.getElementById("liveDelivery");
+if (lf) lf.textContent = TotalFrame;
+if (lw) lw.textContent = TotalWood;
+if (ls) ls.textContent = PricePauschal;
+if (ld) ld.textContent = delivery;
 });
 for (const id in buttonStates) {
   if (buttonStates.hasOwnProperty(id)) {

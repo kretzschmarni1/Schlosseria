@@ -16,7 +16,8 @@ const calculateTotal = () => {
   // Addiere alle Konfigurationen (falls vorhanden)
   const storedConfigurations = JSON.parse(localStorage.getItem("configurations")) || [];
   storedConfigurations.forEach((config) => {
-    total += parseFloat(config.total) || 0;
+    var qty = config.quantity || 1;
+    total += (parseFloat(config.total) || 0) * qty;
     total += parseFloat(config.versand) || 0;
   });
 
@@ -43,9 +44,27 @@ function removeAccessory(id) {
   refreshTotal();
 }
 
+function updateAccessoryQuantity(id, newQty) {
+  if (newQty < 1) { removeAccessory(id); return; }
+  savedData[id].quantity = newQty;
+  savedData[id].totalPrice = calculateAccessoryTotalPrice(savedData[id]);
+  localStorage.setItem("accessories", JSON.stringify(savedData));
+  renderAccessories();
+  refreshTotal();
+}
+
 function removeConfiguration(index) {
   var configs = JSON.parse(localStorage.getItem("configurations")) || [];
   configs.splice(index, 1);
+  localStorage.setItem("configurations", JSON.stringify(configs));
+  renderConfigurations();
+  refreshTotal();
+}
+
+function updateConfigQuantity(index, newQty) {
+  var configs = JSON.parse(localStorage.getItem("configurations")) || [];
+  if (newQty < 1) { removeConfiguration(index); return; }
+  configs[index].quantity = newQty;
   localStorage.setItem("configurations", JSON.stringify(configs));
   renderConfigurations();
   refreshTotal();
@@ -57,10 +76,17 @@ function renderAccessories() {
     if (savedData[id].quantity > 0) {
       var row = document.createElement("div");
       row.classList.add("cCartItem");
+      var pricePerItem = accessoryPrices[savedData[id].name]?.[savedData[id].dimension] || 0;
       row.innerHTML =
         '<div class="cCartDetails">' +
-          savedData[id].quantity + " x " + savedData[id].name + " " +
-          savedData[id].dimension + "mm — " + savedData[id].totalPrice + " €" +
+          '<b>' + savedData[id].name + '</b> (' + savedData[id].dimension + 'mm)<br>' +
+          'Stückpreis: ' + pricePerItem.toFixed(2) + ' €<br>' +
+          'Gesamt: ' + parseFloat(savedData[id].totalPrice).toFixed(2) + ' €' +
+        '</div>' +
+        '<div class="cCartQty">' +
+          '<button class="cQtyBtn" data-acc-id="' + id + '" data-dir="-1">−</button>' +
+          '<span class="cQtyVal">' + savedData[id].quantity + '</span>' +
+          '<button class="cQtyBtn" data-acc-id="' + id + '" data-dir="1">+</button>' +
         '</div>' +
         '<button class="cRemoveBtn" data-acc-id="' + id + '">✕</button>';
       outExtra1.appendChild(row);
@@ -69,6 +95,13 @@ function renderAccessories() {
   outExtra1.querySelectorAll(".cRemoveBtn").forEach(function(btn) {
     btn.addEventListener("click", function() {
       removeAccessory(btn.dataset.accId);
+    });
+  });
+  outExtra1.querySelectorAll(".cQtyBtn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var id = btn.dataset.accId;
+      var dir = parseInt(btn.dataset.dir);
+      updateAccessoryQuantity(id, savedData[id].quantity + dir);
     });
   });
 }
@@ -97,13 +130,21 @@ function renderConfigurations() {
       ? '<img src="' + config.thumbnail + '" class="cCartThumb" alt="Möbelstück ' + (index + 1) + '">'
       : '';
 
+    var qty = config.quantity || 1;
+    var itemTotal = (parseFloat(config.total) * qty).toFixed(2);
     item.innerHTML =
       thumbHTML +
       '<div class="cCartDetails">' +
         '<b>Möbelstück ' + (index + 1) + ':</b><br>' +
         'B/T/H: ' + config.width + ', ' + config.deepth + ', ' + config.hight + '<br>' +
-        'Preis: ' + parseFloat(config.total).toFixed(2) + ' €<br>' +
+        'Einzelpreis: ' + parseFloat(config.total).toFixed(2) + ' €<br>' +
+        'Gesamt: ' + itemTotal + ' €<br>' +
         'Versand: ' + config.versand + ' €' +
+      '</div>' +
+      '<div class="cCartQty">' +
+        '<button class="cQtyBtn" data-config-idx="' + index + '" data-dir="-1">−</button>' +
+        '<span class="cQtyVal">' + qty + '</span>' +
+        '<button class="cQtyBtn" data-config-idx="' + index + '" data-dir="1">+</button>' +
       '</div>' +
       '<button class="cRemoveBtn" data-config-idx="' + index + '">✕</button>';
 
@@ -113,6 +154,15 @@ function renderConfigurations() {
   container.querySelectorAll(".cRemoveBtn").forEach(function(btn) {
     btn.addEventListener("click", function() {
       removeConfiguration(parseInt(btn.dataset.configIdx));
+    });
+  });
+  container.querySelectorAll(".cQtyBtn").forEach(function(btn) {
+    btn.addEventListener("click", function() {
+      var idx = parseInt(btn.dataset.configIdx);
+      var dir = parseInt(btn.dataset.dir);
+      var configs = JSON.parse(localStorage.getItem("configurations")) || [];
+      var currentQty = configs[idx].quantity || 1;
+      updateConfigQuantity(idx, currentQty + dir);
     });
   });
 

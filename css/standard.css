@@ -273,6 +273,8 @@ input[type="range"] {
   cursor: pointer;
   width: 24rem;
   min-width: 321px;
+  border: none;
+  padding: 0;
 }
 
 /* Removes default focus */
@@ -324,8 +326,7 @@ input[type="range"]::-moz-range-thumb {
 }
 
 input[type="range"]:focus::-moz-range-thumb{
-  outline: 3px solid #585656;
-  outline-offset: 0.125rem;
+  outline: none;
 }
 
 

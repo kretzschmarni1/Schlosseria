@@ -115,6 +115,45 @@ flex-wrap: wrap;
       box-shadow: none;
     }
 
+    .cCartQty {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .cQtyBtn {
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      min-height: 24px;
+      border: 1px solid #1A1A1A;
+      border-radius: 50%;
+      background: transparent;
+      color: #1A1A1A;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      line-height: 1;
+    }
+
+    .cQtyBtn:hover {
+      background: #1A1A1A;
+      color: #fff;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .cQtyVal {
+      min-width: 20px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
     input[type="radio"] {
       accent-color: #1A1A1A;
     }
