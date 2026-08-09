@@ -108,3 +108,9 @@ flex-wrap: wrap;
       transform: none;
       box-shadow: none;
     }
+
+    #iSubmit {
+      background-color: #1A1A1A;
+      color: #fff;
+      min-width: 210px;
+    }
