@@ -54,6 +54,7 @@ flex-wrap: wrap;
     .cForm input,
     .cForm textarea {
       font-weight: 400;
+      background-color: rgb(211, 211, 211, 0.87);
     }
 
     #message {
