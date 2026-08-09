@@ -298,7 +298,11 @@
   }
 
   .cPayPalLogo {
-    height: 22px;
+    height: 14px !important;
+    width: auto !important;
+    max-height: 14px !important;
+    max-width: 28px !important;
+    object-fit: contain;
   }
 
   .cCartItem {
