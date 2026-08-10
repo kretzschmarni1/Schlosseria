@@ -203,14 +203,13 @@ function updateWood(){
 
     woodGroup.clear();
 
+    // Holzplatte liegt auf dem Metallrahmen (Unterseite = Oberkante der oberen Streben)
     const woodThickness = 5;
     const widthWood = parseFloat(tWidth) + Thickness + parseFloat(tOversetLeRi);
     const lengthWood = parseFloat(tLength) + Thickness + parseFloat(tOversetFoBa);
 
-    // Oberseite der Platte bündig mit Oberkante der oberen Streben:
-    // darunterliegende Streben werden verdeckt, bündige Streben bleiben sichtbar
-    const woodTopY = tHeight / 2 + Thickness / 2;
-    const woodCenterY = woodTopY - woodThickness / 2;
+    const frameTopY = tHeight / 2 + Thickness / 2;
+    const woodCenterY = frameTopY + woodThickness / 2;
 
     var woodGeometry = new THREE.BoxGeometry(widthWood, woodThickness, lengthWood);
     var woodPlate = new THREE.Mesh(woodGeometry, woodMaterial);
