@@ -139,6 +139,13 @@ p, li, label, span, output, input, textarea, button, select {
 .cHoover {
   border-radius: var(--radius) !important;
   box-shadow: var(--shadow-soft) !important;
+  overflow: hidden !important;
+}
+
+#canvas-container,
+#canvas-container canvas {
+  border-radius: var(--radius) !important;
+  overflow: hidden !important;
 }
 
 .cPopup {
