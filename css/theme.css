@@ -1,0 +1,286 @@
+/* =========================================================
+   Design Preview Theme (branch: design-preview)
+   Visual refresh only – no workflow / image changes
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+:root {
+  --font-display: "DM Sans", "Rubik", sans-serif;
+  --font-body: "Source Sans 3", "Rubik", sans-serif;
+
+  --color-bg: #e8e6e2;
+  --color-surface: rgba(245, 243, 239, 0.88);
+  --color-surface-strong: rgba(240, 238, 233, 0.94);
+  --color-ink: #1c1c1c;
+  --color-ink-muted: #5a5a56;
+  --color-border: rgba(28, 28, 28, 0.12);
+  --color-accent: #2a2e32;
+  --color-accent-soft: #4a5259;
+  --color-header: rgba(250, 249, 246, 0.92);
+  --color-footer: #1f2225;
+  --shadow-soft: 0 8px 28px rgba(28, 28, 28, 0.08);
+  --shadow-lift: 0 12px 36px rgba(28, 28, 28, 0.12);
+  --radius: 14px;
+  --radius-sm: 10px;
+}
+
+/* ---------- Base typography ---------- */
+html,
+body,
+header {
+  font-family: var(--font-body) !important;
+  color: var(--color-ink);
+  background-color: var(--color-bg) !important;
+}
+
+h1, h2, h3, h4,
+.cPopupHeadline,
+.cHome, .cExamples, .cWe, .cAccessoires, .cContact {
+  font-family: var(--font-display) !important;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+p, li, label, span, output, input, textarea, button, select {
+  font-family: var(--font-body);
+}
+
+/* ---------- Header ---------- */
+.cHead {
+  background-color: var(--color-header) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.cHeadLine a,
+.cDropdown-menu a {
+  font-weight: 500 !important;
+  color: var(--color-ink) !important;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+.cHeadLine a:hover,
+.cDropdown-menu a:hover {
+  color: var(--color-accent-soft) !important;
+  background-color: transparent !important;
+  opacity: 1;
+}
+
+.cDropdown-menu {
+  background: var(--color-surface-strong) !important;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm) !important;
+  box-shadow: var(--shadow-lift) !important;
+  overflow: hidden;
+}
+
+/* ---------- Surfaces / frames ---------- */
+.slider-container,
+.cExampleProduct,
+.cUeberUns,
+.cZubehoerOwn,
+.cMyMöbel,
+.cForm,
+.cInputField,
+.cContactContent,
+.cInfoBlock,
+.cPopup {
+  background: var(--color-surface) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-soft) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.cHoover {
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-soft) !important;
+}
+
+.cPopup {
+  background: var(--color-surface-strong) !important;
+}
+
+/* ---------- Buttons ---------- */
+button,
+.cAdd,
+.cIndexButton *,
+.cSubmitSub,
+#iSubmit {
+  font-family: var(--font-display) !important;
+  font-weight: 600 !important;
+  border-radius: var(--radius-sm) !important;
+  letter-spacing: 0.01em;
+  transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease !important;
+}
+
+.cSubmitSub,
+#iSubmit,
+.cIndexButton * {
+  background-color: var(--color-accent) !important;
+  color: #f7f6f3 !important;
+  border-color: var(--color-accent) !important;
+}
+
+.cSubmitSub:hover,
+#iSubmit:hover,
+.cIndexButton:hover * {
+  background-color: var(--color-ink) !important;
+  box-shadow: var(--shadow-soft) !important;
+}
+
+button:not(.cSubmitSub):not(#iSubmit):not(.cRemoveBtn):not(.cQtyBtn):not(.cClosePopup):not(.cView3D):not(.cAddBoard):not(.cDisplayLine) {
+  border-color: var(--color-border) !important;
+  color: var(--color-ink) !important;
+}
+
+.cRemoveBtn,
+.cClosePopup {
+  background: var(--color-accent) !important;
+}
+
+.cQtyBtn {
+  border-color: var(--color-accent) !important;
+  color: var(--color-accent) !important;
+  border-radius: 50% !important;
+}
+
+/* ---------- Forms ---------- */
+input[type="text"],
+input[type="email"],
+input[type="number"],
+textarea,
+select,
+.dropdown,
+.cFix,
+#message {
+  font-family: var(--font-body) !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  border-radius: var(--radius-sm) !important;
+  border: 1.5px solid var(--color-border) !important;
+  background-color: rgba(255, 255, 255, 0.55) !important;
+  color: var(--color-ink) !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-ink-muted) !important;
+  opacity: 0.85;
+}
+
+.cForm {
+  font-weight: 500 !important;
+}
+
+.cForm input,
+.cForm textarea {
+  font-weight: 400 !important;
+}
+
+.cPaymentOption {
+  border-color: var(--color-border) !important;
+}
+
+.cPaymentOption input[type="radio"] {
+  accent-color: var(--color-accent) !important;
+}
+
+/* ---------- Products ---------- */
+.cDifned1::before,
+.cDifned2::before,
+.cDifned3::before,
+.cDifned4::before {
+  background: rgba(20, 22, 24, 0.4) !important;
+}
+
+.cContent,
+.cCartDetails,
+.cLetter2,
+.cLiveSummary {
+  color: var(--color-ink);
+}
+
+.cCartThumb {
+  border-radius: var(--radius-sm) !important;
+  background: rgba(255, 255, 255, 0.4) !important;
+  border: 1px solid var(--color-border);
+}
+
+/* ---------- Footer ---------- */
+footer {
+  background-color: var(--color-footer) !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.cFooterL,
+.cFooter1 {
+  background-color: #f4f2ee !important;
+  color: var(--color-ink) !important;
+}
+
+.cFooterR {
+  background-color: var(--color-footer) !important;
+}
+
+.cFooterR1 a,
+.cFooterR2 a,
+.cFooterRU1 span {
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.cFooterR1 a:hover,
+.cFooterR2 a:hover {
+  opacity: 1;
+}
+
+/* ---------- Range sliders ---------- */
+input[type="range"]::-webkit-slider-runnable-track {
+  background-color: var(--color-accent-soft) !important;
+  border-radius: 999px !important;
+  height: 0.35rem !important;
+}
+
+input[type="range"]::-moz-range-track {
+  background-color: var(--color-accent-soft) !important;
+  border-radius: 999px !important;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  background-color: var(--color-accent) !important;
+  border-radius: 999px !important;
+}
+
+input[type="range"]::-moz-range-thumb {
+  background-color: var(--color-accent) !important;
+  border-radius: 999px !important;
+}
+
+/* ---------- AGB / text pages ---------- */
+.cBodyAgb {
+  background-color: #2a2e32 !important;
+}
+
+.cContext {
+  color: rgba(247, 246, 243, 0.92) !important;
+  line-height: 1.65;
+}
+
+/* ---------- Creator live price ---------- */
+.cLiveSummary {
+  font-family: var(--font-body);
+  color: var(--color-ink);
+}
+
+.cLiveSummary b {
+  font-family: var(--font-display);
+}
