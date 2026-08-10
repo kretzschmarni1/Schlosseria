@@ -47,11 +47,22 @@ function getDeliveryInfo() {
     return hasAccessories ? "Versand möglich" : "—";
   }
 
+  // Sobald ein Möbelstück Abholung braucht → gesamter Warenkorb: Abholung
   const needsPickup = storedConfigurations.some(function (config) {
+    if (config.delivery === "Nur Abholung") return true;
+
     const w = parseFloat(config.width) || 0;
     const d = parseFloat(config.deepth) || 0;
     const h = parseFloat(config.hight) || 0;
-    return w > 150 || d > 150 || h > 150;
+    if (w > 150 || d > 150 || h > 150) return true;
+
+    // Fallback für ältere Warenkorb-Einträge ohne delivery-Feld
+    const versand = parseFloat(config.versand);
+    if (versand === 0 && (w > 0 || d > 0 || h > 0) && (w > 150 || d > 150 || h > 150)) {
+      return true;
+    }
+
+    return false;
   });
 
   return needsPickup ? "Nur Abholung" : "Versand möglich";

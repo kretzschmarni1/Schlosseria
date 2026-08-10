@@ -153,10 +153,13 @@ function createSquarePipe(x1, y1, z1, x2, y2, z2, isActive, index) {
     const pipeMaterial = new THREE.MeshStandardMaterial({
         color: isActive ? colorActive : colorInactive,
         opacity: isActive ? 1.0 : opacityInactive,
-        transparent: true,
-        // Streben immer vor der Holzplatte; untereinander weiter per Render-Order
-        depthTest: false,
-        depthWrite: false
+        transparent: !isActive,
+        depthTest: true,
+        depthWrite: isActive,
+        // Bei Kante/Überlappung mit Holzplatte Streben vor dem Holz
+        polygonOffset: true,
+        polygonOffsetFactor: -2,
+        polygonOffsetUnits: -2
     });
 
     const geometry = new THREE.BoxGeometry(Thickness, Thickness, lengthVal);
@@ -164,7 +167,7 @@ function createSquarePipe(x1, y1, z1, x2, y2, z2, isActive, index) {
 
     pipe.isActive = isActive;
     pipe.lineIndex = index;
-    pipe.renderOrder = isActive ? 3 : 2;
+    pipe.renderOrder = isActive ? 2 : 1;
 
     const direction = new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1).normalize();
     const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), direction);
@@ -186,24 +189,33 @@ var woodMaterial = new THREE.MeshStandardMaterial({
     metalness: 0.2,
     side: THREE.DoubleSide,
     depthTest: true,
-    depthWrite: true
+    depthWrite: true,
+    // Holz leicht zurück, damit bündige Streben sichtbar bleiben
+    polygonOffset: true,
+    polygonOffsetFactor: 2,
+    polygonOffsetUnits: 2
 });
 
 woodGroup.renderOrder = 0;
-cubeGroup.renderOrder = 2;
+cubeGroup.renderOrder = 1;
 
 function updateWood(){
 
     woodGroup.clear();
 
+    const woodThickness = 5;
     const widthWood = parseFloat(tWidth) + Thickness + parseFloat(tOversetLeRi);
-    const hightWood = parseFloat(tHeight) + Thickness * 2;
     const lengthWood = parseFloat(tLength) + Thickness + parseFloat(tOversetFoBa);
 
-    var woodGeometry = new THREE.BoxGeometry(widthWood, 5, lengthWood);
+    // Oberseite der Platte bündig mit Oberkante der oberen Streben:
+    // darunterliegende Streben werden verdeckt, bündige Streben bleiben sichtbar
+    const woodTopY = tHeight / 2 + Thickness / 2;
+    const woodCenterY = woodTopY - woodThickness / 2;
+
+    var woodGeometry = new THREE.BoxGeometry(widthWood, woodThickness, lengthWood);
     var woodPlate = new THREE.Mesh(woodGeometry, woodMaterial);
 
-    woodPlate.position.set(0, hightWood / 2, 0);
+    woodPlate.position.set(0, woodCenterY, 0);
     woodPlate.renderOrder = 0;
 
     woodGroup.add(woodPlate);
@@ -350,10 +362,13 @@ function updateAllLines() {
         line.isActive = isActive;
         line.material.color.set(isActive ? colorActive : colorInactive);
         line.material.opacity = isActive ? 1.0 : (isActive1 ? 0.0 : opacityInactive);
-        line.material.depthTest = false;
-        line.material.depthWrite = false;
-        line.material.transparent = true;
-        line.renderOrder = isActive ? 3 : 2;
+        line.material.transparent = !isActive || isActive1;
+        line.material.depthTest = true;
+        line.material.depthWrite = !!isActive;
+        line.material.polygonOffset = true;
+        line.material.polygonOffsetFactor = -2;
+        line.material.polygonOffsetUnits = -2;
+        line.renderOrder = isActive ? 2 : 1;
     });
     saveButtonStates();
     updateWood();

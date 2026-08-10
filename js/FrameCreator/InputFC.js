@@ -371,6 +371,7 @@ if (ld) ld.textContent = delivery;
       totalFrame: TotalFrame,
       total: Total,
       versand: PricePauschal,
+      delivery: delivery,
       widthWood: woodWidth,
       deepthWood: woodDeepth,
       thumbnail: thumbnail

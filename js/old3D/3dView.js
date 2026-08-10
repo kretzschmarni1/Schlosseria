@@ -143,11 +143,14 @@ function createSquarePipe(x1, y1, z1, x2, y2, z2, isActive, index) {
     const lengthVal = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2 + (z2 - z1) ** 2) + Thickness;
     
     const pipeMaterial = new THREE.MeshStandardMaterial({
-        color: isActive ? colorActive : colorInactive,  // Farbe setzen
-        opacity: isActive ? 1.0 : opacityInactive,      // Opazität setzen
-        transparent: true,
-        depthTest: !isActive,  // Deaktiviert Depth-Test für aktive Linien
-        depthWrite: false      // Verhindert, dass aktive Linien die Depth-Map überschreiben
+        color: isActive ? colorActive : colorInactive,
+        opacity: isActive ? 1.0 : opacityInactive,
+        transparent: !isActive,
+        depthTest: true,
+        depthWrite: isActive,
+        polygonOffset: true,
+        polygonOffsetFactor: -2,
+        polygonOffsetUnits: -2
     });
 
     const geometry = new THREE.BoxGeometry(Thickness, Thickness, lengthVal);
@@ -155,6 +158,7 @@ function createSquarePipe(x1, y1, z1, x2, y2, z2, isActive, index) {
 
     pipe.isActive = isActive;
     pipe.lineIndex = index;
+    pipe.renderOrder = isActive ? 2 : 1;
 
     const direction = new THREE.Vector3(x2 - x1, y2 - y1, z2 - z1).normalize();
     const quaternion = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), direction);
@@ -171,34 +175,38 @@ const woodTexture = loader.load("images/Holz3.png");
 
 // Material für die Holzplatte mit Textur
 var woodMaterial = new THREE.MeshStandardMaterial({
-    map: woodTexture,  // Bild als Textur
+    map: woodTexture,
     roughness: 0.8,
     metalness: 0.2,
-    side: THREE.DoubleSide
-
+    side: THREE.DoubleSide,
+    depthTest: true,
+    depthWrite: true,
+    polygonOffset: true,
+    polygonOffsetFactor: 2,
+    polygonOffsetUnits: 2
 });
+
+woodGroup.renderOrder = 0;
+cubeGroup.renderOrder = 1;
 
 function updateWood(){
 
-    // Funktion zur Erstellung der Holzplatte
-const widthWood = parseFloat(tWidth) + Thickness + parseFloat(tOversetLeRi);
-const ThicknessWood = 5;
-const hightWood = parseFloat(tHeight) + Thickness * 2;
-const lengthWood = parseFloat(tLength) + Thickness+ parseFloat(tOversetFoBa);;
+    woodGroup.clear();
 
-var woodGeometry = new THREE.BoxGeometry(widthWood, 5, lengthWood);
-var woodPlate = new THREE.Mesh(woodGeometry, woodMaterial);
+    const woodThickness = 5;
+    const widthWood = parseFloat(tWidth) + Thickness + parseFloat(tOversetLeRi);
+    const lengthWood = parseFloat(tLength) + Thickness + parseFloat(tOversetFoBa);
 
-    // Lade die Textur (stelle sicher, dass das Bild korrekt geladen wird)
+    // Oberseite der Platte bündig mit Oberkante der oberen Streben
+    const woodTopY = tHeight / 2 + Thickness / 2;
+    const woodCenterY = woodTopY - woodThickness / 2;
 
-    // Geometrie und Material der Holzplatte erstellen
-    var woodGeometry = new THREE.BoxGeometry(widthWood, 5, lengthWood);
+    var woodGeometry = new THREE.BoxGeometry(widthWood, woodThickness, lengthWood);
     var woodPlate = new THREE.Mesh(woodGeometry, woodMaterial);
 
-    // Positioniere die Holzplatte auf der Szene
-    woodPlate.position.set(0, hightWood / 2, 0);
+    woodPlate.position.set(0, woodCenterY, 0);
+    woodPlate.renderOrder = 0;
 
-    // Holzplatte der Szene hinzufügen
     woodGroup.add(woodPlate);
 
     if (addedBoard) {
@@ -304,16 +312,20 @@ window.addEventListener('load', () => {
 
 function updateAllLines() {
     cubeGroup.children.forEach((line, index) => {
-        const isActive = tButtonStates[lineKeys[index]] || false; // Aus LocalStorage oder Standardwert
+        const isActive = tButtonStates[lineKeys[index]] || false;
 
         line.isActive = isActive;
         line.material.color.set(isActive ? colorActive : colorInactive);
-        line.material.opacity = isActive ? 1.0 : (isActive1 ? 0.0 : opacityInactive);    //Wenn Hilfslinien ausgeblendet Opacity = 0.0
-        line.renderOrder = isActive ? 2 : 1; // Höhere Render Order für aktive Linien
-  //     line.material.depthTest = !isActive;
-    //    line.material.depthWrite = false;
+        line.material.opacity = isActive ? 1.0 : (isActive1 ? 0.0 : opacityInactive);
+        line.material.transparent = !isActive || isActive1;
+        line.material.depthTest = true;
+        line.material.depthWrite = !!isActive;
+        line.material.polygonOffset = true;
+        line.material.polygonOffsetFactor = -2;
+        line.material.polygonOffsetUnits = -2;
+        line.renderOrder = isActive ? 2 : 1;
     });
-    saveButtonStates(); // Speichern im LocalStorage
+    saveButtonStates();
     updateWood();
 }
 
