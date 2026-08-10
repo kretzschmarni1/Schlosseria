@@ -126,6 +126,7 @@ p, li, label, span, output, input, textarea, button, select {
 .slider-container .slide ul,
 .slider-container .slide li {
   font-size: 1.2rem !important;
+  text-align: center !important;
 }
 
 .cBodyLandingPage > h3 {
