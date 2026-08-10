@@ -34,6 +34,32 @@ function refreshTotal() {
   if (OutTotal) {
     OutTotal.textContent = calculateTotal().toFixed(2) + " €";
   }
+  refreshDeliveryInfo();
+}
+
+function getDeliveryInfo() {
+  const storedConfigurations = JSON.parse(localStorage.getItem("configurations")) || [];
+  const hasAccessories = Object.keys(savedData).some(function (id) {
+    return (savedData[id].quantity || 0) > 0;
+  });
+
+  if (storedConfigurations.length === 0) {
+    return hasAccessories ? "Versand möglich" : "—";
+  }
+
+  const needsPickup = storedConfigurations.some(function (config) {
+    const w = parseFloat(config.width) || 0;
+    const d = parseFloat(config.deepth) || 0;
+    const h = parseFloat(config.hight) || 0;
+    return w > 150 || d > 150 || h > 150;
+  });
+
+  return needsPickup ? "Nur Abholung" : "Versand möglich";
+}
+
+function refreshDeliveryInfo() {
+  const el = document.getElementById("iDeliveryText");
+  if (el) el.textContent = getDeliveryInfo();
 }
 
 function removeAccessory(id) {
