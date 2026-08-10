@@ -192,6 +192,23 @@
     margin: 0 0 10px 0;
   }
 
+  /* Konfigurieren-Overlay ohne Hover sichtbar (kein Hover auf Touch) */
+  .cDifned1::before,
+  .cDifned2::before,
+  .cDifned3::before,
+  .cDifned4::before {
+    opacity: 1;
+    font-size: 90px;
+  }
+
+  .cDifned1::after,
+  .cDifned2::after,
+  .cDifned3::after,
+  .cDifned4::after {
+    opacity: 1;
+    font-size: 16px;
+  }
+
   .cContent {
     left: 0;
     width: 100%;
