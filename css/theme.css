@@ -162,8 +162,16 @@ p, li, label, span, output, input, textarea, button, select {
   list-style-position: outside !important;
 }
 
+.slider-container .cIndexButtonWrap {
+  display: block !important;
+  width: 100% !important;
+  text-align: center !important;
+  margin-top: 3.5rem !important;
+  padding-top: 0.5rem !important;
+}
+
 .slider-container .cIndexButton {
-  margin-top: 4.5rem !important;
+  display: inline-block !important;
 }
 
 .cBodyLandingPage > h1 {
