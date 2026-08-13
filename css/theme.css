@@ -166,8 +166,8 @@ p, li, label, span, output, input, textarea, button, select {
   display: block !important;
   width: 100% !important;
   text-align: center !important;
-  margin-top: 3.5rem !important;
-  padding-top: 0.5rem !important;
+  margin-top: 2.25rem !important;
+  padding-top: 0.25rem !important;
 }
 
 .slider-container .cIndexButton {
