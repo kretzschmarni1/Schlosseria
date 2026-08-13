@@ -71,9 +71,9 @@
     <h3 id="typeHeading" style="margin-bottom: 15px;"></h3><br>
     <div style="text-align: center;">
     <ul style="list-style-type: disc; list-style-position: inside; margin: 0; padding: 0; line-height: 2.2; text-align: center;">
-        <li id="typeLine1" style="list-style-position: inside; visibility: hidden;"></li>
-        <li id="typeLine2" style="list-style-position: inside; visibility: hidden;"></li>
-        <li id="typeLine3" style="list-style-position: inside; visibility: hidden;"></li>
+        <li id="typeLine1" style="list-style-position: inside; visibility: hidden;">&nbsp;</li>
+        <li id="typeLine2" style="list-style-position: inside; visibility: hidden;">&nbsp;</li>
+        <li id="typeLine3" style="list-style-position: inside; visibility: hidden;">&nbsp;</li>
     </ul><br><br>
     <div style="text-align: center;">
       <a href="ProduktExamples.html" class="cIndexButton" id="typeButton" style="opacity: 0; transition: opacity 0.6s;">
@@ -142,6 +142,7 @@
 
   function typeText(el, text, speed) {
     return new Promise(resolve => {
+      el.textContent = "";
       let i = 0;
       const interval = setInterval(() => {
         el.textContent += text[i];

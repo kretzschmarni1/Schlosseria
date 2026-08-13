@@ -28,8 +28,10 @@ function applyAccessory(item) {
   const taccessoriesRaw = localStorage.getItem("accessories");
   const taccessories = taccessoriesRaw ? JSON.parse(taccessoriesRaw) : {};
 
-  // Falls der Eintrag noch nicht existiert, hier anlegen
-  // (Warenkorb.js braucht name und totalPrice)
+  const unitPrice = (window.accessoryPrices && window.accessoryPrices[item.name])
+    ? (window.accessoryPrices[item.name][item.dimension] || 0)
+    : 0;
+
   const accessory = taccessories[item.id] || {
     name: item.name,
     quantity: 0,
@@ -37,11 +39,21 @@ function applyAccessory(item) {
     totalPrice: 0
   };
 
+  accessory.name = item.name;
   accessory.dimension = item.dimension;
   accessory.quantity += item.count;
+  accessory.totalPrice = unitPrice * accessory.quantity;
 
   taccessories[item.id] = accessory;
   localStorage.setItem("accessories", JSON.stringify(taccessories));
+}
+
+function formatAccessoryLine(item) {
+  const unitPrice = (window.accessoryPrices && window.accessoryPrices[item.name])
+    ? (window.accessoryPrices[item.name][item.dimension] || 0)
+    : 0;
+  const lineTotal = unitPrice * (item.count || 0);
+  return item.label + " – " + lineTotal + " €";
 }
 
 // Wird von InputFC.js aufgerufen, sobald der Rahmen gespeichert wurde
@@ -52,7 +64,7 @@ function showAccessoryRecommendation() {
   accList.innerHTML = "";
   items.forEach(item => {
     const line = document.createElement("h3");
-    line.textContent = item.label;
+    line.textContent = formatAccessoryLine(item);
     accList.appendChild(line);
   });
 

@@ -129,6 +129,14 @@ p, li, label, span, output, input, textarea, button, select {
 .slider-container .slide li {
   font-size: 1.2rem !important;
   text-align: center !important;
+  line-height: 2.2 !important;
+}
+
+.slider-container .slide li {
+  min-height: calc(1.2rem * 2.2) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box;
 }
 
 .cBodyLandingPage > h1 {

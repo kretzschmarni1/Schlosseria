@@ -92,7 +92,7 @@ footer{
         width: 60%;
         text-align: left;
         justify-content: center; /* Zentriert die Container-Gruppe */
-        align-items: center; /* Zentriert die Container vertikal */
+        align-items: flex-start; /* Überschriften (Infos / Bedingungen) auf gleicher Höhe */
         gap: clamp(5px, 8vw, 500px);; /* Abstand zwischen den Containern */
     }
 

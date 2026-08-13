@@ -149,6 +149,11 @@ canvas {
   font-weight: bold;
 }
 
+.cOversetHeading {
+  margin-top: 8px;
+  margin-bottom: 2px;
+}
+
 
 
         .cStepAbs{
