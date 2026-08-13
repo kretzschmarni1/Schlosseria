@@ -163,7 +163,7 @@ function setData(){
   deepthInput.value = localStorage.getItem("iDeepth") ?? 100;
   localStorage.setItem("iDeepth", deepth);
   
-  MaterialInput.value = localStorage.getItem("iMaterial") ?? 30;
+  MaterialInput.value = localStorage.getItem("iMaterial") ?? 15;
   localStorage.setItem("iMaterial", material);
   
   MiddleInput.value = localStorage.getItem("iMiddleH") ?? 80;
@@ -199,7 +199,7 @@ function ActInput(){ //Ein-Ausgänge aktualisieren
   width =  localStorage.getItem("iWidth") || 100;
   hight =  localStorage.getItem("iHight") || 100;
   deepth =  localStorage.getItem("iDeepth") || 100;
-  material =  localStorage.getItem("iMaterial") || 30;
+  material =  localStorage.getItem("iMaterial") || 15;
   middleV =  localStorage.getItem("iMiddleV") || 50;
   middleH =  localStorage.getItem("iMiddleH") || 50;
   oversetLiRe =  localStorage.getItem("iOversetLeRi") || 0;

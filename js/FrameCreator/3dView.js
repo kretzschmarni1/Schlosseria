@@ -4,7 +4,7 @@ let tLength = parseFloat(localStorage.getItem("iDeepth")) || 100;
 let tHeight = parseFloat(localStorage.getItem("iHight")) || 100;
 let tMiddleH = parseFloat(localStorage.getItem("iMiddleH")) || 50;
 let tMiddleV = parseFloat(localStorage.getItem("iMiddleV")) || 50;
-let thick = parseFloat(localStorage.getItem("iMaterial")) || 30;
+let thick = parseFloat(localStorage.getItem("iMaterial")) || 15;
 let tButtonStates = JSON.parse(localStorage.getItem("buttonStates")) || {};
 let tOversetLeRi  = parseFloat(localStorage.getItem("iOversetLeRi")) || 0;
 let tOversetFoBa  = parseFloat(localStorage.getItem("iOversetFoBa")) || 0;
@@ -400,7 +400,7 @@ function resetScene() {
     tHeight = parseFloat(localStorage.getItem("iHight")) || 100;
     tMiddleH = parseFloat(localStorage.getItem("iMiddleH")) || 50;
     tMiddleV = parseFloat(localStorage.getItem("iMiddleV")) || 50;
-    thick = parseFloat(localStorage.getItem("iMaterial")) || 10;
+    thick = parseFloat(localStorage.getItem("iMaterial")) || 15;
     tOversetLeRi = parseFloat(localStorage.getItem("iOversetLeRi")) || 0; 
     tOversetFoBa = parseFloat(localStorage.getItem("iOversetFoBa")) || 0; 
 
