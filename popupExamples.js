@@ -162,6 +162,7 @@ localStorage.setItem("iAddBoard", addedBoard);
 
 function navigateToCreator(configId) {
   localStorage.setItem("creatorUnlocked", "true");
+  localStorage.removeItem("editingConfigIndex");
 
   const config = productConfigurations.find(c => c.ids.includes(configId));
   if (config) {

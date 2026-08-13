@@ -374,18 +374,43 @@ if (ld) ld.textContent = delivery;
       delivery: delivery,
       widthWood: woodWidth,
       deepthWood: woodDeepth,
-      thumbnail: thumbnail
+      thumbnail: thumbnail,
+      creatorState: {
+        buttonStates: JSON.parse(localStorage.getItem("buttonStates") || "{}"),
+        iWidth: width,
+        iHight: hight,
+        iDeepth: deepth,
+        iMaterial: material,
+        iMiddleH: middleH,
+        iMiddleV: middleV,
+        iOversetLeRi: oversetLiRe,
+        iOversetFoBa: oversetFoBa,
+        iAddBoard: (typeof addedBoard !== "undefined" ? addedBoard : localStorage.getItem("iAddBoard") === "true")
+      }
       };
 
 if (takenWidth > 0 || takenDeepth > 0 || takenHight > 0) {
-  
-  // Save  current configuration to the array
-  configurations[currentIndex] = currentConfig;
 
-  // Increment the index for the next configuration
-  currentIndex++;
+  const storedConfigurations = localStorage.getItem("configurations");
+  if (storedConfigurations) {
+    configurations = JSON.parse(storedConfigurations);
+  }
 
-localStorage.setItem('configurations', JSON.stringify(configurations));
+  const editIdxRaw = localStorage.getItem("editingConfigIndex");
+  const editIdx = editIdxRaw !== null && editIdxRaw !== "" ? parseInt(editIdxRaw, 10) : NaN;
+
+  if (!isNaN(editIdx) && editIdx >= 0 && editIdx < configurations.length) {
+    const prevQty = configurations[editIdx].quantity || 1;
+    currentConfig.quantity = prevQty;
+    configurations[editIdx] = currentConfig;
+  } else {
+    currentConfig.quantity = 1;
+    configurations.push(currentConfig);
+  }
+
+  currentIndex = configurations.length;
+  localStorage.setItem("configurations", JSON.stringify(configurations));
+  localStorage.removeItem("editingConfigIndex");
 
   // Nach empfohlenem Zubehör fragen, sonst direkt zum Warenkorb
   if (typeof showAccessoryRecommendation === "function" && localStorage.getItem("pendingAccessories")) {

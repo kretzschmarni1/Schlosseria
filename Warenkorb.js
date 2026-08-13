@@ -168,6 +168,33 @@ const initializeDOM = () => {
   refreshTotal();
 };
 
+function openConfigurationInCreator(index) {
+  var configs = JSON.parse(localStorage.getItem("configurations")) || [];
+  var config = configs[index];
+  if (!config) return;
+
+  var state = config.creatorState;
+  if (!state) {
+    alert("Dieses Möbelstück wurde vor der Bearbeiten-Funktion gespeichert und kann nicht erneut geladen werden. Bitte neu konfigurieren.");
+    return;
+  }
+
+  localStorage.setItem("buttonStates", JSON.stringify(state.buttonStates || {}));
+  localStorage.setItem("iWidth", state.iWidth);
+  localStorage.setItem("iHight", state.iHight);
+  localStorage.setItem("iDeepth", state.iDeepth);
+  localStorage.setItem("iMaterial", state.iMaterial);
+  localStorage.setItem("iMiddleH", state.iMiddleH);
+  localStorage.setItem("iMiddleV", state.iMiddleV);
+  localStorage.setItem("iOversetLeRi", state.iOversetLeRi);
+  localStorage.setItem("iOversetFoBa", state.iOversetFoBa);
+  localStorage.setItem("iAddBoard", state.iAddBoard ? "true" : "false");
+  localStorage.setItem("editingConfigIndex", String(index));
+  localStorage.setItem("creatorUnlocked", "true");
+
+  window.location.href = "Creator.html";
+}
+
 function renderConfigurations() {
   var existing = document.querySelector(".configurations-container");
   if (existing) existing.remove();
@@ -183,14 +210,14 @@ function renderConfigurations() {
     item.classList.add("cCartItem");
 
     var thumbHTML = config.thumbnail
-      ? '<img src="' + config.thumbnail + '" class="cCartThumb" alt="Möbelstück ' + (index + 1) + '">'
+      ? '<img src="' + config.thumbnail + '" class="cCartThumb cCartOpenCreator" data-config-idx="' + index + '" alt="Möbelstück ' + (index + 1) + '" title="Im Creator öffnen">'
       : '';
 
     var qty = config.quantity || 1;
     var itemTotal = (parseFloat(config.total) * qty).toFixed(2);
     item.innerHTML =
       thumbHTML +
-      '<div class="cCartDetails">' +
+      '<div class="cCartDetails cCartOpenCreator" data-config-idx="' + index + '" title="Im Creator öffnen">' +
         '<b>Möbelstück ' + (index + 1) + ':</b><br>' +
         'B/T/H: ' + config.width + ', ' + config.deepth + ', ' + config.hight + '<br>' +
         'Einzelpreis: ' + parseFloat(config.total).toFixed(2) + ' €<br>' +
@@ -219,6 +246,11 @@ function renderConfigurations() {
       var configs = JSON.parse(localStorage.getItem("configurations")) || [];
       var currentQty = configs[idx].quantity || 1;
       updateConfigQuantity(idx, currentQty + dir);
+    });
+  });
+  container.querySelectorAll(".cCartOpenCreator").forEach(function(el) {
+    el.addEventListener("click", function() {
+      openConfigurationInCreator(parseInt(el.dataset.configIdx, 10));
     });
   });
 
