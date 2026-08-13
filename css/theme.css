@@ -115,6 +115,8 @@ p, li, label, span, output, input, textarea, button, select {
   box-shadow: var(--shadow-soft) !important;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  height: 400px !important;
+  padding-top: 28px !important;
 }
 
 .slider-container .slide h3,
@@ -127,6 +129,11 @@ p, li, label, span, output, input, textarea, button, select {
 .slider-container .slide li {
   font-size: 1.2rem !important;
   text-align: center !important;
+}
+
+.cBodyLandingPage > h1 {
+  font-size: clamp(2.4rem, 5.5vw, 3.25rem) !important;
+  line-height: 1.15;
 }
 
 .cBodyLandingPage > h3 {
