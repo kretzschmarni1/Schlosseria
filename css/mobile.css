@@ -442,11 +442,11 @@
     transform: none;
   }
 
-  .cView3D,
   /* Level controls bottom-left on mobile */
   .cLevelControls {
     top: auto;
     left: 8px;
+    right: auto;
     bottom: 8px;
     max-width: min(180px, calc(42vw - 8px));
   }
@@ -475,13 +475,16 @@
   }
 
   .cDisplayLine {
+    left: auto;
     right: 8px;
     bottom: 8px;
   }
 
   .cView3D {
+    left: auto;
     right: 8px;
-    bottom: 48px;
+    bottom: 52px; /* kleiner vertikaler Abstand zu Hilfslinien */
+    max-width: none;
   }
 
   .cBottomTools {
