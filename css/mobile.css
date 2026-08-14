@@ -462,11 +462,16 @@
   }
 
   .cAddBoard,
-  .cDisplayLine {
+  .cDisplayLine,
+  .cView3D {
     font-size: 12px;
     padding: 6px 8px;
     min-width: 0 !important;
     max-width: calc(50% - 16px);
+    width: auto;
+    height: auto;
+    line-height: 1.2;
+    box-sizing: border-box;
   }
 
   .cAddBoard {
@@ -484,7 +489,6 @@
     left: auto;
     right: 8px;
     bottom: 52px; /* kleiner vertikaler Abstand zu Hilfslinien */
-    max-width: none;
   }
 
   .cBottomTools {
