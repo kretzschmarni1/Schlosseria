@@ -189,6 +189,19 @@ function openConfigurationInCreator(index) {
   localStorage.setItem("iOversetLeRi", state.iOversetLeRi);
   localStorage.setItem("iOversetFoBa", state.iOversetFoBa);
   localStorage.setItem("iAddBoard", state.iAddBoard ? "true" : "false");
+  localStorage.setItem("iAddBoardMiddle", state.iAddBoardMiddle ? "true" : "false");
+  localStorage.setItem("middleLevelVisible", state.middleLevelVisible ? "true" : "false");
+  if (Array.isArray(state.shelfLevels)) {
+    localStorage.setItem("shelfLevels", JSON.stringify(state.shelfLevels));
+  } else if (state.middleLevelVisible || state.iAddBoardMiddle) {
+    localStorage.setItem("shelfLevels", JSON.stringify([{
+      id: 1,
+      height: parseFloat(state.iMiddleH) || 50,
+      wood: !!state.iAddBoardMiddle
+    }]));
+  } else {
+    localStorage.setItem("shelfLevels", "[]");
+  }
   localStorage.setItem("editingConfigIndex", String(index));
   localStorage.setItem("creatorUnlocked", "true");
 

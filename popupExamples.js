@@ -115,7 +115,11 @@ localStorage.setItem("iOversetFoBa", oversetFoBa);
 
 // Produktbeispiele bzw konfiguration vorbestimmen
 function PreConfigDesign(tHight, tWidth, tDeepth, tmiddleH, tmiddleV, tPerspective, tMaterial ,tFrontTop, tFrontBottom , tLeftTop, tRightTop, tTopMiddle, tBackTop, tBackBottom, tFrontRight, tBackRight, tFrontLeft, tBackLeft, tRightBottom, tLeftBottom, tFrontMiddleCross, tFrontMiddleLength, tBackMiddleCross, tBackMiddleLength, tRightMiddleCross, tLeftMiddleCross, tOversetLiRe, tOversetFoBa, tAddBoard ) {
-  // Strebenzustände setzen
+  // Strebenzustände komplett neu setzen (keine Reste aus dem Creator)
+  Object.keys(buttonStates).forEach(function (key) {
+    delete buttonStates[key];
+  });
+
   buttonStates["iFrontTop"] = tFrontTop;
   buttonStates["iFrontBottom"] = tFrontBottom;
   buttonStates["iLeftTop"] = tLeftTop;
@@ -151,18 +155,77 @@ function PreConfigDesign(tHight, tWidth, tDeepth, tmiddleH, tmiddleV, tPerspecti
   addedBoard = tAddBoard;
 
 setData();
-localStorage.setItem("iAddBoard", addedBoard);
+localStorage.setItem("iAddBoard", addedBoard ? "true" : "false");
+syncProductShelfLevels();
 }
 
 // Gespeicherte Werte laden
-  window.onload = function() {         
-    getData();
+window.onload = function () {
+  getData();
+};
 
+// Extra-Ebenen aus Produkt-Mittelstreben für den neuen Creator ableiten
+function syncProductShelfLevels() {
+  var midKeys = [
+    "iFrontMiddleCross", "iBackMiddleCross",
+    "iLeftMiddleCross", "iRightMiddleCross", "iMiddleMiddle"
+  ];
+  var hasMid = midKeys.some(function (k) { return !!buttonStates[k]; });
+
+  if (!hasMid) {
+    localStorage.setItem("shelfLevels", "[]");
+    localStorage.setItem("middleLevelVisible", "false");
+    localStorage.setItem("iAddBoardMiddle", "false");
+    return;
   }
 
-function navigateToCreator(configId) {
-  localStorage.setItem("creatorUnlocked", "true");
+  var height = parseFloat(middleH) || 50;
+  localStorage.setItem("shelfLevels", JSON.stringify([{
+    id: 1,
+    height: height,
+    wood: false
+  }]));
+  localStorage.setItem("middleLevelVisible", "true");
+  localStorage.setItem("iAddBoardMiddle", "false");
+
+  var map = {
+    iFrontMiddleCross: "iLvl1Front",
+    iBackMiddleCross: "iLvl1Back",
+    iLeftMiddleCross: "iLvl1Left",
+    iRightMiddleCross: "iLvl1Right",
+    iMiddleMiddle: "iLvl1Mid"
+  };
+  Object.keys(map).forEach(function (oldKey) {
+    if (buttonStates[oldKey]) buttonStates[map[oldKey]] = true;
+    delete buttonStates[oldKey];
+  });
+  localStorage.setItem("buttonStates", JSON.stringify(buttonStates));
+}
+
+function resetCreatorState() {
+  Object.keys(buttonStates).forEach(function (key) {
+    delete buttonStates[key];
+  });
+
+  localStorage.setItem("buttonStates", "{}");
+  localStorage.setItem("shelfLevels", "[]");
+  localStorage.setItem("iAddBoard", "false");
+  localStorage.setItem("iAddBoardMiddle", "false");
+  localStorage.setItem("middleLevelVisible", "false");
+  localStorage.setItem("iWidth", "100");
+  localStorage.setItem("iHight", "100");
+  localStorage.setItem("iDeepth", "100");
+  localStorage.setItem("iMaterial", "15");
+  localStorage.setItem("iMiddleH", "50");
+  localStorage.setItem("iMiddleV", "50");
+  localStorage.setItem("iOversetLeRi", "0");
+  localStorage.setItem("iOversetFoBa", "0");
   localStorage.removeItem("editingConfigIndex");
+}
+
+function navigateToCreator(configId) {
+  resetCreatorState();
+  localStorage.setItem("creatorUnlocked", "true");
 
   const config = productConfigurations.find(c => c.ids.includes(configId));
   if (config) {

@@ -40,24 +40,24 @@ canvas {
 
   left: calc(50%); 
   transform: translateX(-50%);
-  gap: clamp(0px, 3vw, 100px); 
-  gap: clamp(0px, calc(20vw - 200px), 150px);
+  gap: clamp(24px, calc(20vw - 200px), 150px);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   flex: 1;
-  padding: 0 20px; 
   justify-content: center;
-  padding: 0px 0px;
+  padding: 36px 20px 24px;
+  margin-top: 28px;
+  box-sizing: border-box;
 }
 
   .cInputField{
     position: relative;
     width: 560px;
-    height: 660px;
+    height: auto;
+    min-height: 660px;
     background-color:rgb(211, 211, 211, 0.9);
-    padding: 10px 10px 10px 5px;
-    padding: 5px 20px 5px 20px;
-    gap: 10px;       
+    padding: 16px 20px 24px;
+    gap: 16px;
     color: rgba(0,0,0,1);
     font-weight: Light;
     font-size: 16px;
@@ -67,15 +67,34 @@ canvas {
     border-width: 3px;
     border-style: solid;
     border-radius: 5px;
-    justify-content: center;
-    align-items: center;
-
-    
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    box-sizing: border-box;
     border: 5px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     background-color:rgb(211, 211, 211, 0.9);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     border-radius: 16px;
+  }
+
+  .cInputField > div:first-child {
+    flex: 0 0 auto;
+    min-height: 0 !important;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .cInputSliders {
+    flex: 0 0 auto;
+    min-height: 0;
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
   }
 
 
@@ -206,49 +225,74 @@ canvas {
           }
           
         .cLiveSummary {
-          position: absolute;
-          bottom: 70px;
-          left: 50%;
-          transform: translateX(-50%);
+          position: static;
+          bottom: auto;
+          left: auto;
+          transform: none;
           text-align: center;
           font-size: 16px;
-          line-height: 2;
+          line-height: 1.8;
           z-index: 6;
-          width: auto;
-          white-space: nowrap;
+          width: 100%;
+          white-space: normal;
+          margin: 18px 0 12px;
+          flex: 0 0 auto;
         }
 
         .cSubmitSub{
-          position: absolute;
-          bottom: 20px;
-          left: 50%;
-          transform: translateX(-50%);
-          min-width: 210px;
+          position: static;
+          bottom: auto;
+          left: auto;
+          transform: none;
+          display: block;
+          width: 100%;
+          min-width: 0;
           font-size: 16px;
           z-index: 6;
           background-color: #1A1A1A;
           color: #fff;
+          margin: 0 0 4px;
+          flex: 0 0 auto;
         }
 
         .cSubmitSub:hover {
-          transform: translateX(-50%) translateY(-2px);
+          transform: translateY(-2px);
         }
 
         .cSubmitSub:active {
-          transform: translateX(-50%) translateY(0);
+          transform: translateY(0);
         }
   
+          .cBottomTools {
+            position: absolute;
+            left: 50%;
+            bottom: 18px;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            z-index: 7;
+            pointer-events: none;
+          }
+
+          .cBottomTools > * {
+            pointer-events: auto;
+          }
+
           .cTrash{
-            left: 15px;
-            top: 505px;
-            width: 65px;
-            height: 65px;
+            position: relative;
+            left: auto;
+            top: auto;
+            order: 2;
+            width: 48px;
+            height: 48px;
             background-repeat: no-repeat;
             background-position: center center;
             background-size: cover;
             opacity: 0.7;
-            position: absolute;
-            margin: 10px 10px 10px 10px;
+            margin: 0;
             border: none;
             cursor: pointer;
             z-index: 5;
@@ -258,16 +302,17 @@ canvas {
           }
 
           .cCapture{       
-            left: 80px;
-            top: 518px;
-            width: 65px;
-            height: 65px;
+            position: relative;
+            left: auto;
+            top: auto;
+            order: 1;
+            width: 40px;
+            height: 40px;
             background-repeat: no-repeat;
             background-position: center center;
             background-size: cover;
             opacity: 0.7;
-            position: absolute;
-            margin: 10px 10px 10px 10px;
+            margin: 0;
             border: none;
             cursor: pointer;
             z-index: 5;
@@ -287,6 +332,172 @@ canvas {
     min-width: 210px;
     font-size: 16px;
     z-index: 6;
+    display: none !important;
+  }
+
+  .cLevelControls {
+    position: absolute;
+    left: 14px;
+    bottom: 14px;
+    top: auto;
+    transform: none;
+    z-index: 8;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    max-width: min(220px, calc(50% - 40px));
+    max-height: calc(100% - 28px);
+    overflow: auto;
+    pointer-events: none;
+  }
+
+  .cLevelControls > * {
+    pointer-events: auto;
+  }
+
+  .cLevelAddBtn {
+    position: relative;
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 50%;
+    border: 2px solid #1A1A1A;
+    background: var(--color-surface);
+    color: #1A1A1A;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .cLevelAddBtn:hover {
+    background: #1A1A1A;
+    color: #fff;
+    transform: none;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  }
+
+  .cLevelAddBtn::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    top: auto;
+    left: 0;
+    transform: none;
+    white-space: nowrap;
+    background: rgba(28, 28, 28, 0.92);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 10px;
+    border-radius: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .cLevelAddBtn:hover::after {
+    opacity: 1;
+  }
+
+  .cLevelList {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 170px;
+    width: 100%;
+  }
+
+  .cLevelRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 6px 8px 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1A1A1A;
+  }
+
+  .cLevelWoodBtn {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid #1A1A1A;
+    background: var(--color-surface);
+    color: #1A1A1A;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .cLevelWoodBtn.is-on {
+    background: #1A1A1A;
+    color: #fff;
+  }
+
+  .cLevelWoodBtn:hover {
+    transform: none;
+  }
+
+  .cLevelRemoveBtn {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(28, 28, 28, 0.35);
+    background: var(--color-surface);
+    color: #1A1A1A;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .cLevelRemoveBtn:hover {
+    background: #1A1A1A;
+    color: #fff;
+    border-color: #1A1A1A;
+    transform: none;
+  }
+
+  .cLevelRowActions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .cExtraLevelSliders {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
   }
 
   .cDisplayLine {

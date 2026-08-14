@@ -368,7 +368,8 @@
     flex-direction: column;
     left: 0;
     transform: none;
-    padding: 12px;
+    padding: 28px 12px 12px;
+    margin-top: 16px;
     gap: 16px;
     align-items: stretch;
   }
@@ -390,10 +391,11 @@
     height: auto !important;
     min-height: 0;
     padding: 12px !important;
-    margin-bottom: 80px;
+    margin-bottom: 24px;
   }
 
-  .cInputField > div {
+  .cInputField > div,
+  .cInputSliders {
     min-height: 0 !important;
     gap: 10px !important;
   }
@@ -441,6 +443,24 @@
   }
 
   .cView3D,
+  /* Level controls bottom-left on mobile */
+  .cLevelControls {
+    top: auto;
+    left: 8px;
+    bottom: 8px;
+    max-width: min(180px, calc(42vw - 8px));
+  }
+
+  .cLevelList {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .cLevelRow {
+    font-size: 11px;
+    padding: 5px 6px 5px 8px;
+  }
+
   .cAddBoard,
   .cDisplayLine {
     font-size: 12px;
@@ -464,22 +484,28 @@
     bottom: 48px;
   }
 
+  .cBottomTools {
+    bottom: 10px;
+    gap: 6px;
+    flex-direction: column;
+  }
+
   .cTrash {
-    left: 8px !important;
+    left: auto !important;
     top: auto !important;
-    bottom: 48px;
+    bottom: auto !important;
     width: 36px !important;
     height: 36px !important;
-    position: absolute;
+    position: relative !important;
   }
 
   .cCapture {
-    left: 48px !important;
+    left: auto !important;
     top: auto !important;
-    bottom: 50px;
+    bottom: auto !important;
     width: 32px !important;
     height: 32px !important;
-    position: absolute;
+    position: relative !important;
   }
 
   .cHover-Image {

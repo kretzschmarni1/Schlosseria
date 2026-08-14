@@ -63,36 +63,80 @@ const PricePerPeace = 20; //Für ABschnitt zusammenschweißen usw.
 const PriceDelivery = 35; // Versand etc.
 const PriceWood = 150; //Price pro Quadratmeter
 
+function getShelfLevelsFromStorage() {
+  try {
+    if (typeof shelfLevels !== "undefined" && Array.isArray(shelfLevels)) return shelfLevels;
+    var parsed = JSON.parse(localStorage.getItem("shelfLevels") || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function countWoodBoards() {
+  var n = localStorage.getItem("iAddBoard") === "true" ? 1 : 0;
+  getShelfLevelsFromStorage().forEach(function (l) { if (l && l.wood) n++; });
+  return n;
+}
+
+function hasOnlyTopWoodBoard() {
+  var top = localStorage.getItem("iAddBoard") === "true";
+  if (!top) return false;
+  return !getShelfLevelsFromStorage().some(function (l) { return l && l.wood; });
+}
+
+function widthStrutKeys() {
+  var keys = ["iFrontTop", "iFrontBottom", "iBackTop", "iBackBottom", "iFrontMiddleCross", "iBackMiddleCross"];
+  getShelfLevelsFromStorage().forEach(function (l) {
+    keys.push("iLvl" + l.id + "Front", "iLvl" + l.id + "Back");
+  });
+  return keys;
+}
+
+function depthStrutKeys() {
+  var keys = [
+    "iLeftBottom", "iLeftTop", "iLeftMiddleCross",
+    "iRightBottom", "iRightTop", "iRightMiddleCross",
+    "iTopMiddle", "iBottomMiddle", "iMiddleMiddle"
+  ];
+  getShelfLevelsFromStorage().forEach(function (l) {
+    keys.push("iLvl" + l.id + "Left", "iLvl" + l.id + "Right", "iLvl" + l.id + "Mid");
+  });
+  return keys;
+}
+
 function updateLivePrices() {
   var w = parseInt(localStorage.getItem("iWidth")) || 100;
   var h = parseInt(localStorage.getItem("iHight")) || 100;
   var d = parseInt(localStorage.getItem("iDeepth")) || 100;
   var mat = parseInt(localStorage.getItem("iMaterial")) || 15;
-  var oLR = parseInt(localStorage.getItem("iOversetLeRi")) || 0;
-  var oFB = parseInt(localStorage.getItem("iOversetFoBa")) || 0;
+  var oLR = hasOnlyTopWoodBoard() ? (parseInt(localStorage.getItem("iOversetLeRi")) || 0) : 0;
+  var oFB = hasOnlyTopWoodBoard() ? (parseInt(localStorage.getItem("iOversetFoBa")) || 0) : 0;
   var bs = JSON.parse(localStorage.getItem("buttonStates")) || {};
-  var board = localStorage.getItem("iAddBoard") === "true";
+  var boardCount = countWoodBoards();
+  var wKeys = widthStrutKeys();
+  var dKeys = depthStrutKeys();
 
-  var tw = setValueToZero(["iFrontTop", "iFrontBottom", "iFrontMiddleCross", "iBackTop", "iBackBottom", "iBackMiddleCross"], w);
+  var tw = setValueToZero(wKeys, w);
   var th = setValueToZero(["iFrontLeft", "iFrontRight", "iFrontMiddleLength", "iBackLeft", "iBackRight", "iBackMiddleLength"], h);
-  var td = setValueToZero(["iLeftBottom", "iLeftTop", "iLeftMiddleCross", "iRightBottom", "iRightTop", "iRightMiddleCross", "iTopMiddle", "iBottomMiddle", "iMiddleMiddle"], d);
+  var td = setValueToZero(dKeys, d);
 
   var del = (td > 150 || tw > 150 || th > 150) ? "Nur Abholung" : "Versand möglich";
 
   var trueCount = Object.values(bs).filter(function(v) { return v === true; }).length;
 
-  var FW = calculateTotal(tw, ["iFrontTop", "iFrontBottom", "iFrontMiddleCross", "iBackTop", "iBackBottom", "iBackMiddleCross"]);
+  var FW = calculateTotal(tw, wKeys);
   var FH = calculateTotal(th, ["iFrontLeft", "iFrontRight", "iFrontMiddleLength", "iBackLeft", "iBackRight", "iBackMiddleLength"]);
-  var FD = calculateTotal(td, ["iLeftBottom", "iLeftTop", "iLeftMiddleCross", "iRightBottom", "iRightTop", "iRightMiddleCross", "iTopMiddle", "iBottomMiddle", "iMiddleMiddle"]);
+  var FD = calculateTotal(td, dKeys);
   var FL = ((FW) + (FH) + (FD)/100) * (mat/20);
   var pp = (FL > 0 && del !== "Nur Abholung") ? PriceDelivery : 0;
 
   var tf = Math.round(FL/100 * PricePerMeter + trueCount * PricePerPeace);
   var twPrice = 0;
-  if (board) {
+  if (boardCount > 0) {
     var ww = parseInt(w) + parseInt(oLR * 2);
     var wd = parseInt(d) + parseInt(oFB * 2);
-    twPrice = Math.round((ww * wd) / 10000 * PriceWood);
+    twPrice = Math.round(((ww * wd) / 10000 * PriceWood) * boardCount);
   }
 
   var lf = document.getElementById("liveFrame");
@@ -108,7 +152,7 @@ function updateLivePrices() {
 // Live-Preise bei Streben-/Holzplatten-Änderungen updaten
 document.addEventListener("click", function(e) {
   var t = e.target;
-  if (t && (t.id === "iAddBoard" || t.classList.contains("cCube-button"))) {
+  if (t && (t.id === "iAddBoard" || t.id === "iAddLevel" || t.classList.contains("cLevelWoodBtn") || t.classList.contains("cLevelRemoveBtn") || t.classList.contains("cCube-button"))) {
     setTimeout(updateLivePrices, 100);
   }
 });
@@ -266,9 +310,11 @@ let countEdge;
 let element; 
 
 PopUp.addEventListener('click', () => {
- takenWidth = setValueToZero(["iFrontTop", "iFrontBottom", "iFrontMiddleCross", "iBackTop", "iBackBottom", "iBackMiddleCross"], width);
+ var wKeysSave = widthStrutKeys();
+ var dKeysSave = depthStrutKeys();
+ takenWidth = setValueToZero(wKeysSave, width);
  takenHight = setValueToZero(["iFrontLeft", "iFrontRight", "iFrontMiddleLength", "iBackLeft", "iBackRight", "iBackMiddleLength"], hight);
- takenDeepth = setValueToZero(["iLeftBottom", "iLeftTop", "iLeftMiddleCross", "iRightBottom", "iRightTop", "iRightMiddleCross", "iTopMiddle", "iBottomMiddle", "iMiddleMiddle"], deepth);
+ takenDeepth = setValueToZero(dKeysSave, deepth);
 
  //Lieferung 
 if (takenDeepth > 150 || takenWidth > 150 || takenHight > 150 ) {
@@ -288,9 +334,9 @@ const trueCount = countTrueValues(JSON.parse(localStorage.getItem("buttonStates"
 
 
 // Berechnung der Gesamtwerte für Länge, Höhe und Tiefe
-let FullWidth = calculateTotal(takenWidth, ["iFrontTop", "iFrontBottom", "iFrontMiddleCross", "iBackTop", "iBackBottom", "iBackMiddleCross"]);
+let FullWidth = calculateTotal(takenWidth, wKeysSave);
 let FullHeight = calculateTotal(takenHight, ["iFrontLeft", "iFrontRight", "iFrontMiddleLength", "iBackLeft", "iBackRight", "iBackMiddleLength"]);
-let FullDepth = calculateTotal(takenDeepth, ["iLeftBottom", "iLeftTop", "iLeftMiddleCross", "iRightBottom", "iRightTop", "iRightMiddleCross", "iTopMiddle", "iBottomMiddle", "iMiddleMiddle"]);
+let FullDepth = calculateTotal(takenDeepth, dKeysSave);
 let Fulllength = ((FullWidth) + (FullHeight) + (FullDepth)/100) * (material/20); //Für 20mm Quadratrohr kalkuliert
 if (Fulllength > 0 && delivery !== "Nur Abholung") { PricePauschal = PriceDelivery;} else {PricePauschal = 0;};
 
@@ -299,11 +345,16 @@ TotalFrame = Math.round(Fulllength/100 * PricePerMeter + trueCount * PricePerPea
  console.log(Fulllength/100 * PricePerMeter);
  console.log(trueCount * PricePerPeace);
 
-//Berechnung Holzplatte
-if (addedBoard) {
-  woodWidth = (parseInt(width) + parseInt(oversetLiRe*2));
-  woodDeepth = (parseInt(deepth) + parseInt(oversetFoBa*2));
-  TotalWood = (woodWidth * woodDeepth) / 10000 * PriceWood;
+//Berechnung Holzplatte(n): Oben + Extra-Ebenen
+woodWidth = (parseInt(width) + parseInt((hasOnlyTopWoodBoard() ? oversetLiRe : 0)*2));
+woodDeepth = (parseInt(deepth) + parseInt((hasOnlyTopWoodBoard() ? oversetFoBa : 0)*2));
+var boardTopSave = (typeof boards !== "undefined") ? !!boards.top : (localStorage.getItem("iAddBoard") === "true");
+var levelsSave = getShelfLevelsFromStorage().map(function (l) {
+  return { id: l.id, height: l.height, wood: !!l.wood };
+});
+var boardCountSave = countWoodBoards();
+if (boardCountSave > 0) {
+  TotalWood = (woodWidth * woodDeepth) / 10000 * PriceWood * boardCountSave;
 } else {
   TotalWood = 0;
 }
@@ -385,7 +436,10 @@ if (ld) ld.textContent = delivery;
         iMiddleV: middleV,
         iOversetLeRi: oversetLiRe,
         iOversetFoBa: oversetFoBa,
-        iAddBoard: (typeof addedBoard !== "undefined" ? addedBoard : localStorage.getItem("iAddBoard") === "true")
+        iAddBoard: boardTopSave,
+        iAddBoardMiddle: levelsSave.some(function (l) { return !!l.wood; }),
+        middleLevelVisible: levelsSave.length > 0,
+        shelfLevels: levelsSave
       }
       };
 
@@ -412,8 +466,9 @@ if (takenWidth > 0 || takenDeepth > 0 || takenHight > 0) {
   localStorage.setItem("configurations", JSON.stringify(configurations));
   localStorage.removeItem("editingConfigIndex");
 
-  // Nach empfohlenem Zubehör fragen, sonst direkt zum Warenkorb
-  if (typeof showAccessoryRecommendation === "function" && localStorage.getItem("pendingAccessories")) {
+  // Nach empfohlenem Zubehör fragen (Holzplatten skalieren Tischbefestigungen), sonst Warenkorb
+  if (typeof showAccessoryRecommendation === "function" &&
+      (localStorage.getItem("pendingAccessories") || countWoodBoards() > 0)) {
     showAccessoryRecommendation();
   } else {
     window.location.href = "Warenkorb.html";

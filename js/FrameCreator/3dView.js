@@ -17,17 +17,111 @@ function saveButtonStates() { localStorage.setItem("buttonStates", JSON.stringif
 //Linien-Dicke
 let Thickness = thick / 10;
 
-//Variablen für Linien-Schlüssel
-const lineKeys = [
+//Variablen für Linien-Schlüssel (werden dynamisch um Ebenen erweitert)
+const BASE_LINE_KEYS = [
     "iBackBottom", "iBackRight", "iBackTop", "iBackLeft",
     "iLeftBottom", "iRightBottom", "iRightTop", "iLeftTop",
-    "iFrontBottom", "iFrontRight", "iFrontTop", "iFrontLeft",
-    "iBackMiddleCross", "iFrontMiddleCross", "iLeftMiddleCross",
-    "iRightMiddleCross", "iTopMiddle", "iFrontMiddleLenght", "iBackMiddleLenght", "iBottomMiddle", "iMiddleMiddle"
+    "iFrontBottom", "iFrontRight", "iFrontTop", "iFrontLeft"
 ];
+const VERTICAL_MIDDLE_KEYS = [
+    "iTopMiddle", "iFrontMiddleLenght", "iBackMiddleLenght", "iBottomMiddle"
+];
+let lineKeys = BASE_LINE_KEYS.slice();
 
-//Konfiguration der Linien-Koordinaten
-const coordinates = {
+//Konfiguration der Linien-Koordinaten (wird in rebuildFrameDefinition befüllt)
+let coordinates = {};
+
+const MAX_EXTRA_LEVELS = 4;
+
+function levelStrutKeys(id) {
+  return {
+    back: "iLvl" + id + "Back",
+    front: "iLvl" + id + "Front",
+    left: "iLvl" + id + "Left",
+    right: "iLvl" + id + "Right",
+    mid: "iLvl" + id + "Mid"
+  };
+}
+
+function loadShelfLevels() {
+  var parsed = null;
+  try {
+    parsed = JSON.parse(localStorage.getItem("shelfLevels") || "null");
+    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+  } catch (e) {}
+
+  // Migration: alte Einzel-Mitte-Ebene (auch wenn shelfLevels = [])
+  var legacyVisible = localStorage.getItem("middleLevelVisible") === "true";
+  var legacyWood = localStorage.getItem("iAddBoardMiddle") === "true";
+  var legacyKeys = [
+    "iFrontMiddleCross", "iBackMiddleCross",
+    "iLeftMiddleCross", "iRightMiddleCross", "iMiddleMiddle"
+  ];
+  var hasLegacyStruts = legacyKeys.some(function (k) { return !!tButtonStates[k]; });
+  if (legacyVisible || legacyWood || hasLegacyStruts) {
+    var lvl = {
+      id: 1,
+      height: parseFloat(localStorage.getItem("iMiddleH")) || 50,
+      wood: legacyWood
+    };
+    var map = {
+      iFrontMiddleCross: "iLvl1Front",
+      iBackMiddleCross: "iLvl1Back",
+      iLeftMiddleCross: "iLvl1Left",
+      iRightMiddleCross: "iLvl1Right",
+      iMiddleMiddle: "iLvl1Mid"
+    };
+    Object.keys(map).forEach(function (oldKey) {
+      if (tButtonStates[oldKey]) tButtonStates[map[oldKey]] = true;
+      delete tButtonStates[oldKey];
+    });
+    localStorage.setItem("shelfLevels", JSON.stringify([lvl]));
+    localStorage.setItem("buttonStates", JSON.stringify(tButtonStates));
+    return [lvl];
+  }
+  return Array.isArray(parsed) ? parsed : [];
+}
+
+var shelfLevels = loadShelfLevels();
+
+function saveShelfLevels() {
+  localStorage.setItem("shelfLevels", JSON.stringify(shelfLevels));
+  if (shelfLevels.length > 0) {
+    localStorage.setItem("iMiddleH", String(shelfLevels[0].height));
+    tMiddleH = shelfLevels[0].height;
+  }
+  localStorage.setItem("middleLevelVisible", shelfLevels.length > 0 ? "true" : "false");
+  localStorage.setItem(
+    "iAddBoardMiddle",
+    shelfLevels.some(function (l) { return !!l.wood; }) ? "true" : "false"
+  );
+}
+
+function nextShelfId() {
+  var max = 0;
+  shelfLevels.forEach(function (l) { if (l.id > max) max = l.id; });
+  return max + 1;
+}
+
+function nextLevelHeight() {
+  var h = tHeight || 100;
+  var existing = shelfLevels.map(function (l) { return l.height; }).sort(function (a, b) { return a - b; });
+  var points = [5].concat(existing).concat([Math.max(10, h - 5)]);
+  var bestGap = 0;
+  var bestMid = Math.round(h / 2);
+  for (var i = 0; i < points.length - 1; i++) {
+    var gap = points[i + 1] - points[i];
+    if (gap > bestGap) {
+      bestGap = gap;
+      bestMid = Math.round((points[i] + points[i + 1]) / 2);
+    }
+  }
+  return Math.max(5, Math.min(h - 5, bestMid));
+}
+
+function rebuildFrameDefinition() {
+  lineKeys = BASE_LINE_KEYS.slice();
+  coordinates = {
     0:  [0, 0, 0, tWidth, 0, 0],
     1:  [tWidth, 0, 0, tWidth, tHeight, 0],
     2:  [tWidth, tHeight, 0, 0, tHeight, 0],
@@ -39,28 +133,261 @@ const coordinates = {
     8:  [0, 0, tLength, tWidth, 0, tLength],
     9:  [tWidth, 0, tLength, tWidth, tHeight, tLength],
     10: [tWidth, tHeight, tLength, 0, tHeight, tLength],
-    11: [0, tHeight, tLength, 0, 0, tLength],
-    12: [0, tMiddleH, 0, tWidth, tMiddleH, 0],
-    13: [0, tMiddleH, tLength, tWidth, tMiddleH, tLength],
-    14: [0, tMiddleH, 0, 0, tMiddleH, tLength],
-    15: [tWidth, tMiddleH, 0, tWidth, tMiddleH, tLength],
-    16: [tMiddleV, tHeight, 0, tMiddleV, tHeight, tLength],
-    17: [tMiddleV, 0, tLength, tMiddleV, tHeight, tLength],
-    18: [tMiddleV, 0, 0, tMiddleV, tHeight, 0],
-    19: [tMiddleV, 0, 0, tMiddleV, 0, tLength],
-    20: [tMiddleV, tMiddleH, 0, tMiddleV, tMiddleH, tLength],
-};
+    11: [0, tHeight, tLength, 0, 0, tLength]
+  };
 
-  //Tischplatte hinzufügen
+  var idx = 12;
+  // Vertikale Mitten-Hilfslinien (Mitte v)
+  lineKeys.push(
+    VERTICAL_MIDDLE_KEYS[0],
+    VERTICAL_MIDDLE_KEYS[1],
+    VERTICAL_MIDDLE_KEYS[2],
+    VERTICAL_MIDDLE_KEYS[3]
+  );
+  coordinates[idx++] = [tMiddleV, tHeight, 0, tMiddleV, tHeight, tLength];
+  coordinates[idx++] = [tMiddleV, 0, tLength, tMiddleV, tHeight, tLength];
+  coordinates[idx++] = [tMiddleV, 0, 0, tMiddleV, tHeight, 0];
+  coordinates[idx++] = [tMiddleV, 0, 0, tMiddleV, 0, tLength];
+
+  var sorted = shelfLevels.slice().sort(function (a, b) { return a.height - b.height; });
+  sorted.forEach(function (lvl) {
+    var y = lvl.height;
+    var keys = levelStrutKeys(lvl.id);
+    lineKeys.push(keys.back, keys.front, keys.left, keys.right, keys.mid);
+    coordinates[idx++] = [0, y, 0, tWidth, y, 0];
+    coordinates[idx++] = [0, y, tLength, tWidth, y, tLength];
+    coordinates[idx++] = [0, y, 0, 0, y, tLength];
+    coordinates[idx++] = [tWidth, y, 0, tWidth, y, tLength];
+    coordinates[idx++] = [tMiddleV, y, 0, tMiddleV, y, tLength];
+  });
+}
+
+rebuildFrameDefinition();
+
+  //Tischplatte / Ebenen
   let addBoard = document.getElementById("iAddBoard");
   var addedBoard = false;
+  var boards = {
+    top: localStorage.getItem("iAddBoard") === "true"
+  };
+  addedBoard = boards.top;
+  // Kompatibilität für älteren Code
+  var middleLevelVisible = shelfLevels.length > 0;
 
-  addBoard.addEventListener("click", function () {
-    addedBoard = !addedBoard;
-    localStorage.setItem("iAddBoard", addedBoard);
-    resetScene();
+  function saveBoardState() {
+    addedBoard = !!boards.top;
+    localStorage.setItem("iAddBoard", boards.top ? "true" : "false");
+    saveShelfLevels();
+  }
+
+  function updateLevelHeightSliders() {
+    var host = document.getElementById("iExtraLevelSliders");
+    if (!host) return;
+    host.innerHTML = "";
+    var sorted = shelfLevels.slice().sort(function (a, b) { return b.height - a.height; });
+    sorted.forEach(function (lvl, visualIndex) {
+      var row = document.createElement("div");
+      row.className = "cInputVlaue";
+      row.dataset.levelId = String(lvl.id);
+      var label = document.createElement("label");
+      label.style.width = "100px";
+      label.style.minWidth = "110px";
+      label.textContent = "Ebene " + (sorted.length - visualIndex) + " h";
+      label.htmlFor = "iLevelH_" + lvl.id;
+      var input = document.createElement("input");
+      input.type = "range";
+      input.className = "cInput";
+      input.min = "5";
+      input.max = String(Math.max(10, (tHeight || 100) - 5));
+      input.step = "1";
+      input.id = "iLevelH_" + lvl.id;
+      input.value = String(lvl.height);
+      input.style.flex = "1";
+      var output = document.createElement("output");
+      output.id = "iLevelHOut_" + lvl.id;
+      output.style.width = "50px";
+      output.style.textAlign = "right";
+      output.textContent = String(lvl.height);
+      var unit = document.createElement("span");
+      unit.textContent = "cm";
+      input.addEventListener("input", function () {
+        var maxH = Math.max(10, (parseFloat(localStorage.getItem("iHight")) || tHeight || 100) - 5);
+        var val = Math.max(5, Math.min(maxH, parseInt(input.value, 10) || 5));
+        input.value = String(val);
+        output.textContent = String(val);
+        var target = shelfLevels.find(function (l) { return l.id === lvl.id; });
+        if (target) {
+          target.height = val;
+          saveShelfLevels();
+          if (typeof resetScene === "function") resetScene();
+        }
+      });
+      input.addEventListener("change", function () {
+        updateLevelUI();
+      });
+      row.appendChild(label);
+      row.appendChild(input);
+      row.appendChild(output);
+      row.appendChild(unit);
+      host.appendChild(row);
+    });
+  }
+
+  function setLevelFrameActive(id, active) {
+    var keys = levelStrutKeys(id);
+    // Rechteck-Rahmen der Ebene (ohne optionale Mitte-v-Strebe)
+    ["back", "front", "left", "right"].forEach(function (k) {
+      tButtonStates[keys[k]] = !!active;
+    });
+    // Querstrebe an Mitte v nur mitaktivieren, wenn Mitte-v schon genutzt wird
+    var hasMiddleV = ["iTopMiddle", "iFrontMiddleLenght", "iBackMiddleLenght", "iBottomMiddle"].some(function (key) {
+      return !!tButtonStates[key];
+    });
+    if (active && hasMiddleV) {
+      tButtonStates[keys.mid] = true;
+    } else if (!active) {
+      tButtonStates[keys.mid] = false;
+    }
+    saveButtonStates();
+  }
+
+  function updateLevelUI() {
+    const list = document.getElementById("iLevelList");
+    const addLevelBtn = document.getElementById("iAddLevel");
+    if (!list) return;
+
+    const levels = [{ id: "top", label: "Oben (Rahmen)", kind: "top" }];
+    const sorted = shelfLevels.slice().sort(function (a, b) { return b.height - a.height; });
+    sorted.forEach(function (lvl, i) {
+      levels.push({
+        id: lvl.id,
+        label: "Ebene " + (sorted.length - i) + " (" + lvl.height + " cm)",
+        kind: "shelf",
+        wood: !!lvl.wood
+      });
+    });
+
+    list.innerHTML = "";
+    levels.forEach(function (level) {
+      const on = level.kind === "top" ? !!boards.top : !!level.wood;
+      const row = document.createElement("div");
+      row.className = "cLevelRow";
+      var actions =
+        '<div class="cLevelRowActions">' +
+          '<button type="button" class="cLevelWoodBtn' + (on ? ' is-on' : '') + '" data-level="' + level.id + '" data-kind="' + level.kind + '" title="' +
+            (on ? 'Holzplatte entfernen' : 'Holzplatte hinzufügen') + '">' +
+            (on ? '−' : '+') +
+          '</button>';
+      if (level.kind === "shelf") {
+        actions +=
+          '<button type="button" class="cLevelRemoveBtn" data-remove="' + level.id + '" title="Ebene entfernen" aria-label="Ebene entfernen">×</button>';
+      }
+      actions += '</div>';
+      row.innerHTML = '<span>' + level.label + '</span>' + actions;
+      list.appendChild(row);
+    });
+
+    list.querySelectorAll(".cLevelWoodBtn").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        const kind = btn.dataset.kind;
+        if (kind === "top") {
+          boards.top = !boards.top;
+          // Oberer Holzplatte: äußeren Top-Rahmen sicherstellen
+          if (boards.top) {
+            ["iFrontTop", "iBackTop", "iLeftTop", "iRightTop"].forEach(function (key) {
+              tButtonStates[key] = true;
+            });
+            saveButtonStates();
+          }
+        } else {
+          const id = parseInt(btn.dataset.level, 10);
+          const target = shelfLevels.find(function (l) { return l.id === id; });
+          if (target) {
+            target.wood = !target.wood;
+            // Holzplatte auf Ebene => Stahlrahmen dieser Ebene aktivieren
+            if (target.wood) {
+              setLevelFrameActive(id, true);
+            }
+          }
+        }
+        saveBoardState();
+        updateLevelUI();
+        if (typeof updateAllLines === "function") updateAllLines();
+        else updateWood();
+        if (typeof updateLivePrices === "function") updateLivePrices();
+      });
+    });
+
+    list.querySelectorAll(".cLevelRemoveBtn").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        const id = parseInt(btn.dataset.remove, 10);
+        removeShelfLevel(id);
+      });
+    });
+
+    if (addLevelBtn) {
+      addLevelBtn.style.display = shelfLevels.length >= MAX_EXTRA_LEVELS ? "none" : "flex";
+      addLevelBtn.setAttribute("data-tooltip", "Ebene hinzufügen");
+    }
+    updateLevelHeightSliders();
+  }
+
+  function addShelfLevel() {
+    if (shelfLevels.length >= MAX_EXTRA_LEVELS) return;
+    var id = nextShelfId();
+    shelfLevels.push({
+      id: id,
+      height: nextLevelHeight(),
+      wood: false
+    });
+    var keys = levelStrutKeys(id);
+    Object.keys(keys).forEach(function (k) {
+      if (tButtonStates[keys[k]] === undefined) tButtonStates[keys[k]] = false;
+    });
+    saveBoardState();
+    saveButtonStates();
+    middleLevelVisible = true;
+    rebuildFrameDefinition();
+    updateLevelUI();
+    if (typeof resetScene === "function") resetScene();
+    else updateAllLines();
     if (typeof updateLivePrices === "function") updateLivePrices();
-  });
+  }
+
+  function removeShelfLevel(id) {
+    var keys = levelStrutKeys(id);
+    Object.keys(keys).forEach(function (k) {
+      delete tButtonStates[keys[k]];
+    });
+    shelfLevels = shelfLevels.filter(function (l) { return l.id !== id; });
+    middleLevelVisible = shelfLevels.length > 0;
+    saveBoardState();
+    saveButtonStates();
+    rebuildFrameDefinition();
+    updateLevelUI();
+    if (typeof resetScene === "function") resetScene();
+    if (typeof updateLivePrices === "function") updateLivePrices();
+  }
+
+  if (addBoard) {
+    addBoard.addEventListener("click", function () {
+      boards.top = !boards.top;
+      saveBoardState();
+      updateLevelUI();
+      resetScene();
+      if (typeof updateLivePrices === "function") updateLivePrices();
+    });
+  }
+
+  const addLevelBtn = document.getElementById("iAddLevel");
+  if (addLevelBtn) {
+    addLevelBtn.addEventListener("click", function (e) {
+      e.stopPropagation();
+      addShelfLevel();
+    });
+  }
 
 
 
@@ -203,41 +530,49 @@ function updateWood(){
 
     woodGroup.clear();
 
-    // Holzplatte liegt auf dem Metallrahmen (Unterseite = Oberkante der oberen Streben)
     const woodThickness = 5;
-    const widthWood = parseFloat(tWidth) + Thickness + parseFloat(tOversetLeRi);
-    const lengthWood = parseFloat(tLength) + Thickness + parseFloat(tOversetFoBa);
+    const onlyTopBoard = !!boards.top && !shelfLevels.some(function (l) { return !!l.wood; });
+    const oversetLR = onlyTopBoard ? parseFloat(tOversetLeRi) : 0;
+    const oversetFB = onlyTopBoard ? parseFloat(tOversetFoBa) : 0;
+    const widthWood = parseFloat(tWidth) + Thickness + oversetLR;
+    const lengthWood = parseFloat(tLength) + Thickness + oversetFB;
+    const woodGeometry = new THREE.BoxGeometry(widthWood, woodThickness, lengthWood);
 
-    const frameTopY = tHeight / 2 + Thickness / 2;
-    const woodCenterY = frameTopY + woodThickness / 2;
-
-    var woodGeometry = new THREE.BoxGeometry(widthWood, woodThickness, lengthWood);
-    var woodPlate = new THREE.Mesh(woodGeometry, woodMaterial);
-
-    woodPlate.position.set(0, woodCenterY, 0);
-    woodPlate.renderOrder = 0;
-
-    woodGroup.add(woodPlate);
-
-    if (addedBoard) {
-        woodPlate.visible = true;   
-    } else {
-        woodPlate.visible = false;   
+    function addPlateAtRailTop(railCenterY, visible) {
+      const railTopY = railCenterY + Thickness / 2;
+      const woodCenterY = railTopY + woodThickness / 2;
+      const woodPlate = new THREE.Mesh(woodGeometry, woodMaterial);
+      woodPlate.position.set(0, woodCenterY, 0);
+      woodPlate.renderOrder = 0;
+      woodPlate.visible = !!visible;
+      woodGroup.add(woodPlate);
     }
 
+    // Oben: auf dem Rahmen
+    const frameTopCenterY = tHeight / 2;
+    addPlateAtRailTop(frameTopCenterY, boards.top);
+
+    // Extra-Ebenen
+    shelfLevels.forEach(function (lvl) {
+      const centerY = lvl.height - tHeight / 2;
+      addPlateAtRailTop(centerY, !!lvl.wood);
+    });
+
+    addedBoard = !!boards.top;
 }
 
 
 
 //____________________________________________________________
 // --- Create All Lines ---
-Object.entries(coordinates).forEach(([index, coord]) => {
+Object.keys(coordinates).forEach((index) => {
+    const coord = coordinates[index];
+    const i = Number(index);
     createSquarePipe(
         coord[0] - tWidth / 2, coord[1] - tHeight / 2, coord[2] - tLength / 2,
         coord[3] - tWidth / 2, coord[4] - tHeight / 2, coord[5] - tLength / 2,
-        tButtonStates[index] || false, index
+        tButtonStates[lineKeys[i]] || false, i
     );
-    
 });
 
 // --- Orbit Controls ---
@@ -401,32 +736,57 @@ function resetScene() {
     tMiddleH = parseFloat(localStorage.getItem("iMiddleH")) || 50;
     tMiddleV = parseFloat(localStorage.getItem("iMiddleV")) || 50;
     thick = parseFloat(localStorage.getItem("iMaterial")) || 15;
-    tOversetLeRi = parseFloat(localStorage.getItem("iOversetLeRi")) || 0; 
-    tOversetFoBa = parseFloat(localStorage.getItem("iOversetFoBa")) || 0; 
+    tOversetLeRi = parseFloat(localStorage.getItem("iOversetLeRi")) || 0;
+    tOversetFoBa = parseFloat(localStorage.getItem("iOversetFoBa")) || 0;
 
+    // Extra-Ebenen an Rahmenhöhe klemmen
+    var maxLevelH = Math.max(10, tHeight - 5);
+    var levelsClamped = false;
+    shelfLevels.forEach(function (lvl) {
+      var next = Math.max(5, Math.min(maxLevelH, lvl.height));
+      if (next !== lvl.height) {
+        lvl.height = next;
+        levelsClamped = true;
+      }
+    });
+    if (levelsClamped) saveShelfLevels();
 
     // Thickness aktualisieren
     Thickness = thick / 10;
 
-        // Koordinaten neu berechnen
+    // Koordinaten / Linien-Keys neu berechnen (inkl. Extra-Ebenen)
     updateCoordinates();
 
     // Entferne alle Objekte aus der Szene
     cubeGroup.clear();
     woodGroup.clear();
 
-    // Koordinaten neu berechnen
-    Object.entries(coordinates).forEach(([index, coord]) => {
+    Object.keys(coordinates).forEach((index) => {
+        const coord = coordinates[index];
+        const i = Number(index);
         createSquarePipe(
             coord[0] - tWidth / 2, coord[1] - tHeight / 2, coord[2] - tLength / 2,
             coord[3] - tWidth / 2, coord[4] - tHeight / 2, coord[5] - tLength / 2,
-            tButtonStates[index] || false, index
+            tButtonStates[lineKeys[i]] || false, i
         );
     });
 
     // Renderer aktualisieren
     updateRendererSize();
     updateAllLines();
+
+    // Slider-Max an aktuelle Höhe anpassen
+    var host = document.getElementById("iExtraLevelSliders");
+    if (host) {
+      host.querySelectorAll('input[type="range"]').forEach(function (input) {
+        input.max = String(maxLevelH);
+        if (parseInt(input.value, 10) > maxLevelH) {
+          input.value = String(maxLevelH);
+          var out = document.getElementById(input.id.replace("iLevelH_", "iLevelHOut_"));
+          if (out) out.textContent = String(maxLevelH);
+        }
+      });
+    }
     
 }
 
@@ -436,9 +796,8 @@ clear.addEventListener('click', FuncClear);
 
 function FuncClear() {
 // Alle Werte in tButtonStates auf false setzen
-lineKeys.forEach((key) => {
-tButtonStates[key] = false;
-localStorage.setItem("iAddBoard", false);
+Object.keys(tButtonStates).forEach(function (key) {
+  tButtonStates[key] = false;
 });
 
 //Defaultwerte setzen
@@ -450,12 +809,17 @@ tMiddleV = 50;
 thick = 20;
 tOversetLeRi = 0;
 tOversetFoBa = 0;
+boards.top = false;
+shelfLevels = [];
+middleLevelVisible = false;
 addedBoard = false;
+saveBoardState();
+rebuildFrameDefinition();
 
 // Speichere die Änderungen in LocalStorage
 saveButtonStates();
 updateDimension();
-updateAllLines();
+updateLevelUI();
 resetScene();
 };
 
@@ -498,27 +862,7 @@ function updateDimension(){
 }
 
 function updateCoordinates() {
-    coordinates[0] = [0, 0, 0, tWidth, 0, 0];
-    coordinates[1] = [tWidth, 0, 0, tWidth, tHeight, 0];
-    coordinates[2] = [tWidth, tHeight, 0, 0, tHeight, 0];
-    coordinates[3] = [0, tHeight, 0, 0, 0, 0];
-    coordinates[4] = [0, 0, 0, 0, 0, tLength];
-    coordinates[5] = [tWidth, 0, 0, tWidth, 0, tLength];
-    coordinates[6] = [tWidth, tHeight, 0, tWidth, tHeight, tLength];
-    coordinates[7] = [0, tHeight, 0, 0, tHeight, tLength];
-    coordinates[8] = [0, 0, tLength, tWidth, 0, tLength];
-    coordinates[9] = [tWidth, 0, tLength, tWidth, tHeight, tLength];
-    coordinates[10] = [tWidth, tHeight, tLength, 0, tHeight, tLength];
-    coordinates[11] = [0, tHeight, tLength, 0, 0, tLength];
-    coordinates[12] = [0, tMiddleH, 0, tWidth, tMiddleH, 0];
-    coordinates[13] = [0, tMiddleH, tLength, tWidth, tMiddleH, tLength];
-    coordinates[14] = [0, tMiddleH, 0, 0, tMiddleH, tLength];
-    coordinates[15] = [tWidth, tMiddleH, 0, tWidth, tMiddleH, tLength];
-    coordinates[16] = [tMiddleV, tHeight, 0, tMiddleV, tHeight, tLength];
-    coordinates[17] = [tMiddleV, 0, tLength, tMiddleV, tHeight, tLength];
-    coordinates[18] = [tMiddleV, 0, 0, tMiddleV, tHeight, 0];
-    coordinates[19] = [tMiddleV, 0, 0, tMiddleV, 0, tLength];
-    coordinates[20] = [tMiddleV, tMiddleH, 0, tMiddleV, tMiddleH, tLength]
+    rebuildFrameDefinition();
 }
 
 //Sichtbarkeit der Eingabefelder
@@ -529,36 +873,36 @@ setInterval(value, 200);
 function value() {
 
     displayed(["iFrontMiddleLenght", "iBackMiddleLenght", "iTopMiddle", "iBottomMiddle", "iMiddleMiddle"], "displayV", "flex");
-    displayed(["iFrontMiddleCross", "iBackMiddleCross", "iRightMiddleCross", "iLeftMiddleCross"], "displayH", "flex");  
+    // Legacy Mitte-h bleibt versteckt; dynamische Slider steuern Extra-Ebenen
+    const displayH = document.getElementById("displayH");
+    if (displayH) displayH.style.display = "none";
 
-    //Holzplatte
+    // Überstand nur bei genau einer Holzplatte: Oben (Rahmen)
+    const onlyTopBoard = !!boards.top && !shelfLevels.some(function (l) { return !!l.wood; });
     document.querySelectorAll(".cDisplayB").forEach(el => {
-        el.style.display = addedBoard ? "flex" : "none";
+        el.style.display = onlyTopBoard ? "flex" : "none";
       });
   
     //Zustand ausgeben
-    if (!addBoard) {
-      console.error("Fehlende Elemente im DOM: addBoard oder polygon nicht gefunden");
-    } else {
-      if (addedBoard) {
-        addBoard.innerHTML = "Holzplatte entfernen";
-      } else {
-        addBoard.innerHTML = "Holzplatte hinzufügen";
-      }
+    if (addBoard) {
+      addBoard.innerHTML = boards.top ? "Holzplatte entfernen" : "Holzplatte hinzufügen";
     }
-
 }
 
 //Seite neu laden
     window.addEventListener("load", function () {
         console.log("Seite komplett geladen");
-        if ( localStorage.getItem("iAddBoard") === "true") {
-            addedBoard = true;
-          } else {
-            addedBoard = false;
-          }
-
-          resetScene(); // Aktualisiert alle Linien basierend auf dem neuen Status
+        boards.top = localStorage.getItem("iAddBoard") === "true";
+        try {
+          var storedLevels = JSON.parse(localStorage.getItem("shelfLevels") || "[]");
+          if (Array.isArray(storedLevels)) shelfLevels = storedLevels;
+        } catch (e) {}
+        middleLevelVisible = shelfLevels.length > 0;
+        addedBoard = boards.top;
+        saveBoardState();
+        rebuildFrameDefinition();
+        updateLevelUI();
+        resetScene(); // Aktualisiert alle Linien basierend auf dem neuen Status
       });
 
 

@@ -69,17 +69,22 @@
   
     <div id="canvas-container"></div>
 
+    <div class="cLevelControls" id="iLevelControls">
+      <div class="cLevelList" id="iLevelList"></div>
+      <button type="button" class="cLevelAddBtn" id="iAddLevel" data-tooltip="Ebene hinzufügen" title="Ebene hinzufügen" aria-label="Ebene hinzufügen">+</button>
+    </div>
 
     <button class="cView3D" onclick="window.location.href='3dView.html'">
       3D Ansicht
     </button>
 
-  <button class="cAddBoard" id="iAddBoard" >Holzplatte hinzufügen</button>
+  <button class="cAddBoard" id="iAddBoard" hidden aria-hidden="true">Holzplatte hinzufügen</button>
   <button class="cDisplayLine" id="iDisplayLine" >Hilfslinien ausblenden</button>
-  <img src="images/trash_V2.png" class="cTrash" id="iTrash" alt="Warenkorb">
 
-  <img id="captureBtn" src="images/save.png" class="cCapture" alt="Speichern" 
-     style="width:40px; height:40px; cursor:pointer;">
+  <div class="cBottomTools" id="iBottomTools">
+    <img id="captureBtn" src="images/save.png" class="cCapture" alt="Speichern">
+    <img src="images/trash_V2.png" class="cTrash" id="iTrash" alt="Zurücksetzen">
+  </div>
 
   </div>
 
@@ -97,7 +102,7 @@
   
   <!--EINGABE der Maße-->
   <div class="cInputField">
-    <div style="min-height: 458; margin-top: 10px; display: flex; flex-direction: column; gap: 15px;">
+    <div class="cInputSliders">
   
   <!--__________________________Eingabefelder_Maße_________________________________________-->
   <!--Materialstärke-->
@@ -135,13 +140,15 @@
     <output name="middleVOutput" id="iMiddleVOutput" style="width: 50px; text-align: right;">100</output>
     <span>cm</span>
   </div>
-  <!--Mitte H-->
-  <div  class ="cInputVlaue" id="displayH">
+  <!--Mitte H (Legacy, von dynamischen Ebenen-Slidern ersetzt)-->
+  <div class="cInputVlaue" id="displayH" hidden aria-hidden="true" style="display:none;">
     <label for="iMiddleH" style="width: 100px; min-width: 110px">Mitte h</label>
     <input type="range" name="middleH" class="cInput" min="5" max="200" step="1" id="iMiddleH" style="flex: 1;">
     <output name="middleHOutput" id="iMiddleHOutput" style="width: 50px; text-align: right;">100</output>
     <span>cm</span>
   </div>
+  <!--Dynamische Höhen-Slider für Extra-Ebenen-->
+  <div id="iExtraLevelSliders" class="cExtraLevelSliders"></div>
   <!--Holzplatte überstand links/rechts-->
   <b class="cDisplayB cOversetHeading">Holzplatte Überstand (Eichenholz, Höhe +4 cm):</b>
   <div id="displayB1" class="cDisplayB">

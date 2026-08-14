@@ -232,7 +232,7 @@ button,
   box-shadow: var(--shadow-soft) !important;
 }
 
-button:not(.cSubmitSub):not(#iSubmit):not(.cAdd):not(.cRemoveBtn):not(.cQtyBtn):not(.cClosePopup):not(.cClose3D):not(.cView3D):not(.cAddBoard):not(.cDisplayLine) {
+button:not(.cSubmitSub):not(#iSubmit):not(.cAdd):not(.cRemoveBtn):not(.cQtyBtn):not(.cClosePopup):not(.cClose3D):not(.cView3D):not(.cAddBoard):not(.cDisplayLine):not(.cLevelAddBtn):not(.cLevelWoodBtn):not(.cLevelRemoveBtn) {
   border-color: var(--color-border) !important;
   color: var(--color-ink) !important;
 }
