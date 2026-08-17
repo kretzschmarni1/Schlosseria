@@ -522,7 +522,7 @@ canvas {
   }
 
   .cDisplayLine {
-    right: 20px;
+    right: 14px; /* gleicher Abstand wie nach unten */
     bottom: 14px; /* gleiche Höhe wie + */
     position: absolute;
     min-width: 210px;
@@ -532,7 +532,7 @@ canvas {
 
     
   .cView3D{
-    right: 20px;
+    right: 14px; /* mit Hilfslinien ausgerichtet */
     /* 14px Boden + 40px Hilfslinien + 8px Gap (wie + zu Oben) */
     bottom: calc(14px + 40px + 8px);
     position: absolute;
