@@ -95,8 +95,12 @@
         margin: 0 auto;
       }
 
+      .cZubehoerOwn > .cAdd {
+        margin-bottom: 18px;
+      }
+
       .cZubehoerOwn > b:last-of-type {
-        margin-top: 15px;
+        margin-top: 22px;
       }
 
 

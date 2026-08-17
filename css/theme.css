@@ -322,12 +322,20 @@ select.dropdown option,
   text-align: center !important;
 }
 
-/* Accessoires: Total + Preis mittig */
+/* Accessoires: Total + Preis mittig, Abstand zum Button */
+.cZubehoerOwn > .cAdd {
+  margin-bottom: 18px !important;
+}
+
 .cZubehoerOwn > b:last-of-type,
 .cZubehoerOwn > output {
   display: block !important;
   width: 100% !important;
   text-align: center !important;
+}
+
+.cZubehoerOwn > b:last-of-type {
+  margin-top: 22px !important;
 }
 
 input::placeholder,
