@@ -345,7 +345,7 @@ canvas {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 8px;
+    gap: 8px; /* Abstand + zu Oben (Rahmen) / Ebenen */
     max-width: min(220px, calc(50% - 40px));
     max-height: calc(100% - 28px);
     overflow: auto;
@@ -510,11 +510,20 @@ canvas {
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: var(--radius-sm);
+    height: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    padding: 0 14px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
   }
 
   .cDisplayLine {
     right: 20px;
-    bottom: 20px;
+    bottom: 14px; /* gleiche Höhe wie + */
     position: absolute;
     min-width: 210px;
     font-size: 16px;
@@ -524,7 +533,8 @@ canvas {
     
   .cView3D{
     right: 20px;
-    bottom: 75px;
+    /* 14px Boden + 40px Hilfslinien + 8px Gap (wie + zu Oben) */
+    bottom: calc(14px + 40px + 8px);
     position: absolute;
     min-width: 210px;
     font-size: 16px;

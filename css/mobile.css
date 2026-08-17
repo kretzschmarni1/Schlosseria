@@ -448,6 +448,7 @@
     left: 8px;
     right: auto;
     bottom: 8px;
+    gap: 8px;
     max-width: min(180px, calc(42vw - 8px));
   }
 
@@ -461,9 +462,7 @@
     padding: 5px 6px 5px 8px;
   }
 
-  .cAddBoard,
-  .cDisplayLine,
-  .cView3D {
+  .cAddBoard {
     font-size: 12px;
     padding: 6px 8px;
     min-width: 0 !important;
@@ -472,23 +471,35 @@
     height: auto;
     line-height: 1.2;
     box-sizing: border-box;
-  }
-
-  .cAddBoard {
     left: 8px;
     bottom: 8px;
+  }
+
+  .cDisplayLine,
+  .cView3D {
+    font-size: 12px !important;
+    padding: 0 10px !important;
+    min-width: 0 !important;
+    max-width: calc(50% - 16px);
+    width: auto;
+    height: 40px !important;
+    min-height: 40px !important;
+    max-height: 40px !important;
+    line-height: 1;
+    box-sizing: border-box;
   }
 
   .cDisplayLine {
     left: auto;
     right: 8px;
-    bottom: 8px;
+    bottom: 8px; /* gleiche Höhe wie + */
   }
 
   .cView3D {
     left: auto;
     right: 8px;
-    bottom: 52px; /* kleiner vertikaler Abstand zu Hilfslinien */
+    /* 8px Boden + 40px Hilfslinien + 8px Gap (wie + zu Oben) */
+    bottom: calc(8px + 40px + 8px);
   }
 
   .cBottomTools {
