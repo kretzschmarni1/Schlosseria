@@ -56,6 +56,6 @@
     }
 
 /* Drittes Foto: Desktop oben, Mobile unten */
-.cUeberUnsPhotoMobileOnly {
+.cUeberUnsGallery img.cUeberUnsPhotoMobileOnly {
     display: none;
     }

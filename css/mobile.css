@@ -250,11 +250,11 @@
   }
 
   /* Drittes Foto nur mobil unter den grauen Frame */
-  .cUeberUnsPhotoDesktopOnly {
+  .cUeberUnsGallery img.cUeberUnsPhotoDesktopOnly {
     display: none !important;
   }
 
-  .cUeberUnsPhotoMobileOnly {
+  .cUeberUnsGallery img.cUeberUnsPhotoMobileOnly {
     display: block !important;
   }
 
