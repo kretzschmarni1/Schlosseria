@@ -1,14 +1,18 @@
 
 .cBodyUeberUns{
     display: flex;
+    flex-direction: column;
     min-height: calc(100vh - 120px);
     align-items: center;
-    justify-content: center;
-    
+    justify-content: flex-start;
+    gap: 28px;
+    padding: 28px 20px 48px;
+    box-sizing: border-box;
     }
 
 .cUeberUns{
     width: 1050px;
+    max-width: 100%;
     padding: 30px;
     font-size: 18px;
     display: flex;
@@ -17,6 +21,7 @@
     border-radius: 16px;
     background-color: rgba(211, 211, 211, 0.85);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
     }
 
 .cUeberUnsImage {
@@ -29,4 +34,23 @@
 .cUeberUnsText {
     text-align: left;
     line-height: 1.7;
+    }
+
+.cUeberUnsGallery {
+    width: 1050px;
+    max-width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    box-sizing: border-box;
+    }
+
+.cUeberUnsGallery img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 14px;
+    display: block;
+    background: rgba(245, 243, 239, 0.5);
+    box-shadow: 0 4px 14px rgba(28, 28, 28, 0.08);
     }
