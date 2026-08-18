@@ -54,3 +54,8 @@
     background: rgba(245, 243, 239, 0.5);
     box-shadow: 0 4px 14px rgba(28, 28, 28, 0.08);
     }
+
+/* Drittes Foto: Desktop oben, Mobile unten */
+.cUeberUnsPhotoMobileOnly {
+    display: none;
+    }

@@ -249,6 +249,15 @@
     border-radius: 12px;
   }
 
+  /* Drittes Foto nur mobil unter den grauen Frame */
+  .cUeberUnsPhotoDesktopOnly {
+    display: none !important;
+  }
+
+  .cUeberUnsPhotoMobileOnly {
+    display: block !important;
+  }
+
   /* ---------- Accessoires ---------- */
   .cZubehoer {
     margin: 16px 12px 40px;
