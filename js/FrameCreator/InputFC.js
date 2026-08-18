@@ -58,10 +58,10 @@ let TotalFrame = 0;
 let TotalWood = 0;
 
 //KONSTANTEN
-const PricePerMeter = 15; //Preis pro Meter bei einem 20mm Quadratrohr
-const PricePerPeace = 20; //Für ABschnitt zusammenschweißen usw.
-const PriceDelivery = 35; // Versand etc.
-const PriceWood = 150; //Price pro Quadratmeter
+const PricePerMeter = 20; //Preis pro Meter bei einem 20mm Quadratrohr
+const PricePerPeace = 25; //Für ABschnitt zusammenschweißen usw.
+const PriceDelivery = 120; // Versand etc.
+const PriceWood = 170; //Price pro Quadratmeter
 
 function getShelfLevelsFromStorage() {
   try {
