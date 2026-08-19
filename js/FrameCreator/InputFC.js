@@ -124,26 +124,31 @@ function resolveDelivery(forcedPickup) {
 }
 
 function syncShippingModeUI(delInfo, shippingCost) {
-  var sel = document.getElementById("iShippingMode");
+  var btns = document.getElementById("iShippingModeBtns");
   var ld = document.getElementById("liveDelivery");
   var row = document.getElementById("liveShippingRow");
-  if (!sel) return;
+  var mode = getShippingMode();
 
-  if (delInfo.canChoose) {
-    sel.hidden = false;
-    sel.style.display = "";
-    sel.value = getShippingMode();
-    if (ld) ld.style.display = "none";
-  } else {
-    sel.hidden = true;
-    sel.style.display = "none";
-    if (ld) {
-      ld.style.display = "";
-      ld.textContent = delInfo.label;
+  if (btns) {
+    if (delInfo.canChoose) {
+      btns.hidden = false;
+      btns.style.display = "";
+      btns.querySelectorAll(".cShippingBtn").forEach(function (btn) {
+        var active = btn.getAttribute("data-shipping") === mode;
+        btn.classList.toggle("is-active", active);
+        btn.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+      if (ld) ld.style.display = "none";
+    } else {
+      btns.hidden = true;
+      btns.style.display = "none";
+      if (ld) {
+        ld.style.display = "";
+        ld.textContent = delInfo.label;
+      }
     }
   }
 
-  // Versandkostenzeile nur bei aktivem Versand anzeigen
   if (row) {
     row.style.display = (shippingCost > 0) ? "" : "none";
   }
@@ -195,11 +200,11 @@ function updateLivePrices() {
   syncShippingModeUI(delInfo, pp);
 }
 
-document.addEventListener("change", function(e) {
-  if (e.target && e.target.id === "iShippingMode") {
-    setShippingMode(e.target.value);
-    updateLivePrices();
-  }
+document.addEventListener("click", function(e) {
+  var btn = e.target && e.target.closest ? e.target.closest("#iShippingModeBtns .cShippingBtn") : null;
+  if (!btn) return;
+  setShippingMode(btn.getAttribute("data-shipping"));
+  updateLivePrices();
 });
 
 // Live-Preise bei Streben-/Holzplatten-Änderungen updaten

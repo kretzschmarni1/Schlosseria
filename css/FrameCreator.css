@@ -244,18 +244,36 @@ canvas {
           flex-wrap: wrap;
           align-items: center;
           justify-content: center;
-          gap: 6px;
+          gap: 8px;
         }
 
-        .cShippingMode {
+        .cShippingToggle {
+          display: inline-flex;
+          flex-wrap: wrap;
+          gap: 6px;
+          justify-content: center;
+        }
+
+        .cShippingBtn {
           font-family: inherit;
-          font-size: 14px;
-          padding: 4px 8px;
-          border: 1px solid #bbb;
+          font-size: 13px;
+          font-weight: 500;
+          padding: 8px 12px;
+          border: 1.5px solid #1a1a1a;
           background: #fff;
           color: #1a1a1a;
           cursor: pointer;
-          min-width: 140px;
+          border-radius: 8px;
+          line-height: 1.2;
+        }
+
+        .cShippingBtn.is-active {
+          background: #1a1a1a;
+          color: #fff;
+        }
+
+        .cShippingBtn:hover {
+          transform: translateY(-1px);
         }
 
         #liveShippingRow[hidden],

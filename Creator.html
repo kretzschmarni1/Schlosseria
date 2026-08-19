@@ -173,10 +173,10 @@
     <div class="cDeliveryRow">
       Lieferung:
       <span id="liveDelivery">—</span>
-      <select id="iShippingMode" class="cShippingMode" aria-label="Lieferart">
-        <option value="versand">Versand möglich</option>
-        <option value="abholung">Abholung</option>
-      </select>
+      <div id="iShippingModeBtns" class="cShippingToggle" role="group" aria-label="Lieferart">
+        <button type="button" class="cShippingBtn" data-shipping="versand" id="iShipVersand">Versand möglich</button>
+        <button type="button" class="cShippingBtn" data-shipping="abholung" id="iShipAbholung">Abholung</button>
+      </div>
       <span style="color: #666;">(ca. 3 Wochen)</span>
     </div>
   </div>

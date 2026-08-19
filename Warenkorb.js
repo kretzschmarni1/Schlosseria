@@ -114,15 +114,42 @@ function getDeliveryInfo() {
   return needsPickup ? "Nur Abholung" : "Versand möglich";
 }
 
+function applyCartShippingMode(mode) {
+  setShippingMode(mode);
+  var configs = JSON.parse(localStorage.getItem("configurations")) || [];
+  configs.forEach(function (config) {
+    if (isConfigForcedPickup(config)) return;
+    if (mode === "abholung") {
+      config.delivery = "Abholung";
+      config.versand = 0;
+      config.shippingMode = "abholung";
+    } else {
+      config.delivery = "Versand möglich";
+      config.versand = 120;
+      config.shippingMode = "versand";
+    }
+  });
+  localStorage.setItem("configurations", JSON.stringify(configs));
+  renderConfigurations();
+  refreshTotal();
+}
+
 function refreshDeliveryInfo() {
   const el = document.getElementById("iDeliveryText");
-  const sel = document.getElementById("iCartShippingMode");
+  const btns = document.getElementById("iCartShippingBtns");
   const info = getDeliveryInfo();
   const canChoose = info === "Versand möglich";
+  const mode = getShippingMode();
 
-  if (sel) {
-    sel.hidden = !canChoose;
-    if (canChoose) sel.value = getShippingMode();
+  if (btns) {
+    btns.hidden = !canChoose;
+    if (canChoose) {
+      btns.querySelectorAll(".cShippingBtn").forEach(function (btn) {
+        var active = btn.getAttribute("data-shipping") === mode;
+        btn.classList.toggle("is-active", active);
+        btn.setAttribute("aria-pressed", active ? "true" : "false");
+      });
+    }
   }
   if (el) {
     if (canChoose) {
@@ -134,27 +161,10 @@ function refreshDeliveryInfo() {
   }
 }
 
-document.addEventListener("change", function (e) {
-  if (e.target && e.target.id === "iCartShippingMode") {
-    setShippingMode(e.target.value);
-    var mode = getShippingMode();
-    var configs = JSON.parse(localStorage.getItem("configurations")) || [];
-    configs.forEach(function (config) {
-      if (isConfigForcedPickup(config)) return;
-      if (mode === "abholung") {
-        config.delivery = "Abholung";
-        config.versand = 0;
-        config.shippingMode = "abholung";
-      } else {
-        config.delivery = "Versand möglich";
-        config.versand = 120;
-        config.shippingMode = "versand";
-      }
-    });
-    localStorage.setItem("configurations", JSON.stringify(configs));
-    renderConfigurations();
-    refreshTotal();
-  }
+document.addEventListener("click", function (e) {
+  var btn = e.target && e.target.closest ? e.target.closest("#iCartShippingBtns .cShippingBtn") : null;
+  if (!btn) return;
+  applyCartShippingMode(btn.getAttribute("data-shipping"));
 });
 
 function removeAccessory(id) {

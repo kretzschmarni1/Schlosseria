@@ -79,10 +79,10 @@
   <div id="iDeliveryInfo" class="cDeliveryInfo">
     Lieferung:
     <span id="iDeliveryText">—</span>
-    <select id="iCartShippingMode" class="cShippingMode" aria-label="Lieferart" hidden>
-      <option value="versand">Versand möglich</option>
-      <option value="abholung">Abholung</option>
-    </select>
+    <div id="iCartShippingBtns" class="cShippingToggle" role="group" aria-label="Lieferart" hidden>
+      <button type="button" class="cShippingBtn" data-shipping="versand" id="iCartShipVersand">Versand möglich</button>
+      <button type="button" class="cShippingBtn" data-shipping="abholung" id="iCartShipAbholung">Abholung</button>
+    </div>
     <span style="color: #666;">(ca. 3 Wochen)</span>
   </div>
   <br><br><br>
