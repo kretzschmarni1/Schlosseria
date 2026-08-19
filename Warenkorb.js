@@ -35,6 +35,8 @@ function isConfigForcedPickup(config) {
 }
 
 function getEffectiveShippingCost(config) {
+  // Ein Möbelstück mit Nur Abholung => gesamter Warenkorb ohne Versand
+  if (isForcedPickup()) return 0;
   if (isConfigForcedPickup(config)) return 0;
   if (getShippingMode() === "abholung") return 0;
   var stored = parseFloat(config.versand) || 0;
@@ -312,10 +314,13 @@ function renderConfigurations() {
 
     var qty = config.quantity || 1;
     var itemTotal = (parseFloat(config.total) * qty).toFixed(2);
+    var forcedCartPickup = isForcedPickup();
     var shipCost = getEffectiveShippingCost(config);
-    var shipLine = shipCost > 0
-      ? ('Versand: ' + shipCost + ' €')
-      : (isForcedPickup() || isConfigForcedPickup(config) ? 'Nur Abholung' : 'Abholung (kein Versand)');
+    var shipLine = forcedCartPickup
+      ? "Nur Abholung"
+      : (shipCost > 0
+        ? ("Versand: " + shipCost + " €")
+        : (isConfigForcedPickup(config) ? "Nur Abholung" : "Abholung (kein Versand)"));
     item.innerHTML =
       thumbHTML +
       '<div class="cCartDetails cCartOpenCreator" data-config-idx="' + index + '" title="Im Creator öffnen">' +
