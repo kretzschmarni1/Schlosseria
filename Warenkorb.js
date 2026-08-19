@@ -9,6 +9,38 @@ const savedData = JSON.parse(localStorage.getItem("accessories")) || {};
 const OutTotal = document.getElementById("iTotoal");
 const clearButton = document.getElementById("iClearButton");
 
+function getShippingMode() {
+  return localStorage.getItem("shippingMode") === "abholung" ? "abholung" : "versand";
+}
+
+function setShippingMode(mode) {
+  localStorage.setItem("shippingMode", mode === "abholung" ? "abholung" : "versand");
+}
+
+function isForcedPickup() {
+  return getDeliveryInfo() === "Nur Abholung";
+}
+
+function isPickupSelected() {
+  return isForcedPickup() || getShippingMode() === "abholung";
+}
+
+function isConfigForcedPickup(config) {
+  if (!config) return false;
+  if (config.delivery === "Nur Abholung") return true;
+  var w = parseFloat(config.width) || 0;
+  var d = parseFloat(config.deepth) || 0;
+  var h = parseFloat(config.hight) || 0;
+  return w > 150 || d > 150 || h > 150;
+}
+
+function getEffectiveShippingCost(config) {
+  if (isPickupSelected()) return 0;
+  if (isConfigForcedPickup(config)) return 0;
+  var stored = parseFloat(config.versand) || 0;
+  return stored > 0 ? stored : 120;
+}
+
 // Berechnung der Gesamtsumme
 const calculateTotal = () => {
   let total = 0;
@@ -18,7 +50,7 @@ const calculateTotal = () => {
   storedConfigurations.forEach((config) => {
     var qty = config.quantity || 1;
     total += (parseFloat(config.total) || 0) * qty;
-    total += parseFloat(config.versand) || 0;
+    total += getEffectiveShippingCost(config);
   });
 
   // Addiere alle Zubehörpreise
@@ -70,8 +102,31 @@ function getDeliveryInfo() {
 
 function refreshDeliveryInfo() {
   const el = document.getElementById("iDeliveryText");
-  if (el) el.textContent = getDeliveryInfo();
+  const sel = document.getElementById("iCartShippingMode");
+  const info = getDeliveryInfo();
+  const canChoose = info === "Versand möglich";
+
+  if (sel) {
+    sel.hidden = !canChoose;
+    if (canChoose) sel.value = getShippingMode();
+  }
+  if (el) {
+    if (canChoose) {
+      el.style.display = "none";
+    } else {
+      el.style.display = "";
+      el.textContent = info;
+    }
+  }
 }
+
+document.addEventListener("change", function (e) {
+  if (e.target && e.target.id === "iCartShippingMode") {
+    setShippingMode(e.target.value);
+    renderConfigurations();
+    refreshTotal();
+  }
+});
 
 function removeAccessory(id) {
   savedData[id].quantity = 0;
@@ -228,6 +283,10 @@ function renderConfigurations() {
 
     var qty = config.quantity || 1;
     var itemTotal = (parseFloat(config.total) * qty).toFixed(2);
+    var shipCost = getEffectiveShippingCost(config);
+    var shipLabel = isPickupSelected()
+      ? (isForcedPickup() ? "Nur Abholung" : "Abholung")
+      : (shipCost + " €");
     item.innerHTML =
       thumbHTML +
       '<div class="cCartDetails cCartOpenCreator" data-config-idx="' + index + '" title="Im Creator öffnen">' +
@@ -235,7 +294,7 @@ function renderConfigurations() {
         'B/T/H: ' + config.width + ', ' + config.deepth + ', ' + config.hight + '<br>' +
         'Einzelpreis: ' + parseFloat(config.total).toFixed(2) + ' €<br>' +
         'Gesamt: ' + itemTotal + ' €<br>' +
-        'Versand: ' + config.versand + ' €' +
+        'Versand: ' + shipLabel +
       '</div>' +
       '<div class="cCartQty">' +
         '<button class="cQtyBtn" data-config-idx="' + index + '" data-dir="-1">−</button>' +
@@ -315,6 +374,7 @@ document.getElementById("emailForm").addEventListener("submit", function (e) {
     E-Mail: ${email}
     Nachricht: ${message}
     Bezahlmethode: ${payment}
+    Lieferung: ${isPickupSelected() ? (isForcedPickup() ? "Nur Abholung" : "Abholung") : "Versand möglich"}
     Zubehör: ${accessoriesData}
     Konfigurationen: ${configurationsData}
   `;

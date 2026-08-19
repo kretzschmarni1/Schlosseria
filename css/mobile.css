@@ -558,6 +558,29 @@
     border-radius: 0 !important;
   }
 
+  .cRoomToolbar {
+    top: 12px;
+    left: 12px;
+    max-width: calc(100% - 24px);
+    gap: 6px;
+  }
+
+  .cRoomBtn {
+    font-size: 12px !important;
+    padding: 6px 10px !important;
+  }
+
+  .cRoomHint {
+    width: 100%;
+    font-size: 11px;
+  }
+
+  .cClose3D {
+    top: auto !important;
+    bottom: 12px !important;
+    right: 12px !important;
+  }
+
   #canvas-container canvas,
   #canvas-container-3d canvas {
     touch-action: none;

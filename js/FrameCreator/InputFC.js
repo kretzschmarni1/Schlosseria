@@ -105,6 +105,37 @@ function depthStrutKeys() {
   return keys;
 }
 
+function getShippingMode() {
+  return localStorage.getItem("shippingMode") === "abholung" ? "abholung" : "versand";
+}
+
+function setShippingMode(mode) {
+  localStorage.setItem("shippingMode", mode === "abholung" ? "abholung" : "versand");
+}
+
+function resolveDelivery(forcedPickup) {
+  if (forcedPickup) {
+    return { label: "Nur Abholung", cost: 0, canChoose: false };
+  }
+  if (getShippingMode() === "abholung") {
+    return { label: "Abholung", cost: 0, canChoose: true };
+  }
+  return { label: "Versand möglich", cost: PriceDelivery, canChoose: true };
+}
+
+function syncShippingModeUI(canChoose) {
+  var sel = document.getElementById("iShippingMode");
+  var ld = document.getElementById("liveDelivery");
+  if (!sel) return;
+  sel.hidden = !canChoose;
+  if (canChoose) {
+    sel.value = getShippingMode();
+    if (ld) ld.style.display = "none";
+  } else if (ld) {
+    ld.style.display = "";
+  }
+}
+
 function updateLivePrices() {
   var w = parseInt(localStorage.getItem("iWidth")) || 100;
   var h = parseInt(localStorage.getItem("iHight")) || 100;
@@ -121,7 +152,8 @@ function updateLivePrices() {
   var th = setValueToZero(["iFrontLeft", "iFrontRight", "iFrontMiddleLength", "iBackLeft", "iBackRight", "iBackMiddleLength"], h);
   var td = setValueToZero(dKeys, d);
 
-  var del = (td > 150 || tw > 150 || th > 150) ? "Nur Abholung" : "Versand möglich";
+  var forcedPickup = (td > 150 || tw > 150 || th > 150);
+  var delInfo = resolveDelivery(forcedPickup);
 
   var trueCount = Object.values(bs).filter(function(v) { return v === true; }).length;
 
@@ -129,7 +161,7 @@ function updateLivePrices() {
   var FH = calculateTotal(th, ["iFrontLeft", "iFrontRight", "iFrontMiddleLength", "iBackLeft", "iBackRight", "iBackMiddleLength"]);
   var FD = calculateTotal(td, dKeys);
   var FL = ((FW) + (FH) + (FD)/100) * (mat/20);
-  var pp = (FL > 0 && del !== "Nur Abholung") ? PriceDelivery : 0;
+  var pp = (FL > 0) ? delInfo.cost : 0;
 
   var tf = Math.round(FL/100 * PricePerMeter + trueCount * PricePerPeace);
   var twPrice = 0;
@@ -146,8 +178,16 @@ function updateLivePrices() {
   if (lf) lf.textContent = tf;
   if (lw) lw.textContent = twPrice;
   if (ls) ls.textContent = pp;
-  if (ld) ld.textContent = del;
+  if (ld) ld.textContent = delInfo.label;
+  syncShippingModeUI(delInfo.canChoose && FL > 0);
 }
+
+document.addEventListener("change", function(e) {
+  if (e.target && e.target.id === "iShippingMode") {
+    setShippingMode(e.target.value);
+    updateLivePrices();
+  }
+});
 
 // Live-Preise bei Streben-/Holzplatten-Änderungen updaten
 document.addEventListener("click", function(e) {
@@ -317,11 +357,9 @@ PopUp.addEventListener('click', () => {
  takenDeepth = setValueToZero(dKeysSave, deepth);
 
  //Lieferung 
-if (takenDeepth > 150 || takenWidth > 150 || takenHight > 150 ) {
-  delivery = "Nur Abholung";
-} else {
-  delivery = "Versand möglich";
-};
+var forcedPickupSave = (takenDeepth > 150 || takenWidth > 150 || takenHight > 150);
+var delInfoSave = resolveDelivery(forcedPickupSave);
+delivery = delInfoSave.label;
 
 //Preis berechnen
 
@@ -338,7 +376,7 @@ let FullWidth = calculateTotal(takenWidth, wKeysSave);
 let FullHeight = calculateTotal(takenHight, ["iFrontLeft", "iFrontRight", "iFrontMiddleLength", "iBackLeft", "iBackRight", "iBackMiddleLength"]);
 let FullDepth = calculateTotal(takenDeepth, dKeysSave);
 let Fulllength = ((FullWidth) + (FullHeight) + (FullDepth)/100) * (material/20); //Für 20mm Quadratrohr kalkuliert
-if (Fulllength > 0 && delivery !== "Nur Abholung") { PricePauschal = PriceDelivery;} else {PricePauschal = 0;};
+PricePauschal = (Fulllength > 0) ? delInfoSave.cost : 0;
 
 TotalFrame = Math.round(Fulllength/100 * PricePerMeter + trueCount * PricePerPeace);
 

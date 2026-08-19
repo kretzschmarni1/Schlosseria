@@ -239,6 +239,24 @@ canvas {
           flex: 0 0 auto;
         }
 
+        .cDeliveryRow {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+        }
+
+        .cShippingMode {
+          font-family: inherit;
+          font-size: 14px;
+          padding: 4px 8px;
+          border: 1px solid #bbb;
+          background: #fff;
+          color: #1a1a1a;
+          cursor: pointer;
+        }
+
         .cSubmitSub{
           position: static;
           bottom: auto;

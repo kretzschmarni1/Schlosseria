@@ -76,7 +76,15 @@
   <b>Total</b>
   <output id="iTotoal">€</output>
   <br><br>
-  <div id="iDeliveryInfo">Lieferung: <span id="iDeliveryText">—</span> <span style="color: #666;">(ca. 3 Wochen)</span></div>
+  <div id="iDeliveryInfo" class="cDeliveryInfo">
+    Lieferung:
+    <span id="iDeliveryText">—</span>
+    <select id="iCartShippingMode" class="cShippingMode" aria-label="Lieferart" hidden>
+      <option value="versand">Versand</option>
+      <option value="abholung">Abholung</option>
+    </select>
+    <span style="color: #666;">(ca. 3 Wochen)</span>
+  </div>
   <br><br><br>
 </div>
 

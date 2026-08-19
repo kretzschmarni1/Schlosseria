@@ -62,7 +62,7 @@
   <div class="cHoover" onmouseenter="hideImage()" onmouseleave="showImage()">
 
 <!-- <img id="hoverImage" class="cHover-Image" src="video/msedge_UWP9y7LiOn.mp4" alt="Vorschau">        -->
-  <video id="hoverImage" class="cHover-Image" src="video/msedge_V1.mp4" autoplay muted loop playsinline></video>
+  <video id="hoverImage" class="cHover-Image" src="video/msedge_V1.mp4" muted loop playsinline preload="none"></video>
 
 
 
@@ -170,7 +170,15 @@
     <div>Total Rahmen: <b><span id="liveFrame">0</span> €</b></div>
     <div>Total Holz: <b><span id="liveWood">0</span> €</b></div>
     <div>Versand: <b><span id="liveShipping">0</span> €</b></div>
-    <div>Lieferung: <span id="liveDelivery">—</span> <span style="color: #666;">(ca. 3 Wochen)</span></div>
+    <div class="cDeliveryRow">
+      Lieferung:
+      <span id="liveDelivery">—</span>
+      <select id="iShippingMode" class="cShippingMode" aria-label="Lieferart" hidden>
+        <option value="versand">Versand</option>
+        <option value="abholung">Abholung</option>
+      </select>
+      <span style="color: #666;">(ca. 3 Wochen)</span>
+    </div>
   </div>
   <button class="cSubmitSub" id="iShowPopup">Zum Warenkorb hinzufügen</button>
   </div>

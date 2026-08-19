@@ -60,11 +60,19 @@
 
 
 
-  <div class="c3DBody">
+  <div class="c3DBody" id="i3DBody">
     <a class="c3D"></a>
   </div>
 
   <div id="canvas-container-3d">
+    <div class="cRoomToolbar" id="iRoomToolbar">
+      <label class="cRoomBtn" for="iRoomBgUpload">Hintergrund hochladen</label>
+      <input type="file" id="iRoomBgUpload" accept="image/*" hidden>
+      <button type="button" class="cRoomBtn" id="iRoomBgReset">Standard-Hintergrund</button>
+      <button type="button" class="cRoomBtn" id="iRoomPlaceFurniture">Möbel aus Warenkorb platzieren</button>
+      <button type="button" class="cRoomBtn" id="iRoomClearFurniture">Möbel entfernen</button>
+      <span class="cRoomHint" id="iRoomHint">Möbel antippen und ziehen zum Positionieren</span>
+    </div>
     <button class="cClose3D" onclick="window.location.href='Creator.html'">✕ Schließen</button>
   </div>
 
@@ -115,6 +123,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="js/controls/OrbitControls.js"></script> 
 <script src="js/old3D/3dView.js"></script>
+<script src="js/old3D/roomPlanner.js"></script>
 
 
 

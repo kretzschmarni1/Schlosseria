@@ -232,7 +232,7 @@ button,
   box-shadow: var(--shadow-soft) !important;
 }
 
-button:not(.cSubmitSub):not(#iSubmit):not(.cAdd):not(.cRemoveBtn):not(.cQtyBtn):not(.cClosePopup):not(.cClose3D):not(.cView3D):not(.cAddBoard):not(.cDisplayLine):not(.cLevelAddBtn):not(.cLevelWoodBtn):not(.cLevelRemoveBtn) {
+button:not(.cSubmitSub):not(#iSubmit):not(.cAdd):not(.cRemoveBtn):not(.cQtyBtn):not(.cClosePopup):not(.cClose3D):not(.cView3D):not(.cAddBoard):not(.cDisplayLine):not(.cLevelAddBtn):not(.cLevelWoodBtn):not(.cLevelRemoveBtn):not(.cRoomBtn) {
   border-color: var(--color-border) !important;
   color: var(--color-ink) !important;
 }
@@ -277,6 +277,53 @@ button:not(.cSubmitSub):not(#iSubmit):not(.cAdd):not(.cRemoveBtn):not(.cQtyBtn):
 .cClose3D:hover {
   background: rgba(0, 0, 0, 0.48) !important;
   color: #fff !important;
+}
+
+.cRoomToolbar {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 12;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-width: min(720px, calc(100% - 160px));
+  align-items: center;
+}
+
+.cRoomBtn {
+  font-family: 'Rubik', sans-serif !important;
+  font-size: 14px !important;
+  padding: 8px 14px !important;
+  border-radius: 8px !important;
+  border: none !important;
+  background: rgba(0, 0, 0, 0.32) !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.cRoomBtn:hover {
+  background: rgba(0, 0, 0, 0.48) !important;
+}
+
+.cRoomHint {
+  font-family: 'Rubik', sans-serif;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(0, 0, 0, 0.28);
+  padding: 6px 10px;
+  border-radius: 8px;
+  backdrop-filter: blur(6px);
+}
+
+.cDeliveryInfo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0;
 }
 
 .cQtyBtn {
