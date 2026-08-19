@@ -49,10 +49,12 @@ let perspective;
 
 //Konfiguration Produktbeispiele  //siehe funktion productexamples
 const productConfigurations = [
-  { ids: ["iToCreator1"], parameters: [120, 110, 50, 50, 50, 20, 20, 1, 1 , 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, "true"]},
-  { ids: ["iToCreator2"], parameters: [80, 180, 90, 40, 90, 30, 30, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 , 0, 10, 5, "true"] },
-  { ids: ["iToCreator3"], parameters: [200,50, 150,100,25,25,25,     1, 1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,"false"] },
-  { ids: ["iToCreator4"], parameters: [40,30,120,20,15,60,20,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,0,0,1,5,5,"false"] }
+  // Der.Slider / Der.Sider – Holzplatte oben
+  { ids: ["iToCreator1"], parameters: [120, 110, 50, 50, 50, 20, 20, 1, 1 , 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, true]},
+  // Der.Tischler – Holzplatte oben
+  { ids: ["iToCreator2"], parameters: [80, 180, 90, 40, 90, 30, 30, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0 , 0, 10, 5, true] },
+  { ids: ["iToCreator3"], parameters: [200,50, 150,100,25,25,25,     1, 1,0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,false] },
+  { ids: ["iToCreator4"], parameters: [40,30,120,20,15,60,20,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,0,0,1,5,5,false] }
 ];
 
 //Accesoires-Empfehlung je Produkt
@@ -152,10 +154,12 @@ function PreConfigDesign(tHight, tWidth, tDeepth, tmiddleH, tmiddleV, tPerspecti
   
   oversetLiRe = tOversetLiRe;
   oversetFoBa = tOversetFoBa;
-  addedBoard = tAddBoard;
+  // String "false" ist truthy – nur echte true/"true" aktivieren die Holzplatte
+  addedBoard = tAddBoard === true || tAddBoard === "true";
 
 setData();
 localStorage.setItem("iAddBoard", addedBoard ? "true" : "false");
+localStorage.setItem("iAddBoardBottom", "false");
 syncProductShelfLevels();
 }
 
