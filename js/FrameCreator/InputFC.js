@@ -123,13 +123,6 @@ function resolveDelivery(forcedPickup) {
   return { label: "Versand möglich", cost: PriceDelivery, canChoose: true };
 }
 
-function syncShippingModeUI(delInfo, shippingCost) {
-  var row = document.getElementById("liveShippingRow");
-  if (row) {
-    row.style.display = (shippingCost > 0) ? "" : "none";
-  }
-}
-
 function updateLivePrices() {
   var w = parseInt(localStorage.getItem("iWidth")) || 100;
   var h = parseInt(localStorage.getItem("iHight")) || 100;
@@ -155,7 +148,6 @@ function updateLivePrices() {
   var FH = calculateTotal(th, ["iFrontLeft", "iFrontRight", "iFrontMiddleLength", "iBackLeft", "iBackRight", "iBackMiddleLength"]);
   var FD = calculateTotal(td, dKeys);
   var FL = ((FW) + (FH) + (FD)/100) * (mat/20);
-  var pp = (FL > 0) ? delInfo.cost : 0;
 
   var tf = Math.round(FL/100 * PricePerMeter + trueCount * PricePerPeace);
   var twPrice = 0;
@@ -167,11 +159,8 @@ function updateLivePrices() {
 
   var lf = document.getElementById("liveFrame");
   var lw = document.getElementById("liveWood");
-  var ls = document.getElementById("liveShipping");
   if (lf) lf.textContent = tf;
   if (lw) lw.textContent = twPrice;
-  if (ls) ls.textContent = pp;
-  syncShippingModeUI(delInfo, pp);
 }
 
 // Live-Preise bei Streben-/Holzplatten-Änderungen updaten
@@ -397,11 +386,8 @@ outTotalDel.textContent = PricePauschal + "€";
 // Live-Preisanzeige aktualisieren
 var lf = document.getElementById("liveFrame");
 var lw = document.getElementById("liveWood");
-var ls = document.getElementById("liveShipping");
 if (lf) lf.textContent = TotalFrame;
 if (lw) lw.textContent = TotalWood;
-if (ls) ls.textContent = PricePauschal;
-syncShippingModeUI(delInfoSave, PricePauschal);
 
   for (const id in buttonStates) {
     if (buttonStates.hasOwnProperty(id)) {
