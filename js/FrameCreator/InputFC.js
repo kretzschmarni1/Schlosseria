@@ -124,26 +124,7 @@ function resolveDelivery(forcedPickup) {
 }
 
 function syncShippingModeUI(delInfo, shippingCost) {
-  var sel = document.getElementById("iShippingMode");
-  var ld = document.getElementById("liveDelivery");
   var row = document.getElementById("liveShippingRow");
-  if (!sel) return;
-
-  if (delInfo.canChoose) {
-    sel.hidden = false;
-    sel.style.display = "";
-    sel.value = getShippingMode();
-    if (ld) ld.style.display = "none";
-  } else {
-    sel.hidden = true;
-    sel.style.display = "none";
-    if (ld) {
-      ld.style.display = "";
-      ld.textContent = delInfo.label;
-    }
-  }
-
-  // Versandkostenzeile nur bei aktivem Versand anzeigen
   if (row) {
     row.style.display = (shippingCost > 0) ? "" : "none";
   }
@@ -187,20 +168,11 @@ function updateLivePrices() {
   var lf = document.getElementById("liveFrame");
   var lw = document.getElementById("liveWood");
   var ls = document.getElementById("liveShipping");
-  var ld = document.getElementById("liveDelivery");
   if (lf) lf.textContent = tf;
   if (lw) lw.textContent = twPrice;
   if (ls) ls.textContent = pp;
-  if (ld) ld.textContent = delInfo.label;
   syncShippingModeUI(delInfo, pp);
 }
-
-document.addEventListener("change", function(e) {
-  if (e.target && e.target.id === "iShippingMode") {
-    setShippingMode(e.target.value);
-    updateLivePrices();
-  }
-});
 
 // Live-Preise bei Streben-/Holzplatten-Änderungen updaten
 document.addEventListener("click", function(e) {
@@ -426,11 +398,9 @@ outTotalDel.textContent = PricePauschal + "€";
 var lf = document.getElementById("liveFrame");
 var lw = document.getElementById("liveWood");
 var ls = document.getElementById("liveShipping");
-var ld = document.getElementById("liveDelivery");
 if (lf) lf.textContent = TotalFrame;
 if (lw) lw.textContent = TotalWood;
 if (ls) ls.textContent = PricePauschal;
-if (ld) ld.textContent = delivery;
 syncShippingModeUI(delInfoSave, PricePauschal);
 
   for (const id in buttonStates) {
