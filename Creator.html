@@ -169,12 +169,12 @@
   <div id="livePriceSummary" class="cLiveSummary">
     <div>Total Rahmen: <b><span id="liveFrame">0</span> €</b></div>
     <div>Total Holz: <b><span id="liveWood">0</span> €</b></div>
-    <div>Versand: <b><span id="liveShipping">0</span> €</b></div>
+    <div id="liveShippingRow">Versand: <b><span id="liveShipping">0</span> €</b></div>
     <div class="cDeliveryRow">
       Lieferung:
       <span id="liveDelivery">—</span>
-      <select id="iShippingMode" class="cShippingMode" aria-label="Lieferart" hidden>
-        <option value="versand">Versand</option>
+      <select id="iShippingMode" class="cShippingMode" aria-label="Lieferart">
+        <option value="versand">Versand möglich</option>
         <option value="abholung">Abholung</option>
       </select>
       <span style="color: #666;">(ca. 3 Wochen)</span>

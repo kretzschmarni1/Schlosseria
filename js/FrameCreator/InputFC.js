@@ -123,16 +123,29 @@ function resolveDelivery(forcedPickup) {
   return { label: "Versand möglich", cost: PriceDelivery, canChoose: true };
 }
 
-function syncShippingModeUI(canChoose) {
+function syncShippingModeUI(delInfo, shippingCost) {
   var sel = document.getElementById("iShippingMode");
   var ld = document.getElementById("liveDelivery");
+  var row = document.getElementById("liveShippingRow");
   if (!sel) return;
-  sel.hidden = !canChoose;
-  if (canChoose) {
+
+  if (delInfo.canChoose) {
+    sel.hidden = false;
+    sel.style.display = "";
     sel.value = getShippingMode();
     if (ld) ld.style.display = "none";
-  } else if (ld) {
-    ld.style.display = "";
+  } else {
+    sel.hidden = true;
+    sel.style.display = "none";
+    if (ld) {
+      ld.style.display = "";
+      ld.textContent = delInfo.label;
+    }
+  }
+
+  // Versandkostenzeile nur bei aktivem Versand anzeigen
+  if (row) {
+    row.style.display = (shippingCost > 0) ? "" : "none";
   }
 }
 
@@ -179,7 +192,7 @@ function updateLivePrices() {
   if (lw) lw.textContent = twPrice;
   if (ls) ls.textContent = pp;
   if (ld) ld.textContent = delInfo.label;
-  syncShippingModeUI(delInfo.canChoose && FL > 0);
+  syncShippingModeUI(delInfo, pp);
 }
 
 document.addEventListener("change", function(e) {
@@ -418,6 +431,7 @@ if (lf) lf.textContent = TotalFrame;
 if (lw) lw.textContent = TotalWood;
 if (ls) ls.textContent = PricePauschal;
 if (ld) ld.textContent = delivery;
+syncShippingModeUI(delInfoSave, PricePauschal);
 
   for (const id in buttonStates) {
     if (buttonStates.hasOwnProperty(id)) {
@@ -461,6 +475,7 @@ if (ld) ld.textContent = delivery;
       total: Total,
       versand: PricePauschal,
       delivery: delivery,
+      shippingMode: forcedPickupSave ? "abholung" : getShippingMode(),
       widthWood: woodWidth,
       deepthWood: woodDeepth,
       thumbnail: thumbnail,

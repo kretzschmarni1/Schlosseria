@@ -35,10 +35,24 @@ function isConfigForcedPickup(config) {
 }
 
 function getEffectiveShippingCost(config) {
-  if (isPickupSelected()) return 0;
   if (isConfigForcedPickup(config)) return 0;
+  if (getShippingMode() === "abholung") return 0;
   var stored = parseFloat(config.versand) || 0;
   return stored > 0 ? stored : 120;
+}
+
+function applyConfigsShippingPreference() {
+  var configs = [];
+  try {
+    configs = JSON.parse(localStorage.getItem("configurations") || "[]") || [];
+  } catch (e) {
+    configs = [];
+  }
+  var prefersPickup = configs.some(function (config) {
+    if (isConfigForcedPickup(config)) return false;
+    return config.delivery === "Abholung" || config.shippingMode === "abholung";
+  });
+  if (prefersPickup) setShippingMode("abholung");
 }
 
 // Berechnung der Gesamtsumme
@@ -123,6 +137,21 @@ function refreshDeliveryInfo() {
 document.addEventListener("change", function (e) {
   if (e.target && e.target.id === "iCartShippingMode") {
     setShippingMode(e.target.value);
+    var mode = getShippingMode();
+    var configs = JSON.parse(localStorage.getItem("configurations")) || [];
+    configs.forEach(function (config) {
+      if (isConfigForcedPickup(config)) return;
+      if (mode === "abholung") {
+        config.delivery = "Abholung";
+        config.versand = 0;
+        config.shippingMode = "abholung";
+      } else {
+        config.delivery = "Versand möglich";
+        config.versand = 120;
+        config.shippingMode = "versand";
+      }
+    });
+    localStorage.setItem("configurations", JSON.stringify(configs));
     renderConfigurations();
     refreshTotal();
   }
@@ -284,9 +313,9 @@ function renderConfigurations() {
     var qty = config.quantity || 1;
     var itemTotal = (parseFloat(config.total) * qty).toFixed(2);
     var shipCost = getEffectiveShippingCost(config);
-    var shipLabel = isPickupSelected()
-      ? (isForcedPickup() ? "Nur Abholung" : "Abholung")
-      : (shipCost + " €");
+    var shipLine = shipCost > 0
+      ? ('Versand: ' + shipCost + ' €')
+      : (isForcedPickup() || isConfigForcedPickup(config) ? 'Nur Abholung' : 'Abholung (kein Versand)');
     item.innerHTML =
       thumbHTML +
       '<div class="cCartDetails cCartOpenCreator" data-config-idx="' + index + '" title="Im Creator öffnen">' +
@@ -294,7 +323,7 @@ function renderConfigurations() {
         'B/T/H: ' + config.width + ', ' + config.deepth + ', ' + config.hight + '<br>' +
         'Einzelpreis: ' + parseFloat(config.total).toFixed(2) + ' €<br>' +
         'Gesamt: ' + itemTotal + ' €<br>' +
-        'Versand: ' + shipLabel +
+        shipLine +
       '</div>' +
       '<div class="cCartQty">' +
         '<button class="cQtyBtn" data-config-idx="' + index + '" data-dir="-1">−</button>' +
@@ -398,6 +427,7 @@ document.getElementById("emailForm").addEventListener("submit", function (e) {
 
 // Initialisierung der Seite
 document.addEventListener("DOMContentLoaded", () => {
+  applyConfigsShippingPreference();
   initializeDOM();
   renderConfigurations();
 });

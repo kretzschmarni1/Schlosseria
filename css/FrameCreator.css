@@ -255,6 +255,12 @@ canvas {
           background: #fff;
           color: #1a1a1a;
           cursor: pointer;
+          min-width: 140px;
+        }
+
+        #liveShippingRow[hidden],
+        #liveShippingRow[style*="display: none"] {
+          margin: 0;
         }
 
         .cSubmitSub{
