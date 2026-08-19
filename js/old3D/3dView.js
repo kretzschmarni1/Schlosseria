@@ -78,7 +78,8 @@ function loadShelfLevels() {
 
 var shelfLevels = loadShelfLevels();
 var boards = {
-  top: localStorage.getItem("iAddBoard") === "true"
+  top: localStorage.getItem("iAddBoard") === "true",
+  bottom: localStorage.getItem("iAddBoardBottom") === "true"
 };
 var addedBoard = boards.top;
 
@@ -263,7 +264,7 @@ function updateWood(){
     woodGroup.clear();
 
     const woodThickness = 5;
-    const onlyTopBoard = !!boards.top && !shelfLevels.some(function (l) { return !!l.wood; });
+    const onlyTopBoard = !!boards.top && !boards.bottom && !shelfLevels.some(function (l) { return !!l.wood; });
     const oversetLR = onlyTopBoard ? parseFloat(tOversetLeRi) : 0;
     const oversetFB = onlyTopBoard ? parseFloat(tOversetFoBa) : 0;
     const widthWood = parseFloat(tWidth) + Thickness + oversetLR;
@@ -284,6 +285,7 @@ function updateWood(){
     shelfLevels.forEach(function (lvl) {
       addPlateAtRailTop(lvl.height - tHeight / 2, !!lvl.wood);
     });
+    addPlateAtRailTop(-tHeight / 2, boards.bottom);
 
     addedBoard = !!boards.top;
 }
@@ -434,6 +436,7 @@ function resetScene() {
     tOversetLeRi = parseFloat(localStorage.getItem("iOversetLeRi")) || 0;
     tOversetFoBa = parseFloat(localStorage.getItem("iOversetFoBa")) || 0;
     boards.top = localStorage.getItem("iAddBoard") === "true";
+    boards.bottom = localStorage.getItem("iAddBoardBottom") === "true";
     try {
       var storedLevels = JSON.parse(localStorage.getItem("shelfLevels") || "[]");
       if (Array.isArray(storedLevels)) shelfLevels = storedLevels;
@@ -486,6 +489,7 @@ thick = 20;
 tOversetLeRi = 0;
 tOversetFoBa = 0;
 boards.top = false;
+boards.bottom = false;
 shelfLevels = [];
 addedBoard = false;
 
@@ -560,6 +564,7 @@ if (document.getElementById("displayV") || document.getElementById("displayH")) 
 //Seite neu laden
 window.onload = function() {
   boards.top = localStorage.getItem("iAddBoard") === "true";
+  boards.bottom = localStorage.getItem("iAddBoardBottom") === "true";
   addedBoard = boards.top;
   try {
     var storedLevels = JSON.parse(localStorage.getItem("shelfLevels") || "[]");

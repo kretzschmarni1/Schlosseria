@@ -75,6 +75,7 @@ function getShelfLevelsFromStorage() {
 
 function countWoodBoards() {
   var n = localStorage.getItem("iAddBoard") === "true" ? 1 : 0;
+  if (localStorage.getItem("iAddBoardBottom") === "true") n++;
   getShelfLevelsFromStorage().forEach(function (l) { if (l && l.wood) n++; });
   return n;
 }
@@ -82,6 +83,7 @@ function countWoodBoards() {
 function hasOnlyTopWoodBoard() {
   var top = localStorage.getItem("iAddBoard") === "true";
   if (!top) return false;
+  if (localStorage.getItem("iAddBoardBottom") === "true") return false;
   return !getShelfLevelsFromStorage().some(function (l) { return l && l.wood; });
 }
 
@@ -120,7 +122,7 @@ function resolveDelivery(forcedPickup) {
   if (getShippingMode() === "abholung") {
     return { label: "Abholung", cost: 0, canChoose: true };
   }
-  return { label: "Versand möglich", cost: PriceDelivery, canChoose: true };
+  return { label: "Versand", cost: PriceDelivery, canChoose: true };
 }
 
 function updateLivePrices() {
@@ -361,6 +363,7 @@ TotalFrame = Math.round(Fulllength/100 * PricePerMeter + trueCount * PricePerPea
 woodWidth = (parseInt(width) + parseInt((hasOnlyTopWoodBoard() ? oversetLiRe : 0)*2));
 woodDeepth = (parseInt(deepth) + parseInt((hasOnlyTopWoodBoard() ? oversetFoBa : 0)*2));
 var boardTopSave = (typeof boards !== "undefined") ? !!boards.top : (localStorage.getItem("iAddBoard") === "true");
+var boardBottomSave = (typeof boards !== "undefined") ? !!boards.bottom : (localStorage.getItem("iAddBoardBottom") === "true");
 var levelsSave = getShelfLevelsFromStorage().map(function (l) {
   return { id: l.id, height: l.height, wood: !!l.wood };
 });
@@ -446,6 +449,7 @@ if (lw) lw.textContent = TotalWood;
         iOversetLeRi: oversetLiRe,
         iOversetFoBa: oversetFoBa,
         iAddBoard: boardTopSave,
+        iAddBoardBottom: boardBottomSave,
         iAddBoardMiddle: levelsSave.some(function (l) { return !!l.wood; }),
         middleLevelVisible: levelsSave.length > 0,
         shelfLevels: levelsSave

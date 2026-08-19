@@ -92,7 +92,7 @@ function getDeliveryInfo() {
   });
 
   if (storedConfigurations.length === 0) {
-    return hasAccessories ? "Versand möglich" : "—";
+    return hasAccessories ? "Versand" : "—";
   }
 
   // Sobald ein Möbelstück Abholung braucht → gesamter Warenkorb: Abholung
@@ -113,14 +113,14 @@ function getDeliveryInfo() {
     return false;
   });
 
-  return needsPickup ? "Nur Abholung" : "Versand möglich";
+  return needsPickup ? "Nur Abholung" : "Versand";
 }
 
 function refreshDeliveryInfo() {
   const el = document.getElementById("iDeliveryText");
   const sel = document.getElementById("iCartShippingMode");
   const info = getDeliveryInfo();
-  const canChoose = info === "Versand möglich";
+  const canChoose = info === "Versand";
 
   if (sel) {
     sel.hidden = !canChoose;
@@ -148,7 +148,7 @@ document.addEventListener("change", function (e) {
         config.versand = 0;
         config.shippingMode = "abholung";
       } else {
-        config.delivery = "Versand möglich";
+        config.delivery = "Versand";
         config.versand = 120;
         config.shippingMode = "versand";
       }
@@ -275,6 +275,7 @@ function openConfigurationInCreator(index) {
   localStorage.setItem("iOversetLeRi", state.iOversetLeRi);
   localStorage.setItem("iOversetFoBa", state.iOversetFoBa);
   localStorage.setItem("iAddBoard", state.iAddBoard ? "true" : "false");
+  localStorage.setItem("iAddBoardBottom", state.iAddBoardBottom ? "true" : "false");
   localStorage.setItem("iAddBoardMiddle", state.iAddBoardMiddle ? "true" : "false");
   localStorage.setItem("middleLevelVisible", state.middleLevelVisible ? "true" : "false");
   if (Array.isArray(state.shelfLevels)) {
@@ -408,7 +409,7 @@ document.getElementById("emailForm").addEventListener("submit", function (e) {
     E-Mail: ${email}
     Nachricht: ${message}
     Bezahlmethode: ${payment}
-    Lieferung: ${isPickupSelected() ? (isForcedPickup() ? "Nur Abholung" : "Abholung") : "Versand möglich"}
+    Lieferung: ${isPickupSelected() ? (isForcedPickup() ? "Nur Abholung" : "Abholung") : "Versand"}
     Zubehör: ${accessoriesData}
     Konfigurationen: ${configurationsData}
   `;

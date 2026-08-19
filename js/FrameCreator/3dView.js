@@ -168,7 +168,8 @@ rebuildFrameDefinition();
   let addBoard = document.getElementById("iAddBoard");
   var addedBoard = false;
   var boards = {
-    top: localStorage.getItem("iAddBoard") === "true"
+    top: localStorage.getItem("iAddBoard") === "true",
+    bottom: localStorage.getItem("iAddBoardBottom") === "true"
   };
   addedBoard = boards.top;
   // Kompatibilität für älteren Code
@@ -177,6 +178,7 @@ rebuildFrameDefinition();
   function saveBoardState() {
     addedBoard = !!boards.top;
     localStorage.setItem("iAddBoard", boards.top ? "true" : "false");
+    localStorage.setItem("iAddBoardBottom", boards.bottom ? "true" : "false");
     saveShelfLevels();
   }
 
@@ -266,10 +268,13 @@ rebuildFrameDefinition();
         wood: !!lvl.wood
       });
     });
+    levels.push({ id: "bottom", label: "Unten (Rahmen)", kind: "bottom" });
 
     list.innerHTML = "";
     levels.forEach(function (level) {
-      const on = level.kind === "top" ? !!boards.top : !!level.wood;
+      const on = level.kind === "top"
+        ? !!boards.top
+        : (level.kind === "bottom" ? !!boards.bottom : !!level.wood);
       const row = document.createElement("div");
       row.className = "cLevelRow";
       var actions =
@@ -296,6 +301,15 @@ rebuildFrameDefinition();
           // Oberer Holzplatte: äußeren Top-Rahmen sicherstellen
           if (boards.top) {
             ["iFrontTop", "iBackTop", "iLeftTop", "iRightTop"].forEach(function (key) {
+              tButtonStates[key] = true;
+            });
+            saveButtonStates();
+          }
+        } else if (kind === "bottom") {
+          boards.bottom = !boards.bottom;
+          // Untere Holzplatte: äußeren Bottom-Rahmen sicherstellen
+          if (boards.bottom) {
+            ["iFrontBottom", "iBackBottom", "iLeftBottom", "iRightBottom"].forEach(function (key) {
               tButtonStates[key] = true;
             });
             saveButtonStates();
@@ -531,7 +545,7 @@ function updateWood(){
     woodGroup.clear();
 
     const woodThickness = 5;
-    const onlyTopBoard = !!boards.top && !shelfLevels.some(function (l) { return !!l.wood; });
+    const onlyTopBoard = !!boards.top && !boards.bottom && !shelfLevels.some(function (l) { return !!l.wood; });
     const oversetLR = onlyTopBoard ? parseFloat(tOversetLeRi) : 0;
     const oversetFB = onlyTopBoard ? parseFloat(tOversetFoBa) : 0;
     const widthWood = parseFloat(tWidth) + Thickness + oversetLR;
@@ -557,6 +571,9 @@ function updateWood(){
       const centerY = lvl.height - tHeight / 2;
       addPlateAtRailTop(centerY, !!lvl.wood);
     });
+
+    // Unten: auf dem Rahmen
+    addPlateAtRailTop(-tHeight / 2, boards.bottom);
 
     addedBoard = !!boards.top;
 }
@@ -810,6 +827,7 @@ thick = 20;
 tOversetLeRi = 0;
 tOversetFoBa = 0;
 boards.top = false;
+boards.bottom = false;
 shelfLevels = [];
 middleLevelVisible = false;
 addedBoard = false;
@@ -878,7 +896,7 @@ function value() {
     if (displayH) displayH.style.display = "none";
 
     // Überstand nur bei genau einer Holzplatte: Oben (Rahmen)
-    const onlyTopBoard = !!boards.top && !shelfLevels.some(function (l) { return !!l.wood; });
+    const onlyTopBoard = !!boards.top && !boards.bottom && !shelfLevels.some(function (l) { return !!l.wood; });
     document.querySelectorAll(".cDisplayB").forEach(el => {
         el.style.display = onlyTopBoard ? "flex" : "none";
       });
@@ -893,6 +911,7 @@ function value() {
     window.addEventListener("load", function () {
         console.log("Seite komplett geladen");
         boards.top = localStorage.getItem("iAddBoard") === "true";
+        boards.bottom = localStorage.getItem("iAddBoardBottom") === "true";
         try {
           var storedLevels = JSON.parse(localStorage.getItem("shelfLevels") || "[]");
           if (Array.isArray(storedLevels)) shelfLevels = storedLevels;

@@ -29,6 +29,7 @@ function getPendingAccessories() {
 function getWoodBoardCountForAccessories() {
   if (typeof countWoodBoards === "function") return countWoodBoards();
   var n = localStorage.getItem("iAddBoard") === "true" ? 1 : 0;
+  if (localStorage.getItem("iAddBoardBottom") === "true") n++;
   try {
     var levels = JSON.parse(localStorage.getItem("shelfLevels") || "[]");
     if (Array.isArray(levels)) {

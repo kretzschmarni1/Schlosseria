@@ -210,6 +210,7 @@ function resetCreatorState() {
   localStorage.setItem("buttonStates", "{}");
   localStorage.setItem("shelfLevels", "[]");
   localStorage.setItem("iAddBoard", "false");
+  localStorage.setItem("iAddBoardBottom", "false");
   localStorage.setItem("iAddBoardMiddle", "false");
   localStorage.setItem("middleLevelVisible", "false");
   localStorage.setItem("iWidth", "100");
