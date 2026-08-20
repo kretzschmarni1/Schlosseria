@@ -504,3 +504,13 @@ input[type="range"]::-moz-range-thumb {
 .cLiveSummary b {
   font-family: var(--font-display);
 }
+
+@media (max-width: 767px) {
+  .cClose3D {
+    top: auto !important;
+    bottom: 10px !important;
+    right: 10px !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+}

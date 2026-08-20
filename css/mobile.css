@@ -590,6 +590,9 @@
     top: auto !important;
     bottom: 10px !important;
     right: 10px !important;
+    height: auto !important;
+    max-height: none !important;
+    align-self: flex-end !important;
     font-size: 11px !important;
     padding: 4px 10px !important;
     border-radius: 6px !important;
