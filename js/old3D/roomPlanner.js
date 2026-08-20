@@ -240,8 +240,8 @@
     }
 
     var woodThickness = 5;
-    var ww = w + thick + (onlyTop ? oLR : 0);
-    var wd = d + thick + (onlyTop ? oFB : 0);
+    var ww = Math.max(1, w + thick + (onlyTop ? oLR : 0));
+    var wd = Math.max(1, d + thick + (onlyTop ? oFB : 0));
     var woodGeo = new THREE.BoxGeometry(ww, woodThickness, wd);
 
     function addWoodAt(railCenterY, visible) {

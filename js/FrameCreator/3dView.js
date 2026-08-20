@@ -550,8 +550,8 @@ function updateWood(){
     const onlyTopBoard = !!boards.top && !boards.bottom && !shelfLevels.some(function (l) { return !!l.wood; });
     const oversetLR = onlyTopBoard ? parseFloat(tOversetLeRi) : 0;
     const oversetFB = onlyTopBoard ? parseFloat(tOversetFoBa) : 0;
-    const widthWood = parseFloat(tWidth) + Thickness + oversetLR;
-    const lengthWood = parseFloat(tLength) + Thickness + oversetFB;
+    const widthWood = Math.max(1, parseFloat(tWidth) + Thickness + oversetLR);
+    const lengthWood = Math.max(1, parseFloat(tLength) + Thickness + oversetFB);
     const woodGeometry = new THREE.BoxGeometry(widthWood, woodThickness, lengthWood);
 
     function addPlateAtRailTop(railCenterY, visible) {

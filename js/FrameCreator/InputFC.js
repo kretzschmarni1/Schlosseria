@@ -154,8 +154,8 @@ function updateLivePrices() {
   var tf = Math.round(FL/100 * PricePerMeter + trueCount * PricePerPeace);
   var twPrice = 0;
   if (boardCount > 0) {
-    var ww = parseInt(w) + parseInt(oLR * 2);
-    var wd = parseInt(d) + parseInt(oFB * 2);
+    var ww = Math.max(1, parseInt(w) + parseInt(oLR * 2));
+    var wd = Math.max(1, parseInt(d) + parseInt(oFB * 2));
     twPrice = Math.round(((ww * wd) / 10000 * PriceWood) * boardCount);
   }
 
@@ -195,8 +195,8 @@ function updateInput(id, input, min, max) {
   
 //Werte von Inputfeld übernehmen Limitieren und in localStorage  speichern
 function getData() {
-  oversetLiRe =updateInput("iOversetLeRi",OversetLiReInput, 0, 50);
-  oversetFoBa =updateInput("iOversetFoBa",OversetFoBaInput, 0, 50);
+  oversetLiRe =updateInput("iOversetLeRi",OversetLiReInput, -30, 50);
+  oversetFoBa =updateInput("iOversetFoBa",OversetFoBaInput, -30, 50);
   
 width = updateInput("iWidth", widthInput, 5, 200);
 hight = updateInput("iHight", hightInput, 5, 200);
@@ -360,8 +360,8 @@ TotalFrame = Math.round(Fulllength/100 * PricePerMeter + trueCount * PricePerPea
  console.log(trueCount * PricePerPeace);
 
 //Berechnung Holzplatte(n): Oben + Extra-Ebenen
-woodWidth = (parseInt(width) + parseInt((hasOnlyTopWoodBoard() ? oversetLiRe : 0)*2));
-woodDeepth = (parseInt(deepth) + parseInt((hasOnlyTopWoodBoard() ? oversetFoBa : 0)*2));
+woodWidth = Math.max(1, parseInt(width) + parseInt((hasOnlyTopWoodBoard() ? oversetLiRe : 0)*2));
+woodDeepth = Math.max(1, parseInt(deepth) + parseInt((hasOnlyTopWoodBoard() ? oversetFoBa : 0)*2));
 var boardTopSave = (typeof boards !== "undefined") ? !!boards.top : (localStorage.getItem("iAddBoard") === "true");
 var boardBottomSave = (typeof boards !== "undefined") ? !!boards.bottom : (localStorage.getItem("iAddBoardBottom") === "true");
 var levelsSave = getShelfLevelsFromStorage().map(function (l) {
