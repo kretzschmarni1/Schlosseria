@@ -17,16 +17,12 @@
     var base = typeof shiftY === "number" ? shiftY : 0;
     groundY = base - (h0 / 2) * sc;
   })();
-  var groundPlane = new THREE.Plane(new THREE.Vector3(0, 1, 0), -groundY);
   var selected = null;
   var dragging = false;
   var rotating = false;
   var rotateMode = false;
-  var rotateStartAngle = 0;
-  var rotateStartRotY = 0;
   var pointer = new THREE.Vector2();
   var localRay = new THREE.Raycaster();
-  var hitPoint = new THREE.Vector3();
   var steelMat = new THREE.MeshStandardMaterial({
     color: 0x404040,
     metalness: 0.35,
@@ -385,10 +381,15 @@
   var frozenCamPos = null;
   var frozenTarget = null;
   var nativeControlsUpdate = null;
-  var dragOffset = new THREE.Vector3();
+  var lastDragClientX = 0;
+  var lastDragClientY = 0;
+  var lockedRotY = 0;
   var lockedRotX = 0;
   var lockedRotZ = 0;
   var lockedScale = new THREE.Vector3(1, 1, 1);
+  var panScratchRight = new THREE.Vector3();
+  var panScratchUp = new THREE.Vector3();
+  var panScratch = new THREE.Vector3();
 
   function lockCamera() {
     if (typeof controls === "undefined" || !controls || typeof camera === "undefined" || cameraLocked) return;
@@ -446,26 +447,31 @@
   }
 
   function preserveRigidBody(obj) {
-    // CAD: beim Verschieben keine Rotation/Skalierung, nur Translation
     obj.rotation.x = lockedRotX;
+    obj.rotation.y = lockedRotY;
     obj.rotation.z = lockedRotZ;
     obj.scale.copy(lockedScale);
     obj.position.y = furnitureGroundY(obj);
   }
 
+  // Pixel-Delta → Welt-Verschiebung in der Bildebene, auf den Boden projiziert (kein Bodenstrahl)
+  function panFromScreenDelta(dx, dy, obj) {
+    var el = (typeof renderer !== "undefined" && renderer.domElement) ? renderer.domElement : container;
+    var clientH = (el && el.clientHeight) || 1;
+    var dist = camera.position.distanceTo(obj.position);
+    dist *= Math.tan((camera.fov / 2) * Math.PI / 180);
+    var moveX = 2 * dx * dist / clientH;
+    var moveY = 2 * dy * dist / clientH;
+    camera.updateMatrixWorld();
+    panScratchRight.setFromMatrixColumn(camera.matrix, 0).multiplyScalar(-moveX);
+    panScratchUp.setFromMatrixColumn(camera.matrix, 1).multiplyScalar(moveY);
+    panScratch.copy(panScratchRight).add(panScratchUp);
+    panScratch.y = 0;
+    return panScratch;
+  }
+
   function isUiTarget(event) {
     return !!(event.target.closest && (event.target.closest(".cRoomToolbar") || event.target.closest(".cClose3D")));
-  }
-
-  function groundHitFromEvent(event) {
-    updatePointer(event);
-    localRay.setFromCamera(pointer, camera);
-    return localRay.ray.intersectPlane(groundPlane, hitPoint) ? hitPoint : null;
-  }
-
-  function angleAroundCenter(obj, point) {
-    // Pivot = Objektursprung = innerer Bauteilmittelpunkt
-    return Math.atan2(point.x - obj.position.x, point.z - obj.position.z);
   }
 
   function beginFurnitureInteract(event, clientX, clientY) {
@@ -480,23 +486,15 @@
     event.stopImmediatePropagation();
 
     setSelected(hit);
+    lastDragClientX = clientX;
+    lastDragClientY = typeof clientY === "number" ? clientY : event.clientY;
     lockedRotX = hit.rotation.x;
+    lockedRotY = hit.rotation.y;
     lockedRotZ = hit.rotation.z;
     lockedScale.copy(hit.scale);
     rotating = !!(rotateMode || event.shiftKey);
     dragging = !rotating;
     lockCamera();
-
-    var gp = groundHitFromEvent(event);
-    if (rotating) {
-      if (gp) {
-        rotateStartAngle = angleAroundCenter(hit, gp);
-        rotateStartRotY = hit.rotation.y;
-      }
-    } else if (gp) {
-      // Versatz Finger → Mittelpunkt, reine Translation auf dem Boden
-      dragOffset.set(hit.position.x - gp.x, 0, hit.position.z - gp.z);
-    }
     return true;
   }
 
@@ -524,22 +522,27 @@
     event.preventDefault();
     event.stopImmediatePropagation();
 
-    var gp = groundHitFromEvent(event);
-    if (!gp) return;
+    var dx = event.clientX - lastDragClientX;
+    var dy = event.clientY - lastDragClientY;
+    lastDragClientX = event.clientX;
+    lastDragClientY = event.clientY;
+    if (!dx && !dy) return;
 
     if (rotating) {
-      // Nur Yaw um den inneren Mittelpunkt – kein Orbit um äußeren Punkt
-      selected.rotation.y = rotateStartRotY + (angleAroundCenter(selected, gp) - rotateStartAngle);
+      // CAD-Drehen: nur horizontales Ziehen → Yaw um die eigene vertikale Achse
+      lockedRotY += dx * 0.01;
       selected.rotation.x = lockedRotX;
+      selected.rotation.y = lockedRotY;
       selected.rotation.z = lockedRotZ;
       selected.scale.copy(lockedScale);
       selected.position.y = furnitureGroundY(selected);
       return;
     }
 
-    // CAD-Verschieben: nur Position XZ, Rotation und Scale unverändert
-    selected.position.x = gp.x + dragOffset.x;
-    selected.position.z = gp.z + dragOffset.z;
+    // CAD-Verschieben: Bildebene, Rotation/Scale fest, Kamera fest
+    var pan = panFromScreenDelta(dx, dy, selected);
+    selected.position.x += pan.x;
+    selected.position.z += pan.z;
     preserveRigidBody(selected);
   }
 
