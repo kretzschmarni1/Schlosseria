@@ -375,6 +375,11 @@
   var frozenCamPos = null;
   var frozenTarget = null;
   var nativeControlsUpdate = null;
+  var lastDragClientX = 0;
+  var lastDragClientY = 0;
+  var panScratchRight = new THREE.Vector3();
+  var panScratchUp = new THREE.Vector3();
+  var panScratch = new THREE.Vector3();
 
   function lockCamera() {
     if (typeof controls === "undefined" || !controls || typeof camera === "undefined" || cameraLocked) return;
@@ -396,7 +401,7 @@
     if (!nativeControlsUpdate) {
       nativeControlsUpdate = controls.update.bind(controls);
     }
-    // Animate-Loop darf Kamera/Target während Möbel-Drag nicht bewegen
+    // Animate-Loop: eingefrorene / mitgeführte Kamera halten (kein Orbit-Damping)
     controls.update = function () {
       camera.position.copy(frozenCamPos);
       controls.target.copy(frozenTarget);
@@ -432,6 +437,33 @@
     }
   }
 
+  // Bildschirm-Delta → Boden-Pan (XZ), wie OrbitControls screenSpacePanning, ohne Höhenänderung
+  function panFromScreenDelta(dx, dy) {
+    var el = (typeof renderer !== "undefined" && renderer.domElement) ? renderer.domElement : container;
+    var clientH = (el && el.clientHeight) || 1;
+    var dist = frozenCamPos.distanceTo(frozenTarget);
+    dist *= Math.tan((camera.fov / 2) * Math.PI / 180);
+    var moveX = 2 * dx * dist / clientH;
+    var moveY = 2 * dy * dist / clientH;
+    camera.updateMatrixWorld();
+    panScratchRight.setFromMatrixColumn(camera.matrix, 0).multiplyScalar(-moveX);
+    panScratchUp.setFromMatrixColumn(camera.matrix, 1).multiplyScalar(moveY);
+    panScratch.copy(panScratchRight).add(panScratchUp);
+    panScratch.y = 0;
+    return panScratch;
+  }
+
+  function followCameraByPan(pan) {
+    if (!frozenCamPos || !frozenTarget) return;
+    frozenCamPos.x += pan.x;
+    frozenCamPos.z += pan.z;
+    frozenTarget.x += pan.x;
+    frozenTarget.z += pan.z;
+    camera.position.copy(frozenCamPos);
+    controls.target.copy(frozenTarget);
+    camera.lookAt(controls.target);
+  }
+
   function isUiTarget(event) {
     return !!(event.target.closest && (event.target.closest(".cRoomToolbar") || event.target.closest(".cClose3D")));
   }
@@ -446,7 +478,7 @@
     return Math.atan2(point.x - obj.position.x, point.z - obj.position.z);
   }
 
-  function beginFurnitureInteract(event, clientX) {
+  function beginFurnitureInteract(event, clientX, clientY) {
     updatePointer(event);
     var hit = findFurnitureHit();
     if (!hit) {
@@ -460,16 +492,17 @@
 
     setSelected(hit);
     lastPointerX = clientX;
+    lastDragClientX = clientX;
+    lastDragClientY = typeof clientY === "number" ? clientY : event.clientY;
     rotating = !!(rotateMode || event.shiftKey);
     dragging = !rotating;
     lockCamera();
-    var gp = groundHitFromEvent(event);
-    if (rotating && gp) {
-      rotateStartAngle = angleAroundObject(hit, gp);
-      rotateStartRotY = hit.rotation.y;
-    } else if (dragging && gp) {
-      dragOffset.copy(hit.position).sub(gp);
-      dragOffset.y = 0;
+    if (rotating) {
+      var gp = groundHitFromEvent(event);
+      if (gp) {
+        rotateStartAngle = angleAroundObject(hit, gp);
+        rotateStartRotY = hit.rotation.y;
+      }
     }
     return true;
   }
@@ -478,7 +511,7 @@
     if (isUiTarget(event)) return;
     // Touch läuft über touchstart – doppelte Starts vermeiden
     if (event.pointerType === "touch") return;
-    beginFurnitureInteract(event, event.clientX);
+    beginFurnitureInteract(event, event.clientX, event.clientY);
   }
 
   function onTouchStart(event) {
@@ -491,23 +524,31 @@
       shiftKey: event.shiftKey,
       preventDefault: function () { event.preventDefault(); },
       stopImmediatePropagation: function () { event.stopImmediatePropagation(); }
-    }, t.clientX);
+    }, t.clientX, t.clientY);
   }
 
   function onPointerMove(event) {
     if (!selected || (!dragging && !rotating)) return;
     event.preventDefault();
     event.stopImmediatePropagation();
-    var gp = groundHitFromEvent(event);
-    if (!gp) return;
     if (rotating) {
-      // Drehung um den eigenen Mittelpunkt (Bodenprojektion)
+      var gp = groundHitFromEvent(event);
+      if (!gp) return;
+      // Drehung um den eigenen Mittelpunkt (Bodenprojektion), Kamera bleibt
       selected.rotation.y = rotateStartRotY + (angleAroundObject(selected, gp) - rotateStartAngle);
       return;
     }
-    selected.position.x = gp.x + dragOffset.x;
-    selected.position.z = gp.z + dragOffset.z;
+    // Verschieben: Möbel + Kamera gemeinsam → gleicher Blickwinkel aufs Bauteil
+    var dx = event.clientX - lastDragClientX;
+    var dy = event.clientY - lastDragClientY;
+    lastDragClientX = event.clientX;
+    lastDragClientY = event.clientY;
+    if (!dx && !dy) return;
+    var pan = panFromScreenDelta(dx, dy);
+    selected.position.x += pan.x;
+    selected.position.z += pan.z;
     selected.position.y = groundY;
+    followCameraByPan(pan);
   }
 
   function onTouchMove(event) {
