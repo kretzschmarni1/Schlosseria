@@ -66,11 +66,12 @@
 
   <div id="canvas-container-3d">
     <div class="cRoomToolbar" id="iRoomToolbar">
-      <label class="cRoomBtn" for="iRoomBgUpload">Hintergrund hochladen</label>
+      <button type="button" class="cRoomBtn" id="iRoomBgUploadBtn">Hintergrund hochladen</button>
       <input type="file" id="iRoomBgUpload" accept="image/*" hidden>
       <button type="button" class="cRoomBtn" id="iRoomBgReset">Standard-Hintergrund</button>
       <button type="button" class="cRoomBtn" id="iRoomPlaceFurniture">Möbel aus Warenkorb platzieren</button>
       <button type="button" class="cRoomBtn" id="iRoomClearFurniture">Möbel entfernen</button>
+      <button type="button" class="cRoomBtn" id="iRoomRotateMode" aria-pressed="false">Möbel drehen</button>
     </div>
     <button class="cClose3D" onclick="window.location.href='Creator.html'">✕ Schließen</button>
   </div>
