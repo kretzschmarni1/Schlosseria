@@ -377,7 +377,7 @@ function toggleLineVisibility(lineIndex) {
 // --- Animation Loop ---
 function animate() {
     requestAnimationFrame(animate);
-    controls.update();
+    if (!window.__lockRoomCamera) controls.update();
     renderer.render(scene, camera);
 }
 

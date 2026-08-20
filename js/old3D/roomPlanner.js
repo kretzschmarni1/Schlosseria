@@ -362,12 +362,30 @@
   function findFurnitureHit() {
     localRay.setFromCamera(pointer, camera);
     var hits = localRay.intersectObjects(furnitureGroup.children, true);
-    if (!hits.length) return null;
-    var obj = hits[0].object;
-    while (obj && obj.parent && obj.parent !== furnitureGroup) {
-      obj = obj.parent;
+    if (hits.length) {
+      var obj = hits[0].object;
+      while (obj && obj.parent && obj.parent !== furnitureGroup) {
+        obj = obj.parent;
+      }
+      if (obj && obj.parent === furnitureGroup) return obj;
     }
-    return obj && obj.parent === furnitureGroup ? obj : null;
+    // Fallback: Bounding-Box, damit Klicks ins Rahmeninnere zählen
+    var best = null;
+    var bestDist = Infinity;
+    var box = new THREE.Box3();
+    var center = new THREE.Vector3();
+    for (var i = 0; i < furnitureGroup.children.length; i++) {
+      var root = furnitureGroup.children[i];
+      box.setFromObject(root);
+      if (!localRay.ray.intersectsBox(box)) continue;
+      box.getCenter(center);
+      var dist = localRay.ray.distanceToPoint(center);
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = root;
+      }
+    }
+    return best;
   }
 
   function syncRotateBtn() {
@@ -380,7 +398,7 @@
   var savedControlsState = null;
   var cameraLocked = false;
   var frozenCamPos = null;
-  var frozenTarget = null;
+  var frozenCamQuat = null;
   var nativeControlsUpdate = null;
   var lastDragClientX = 0;
   var lastDragClientY = 0;
@@ -403,7 +421,8 @@
       enableDamping: controls.enableDamping
     };
     frozenCamPos = camera.position.clone();
-    frozenTarget = controls.target.clone();
+    frozenCamQuat = camera.quaternion.clone();
+    window.__lockRoomCamera = true;
     controls.enabled = false;
     controls.enablePan = false;
     controls.enableRotate = false;
@@ -412,25 +431,26 @@
     if (!nativeControlsUpdate) {
       nativeControlsUpdate = controls.update.bind(controls);
     }
+    // Kein lookAt(target) – sonst bleibt der Szenenmittelpunkt der Fluchtpunkt
     controls.update = function () {
       camera.position.copy(frozenCamPos);
-      controls.target.copy(frozenTarget);
-      camera.lookAt(controls.target);
+      camera.quaternion.copy(frozenCamQuat);
+      camera.updateMatrixWorld();
       return false;
     };
-    controls.update();
   }
 
   function unlockCamera() {
     if (!cameraLocked) return;
     cameraLocked = false;
-    if (typeof camera !== "undefined" && typeof controls !== "undefined" && frozenCamPos && frozenTarget) {
+    window.__lockRoomCamera = false;
+    if (typeof camera !== "undefined" && frozenCamPos && frozenCamQuat) {
       camera.position.copy(frozenCamPos);
-      controls.target.copy(frozenTarget);
-      camera.lookAt(controls.target);
+      camera.quaternion.copy(frozenCamQuat);
+      camera.updateMatrixWorld();
     }
     frozenCamPos = null;
-    frozenTarget = null;
+    frozenCamQuat = null;
     if (typeof controls !== "undefined" && controls) {
       if (nativeControlsUpdate) {
         controls.update = nativeControlsUpdate;
@@ -463,8 +483,9 @@
     var moveX = 2 * dx * dist / clientH;
     var moveY = 2 * dy * dist / clientH;
     camera.updateMatrixWorld();
-    panScratchRight.setFromMatrixColumn(camera.matrix, 0).multiplyScalar(-moveX);
-    panScratchUp.setFromMatrixColumn(camera.matrix, 1).multiplyScalar(moveY);
+    var mtx = camera.matrixWorld;
+    panScratchRight.setFromMatrixColumn(mtx, 0).multiplyScalar(moveX);
+    panScratchUp.setFromMatrixColumn(mtx, 1).multiplyScalar(-moveY);
     panScratch.copy(panScratchRight).add(panScratchUp);
     return panScratch;
   }
@@ -499,12 +520,16 @@
 
   function onPointerDown(event) {
     if (isUiTarget(event)) return;
-    if (event.pointerType === "touch") return;
     beginFurnitureInteract(event, event.clientX, event.clientY);
   }
 
   function onTouchStart(event) {
     if (isUiTarget(event)) return;
+    if (dragging || rotating) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      return;
+    }
     if (!event.touches || !event.touches.length) return;
     var t = event.touches[0];
     beginFurnitureInteract({
@@ -617,6 +642,7 @@
     }
 
     var canvas = (typeof renderer !== "undefined" && renderer.domElement) ? renderer.domElement : container;
+    if (canvas && canvas.style) canvas.style.touchAction = "none";
     // Capture-Phase: vor OrbitControls, damit die Kamera beim Möbel-Drag nicht mitwandert
     canvas.addEventListener("pointerdown", onPointerDown, true);
     canvas.addEventListener("touchstart", onTouchStart, { capture: true, passive: false });
