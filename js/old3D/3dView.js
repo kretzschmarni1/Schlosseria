@@ -310,15 +310,16 @@ controls.enableDamping = true;
 controls.dampingFactor = 0.1;
 controls.minDistance = 40;
 controls.maxDistance = 1500; // Weit herauszoomen möglich
-controls.screenSpacePanning = true; // Verschieben ohne Perspektivwechsel
-// Horizontal/vertikal verschieben = Pan (Perspektive bleibt), Drehen per Rechtsklick / 2 Finger
+controls.screenSpacePanning = true;
+// Desktop: Linksklick = Pan, Rechtsklick = Drehen
 controls.mouseButtons = {
   LEFT: THREE.MOUSE.PAN,
   MIDDLE: THREE.MOUSE.DOLLY,
   RIGHT: THREE.MOUSE.ROTATE
 };
+// Mobil wie Creator: 1 Finger drehen, 2 Finger zoomen + verschieben
 controls.touches = {
-  ONE: THREE.TOUCH.PAN,
+  ONE: THREE.TOUCH.ROTATE,
   TWO: THREE.TOUCH.DOLLY_PAN
 };
 

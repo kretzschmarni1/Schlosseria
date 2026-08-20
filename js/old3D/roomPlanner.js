@@ -518,13 +518,27 @@
     return true;
   }
 
+  function abortFurnitureInteract() {
+    if (!dragging && !rotating) return;
+    dragging = false;
+    rotating = false;
+    unlockCamera();
+    persistPositions();
+  }
+
   function onPointerDown(event) {
     if (isUiTarget(event)) return;
+    if (event.isPrimary === false) return;
     beginFurnitureInteract(event, event.clientX, event.clientY);
   }
 
   function onTouchStart(event) {
     if (isUiTarget(event)) return;
+    // Zwei Finger: Kamera wie im Creator (Zoom/Verschieben), kein Möbel-Drag
+    if (event.touches && event.touches.length > 1) {
+      abortFurnitureInteract();
+      return;
+    }
     if (dragging || rotating) {
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -569,6 +583,10 @@
   }
 
   function onTouchMove(event) {
+    if (event.touches && event.touches.length > 1) {
+      abortFurnitureInteract();
+      return;
+    }
     if (!selected || (!dragging && !rotating)) return;
     if (!event.touches || !event.touches.length) return;
     event.preventDefault();
@@ -583,11 +601,7 @@
   }
 
   function onPointerUp() {
-    if (!dragging && !rotating) return;
-    dragging = false;
-    rotating = false;
-    unlockCamera();
-    persistPositions();
+    abortFurnitureInteract();
   }
 
   function initUI() {
