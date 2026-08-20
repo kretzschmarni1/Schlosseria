@@ -262,31 +262,43 @@
     addWoodAt(-h / 2, boardBottom);
 
     model.scale.set(SCALE, SCALE, SCALE);
-    // Bottom of frame sits on y=0 in root space; XZ-Mittelpunkt = Drehachse
-    model.position.y = (h / 2) * SCALE;
+    model.position.set(0, 0, 0);
     root.add(model);
     root.updateMatrixWorld(true);
+    // Geometrie so verschieben, dass der innere Bounding-Box-Mittelpunkt im Ursprung liegt
     var bounds = new THREE.Box3().setFromObject(model);
     var center = bounds.getCenter(new THREE.Vector3());
     model.position.x -= center.x;
+    model.position.y -= center.y;
     model.position.z -= center.z;
     bounds.setFromObject(model);
-    model.position.y -= bounds.min.y;
-    root.userData.height = h * SCALE;
+    var size = bounds.getSize(new THREE.Vector3());
+    root.userData.height = size.y;
+    root.userData.halfHeight = size.y / 2;
     root.userData.modelHeight = h;
     return root;
+  }
+
+  function furnitureGroundY(root) {
+    var half = (root && root.userData && typeof root.userData.halfHeight === "number")
+      ? root.userData.halfHeight
+      : 0;
+    return groundY + half;
   }
 
   function createFurnitureMesh(config, configIdx, copyIdx, pos) {
     var root = buildFurnitureModel(config);
     root.position.set(
       pos && typeof pos.x === "number" ? pos.x : (configIdx * 50 + copyIdx * 25) - 70,
-      groundY,
+      furnitureGroundY(root),
       pos && typeof pos.z === "number" ? pos.z : configIdx * 35
     );
     if (pos && typeof pos.rotY === "number") {
       root.rotation.y = pos.rotY;
     }
+    root.rotation.x = 0;
+    root.rotation.z = 0;
+    root.scale.set(1, 1, 1);
     root.userData.isRoomFurniture = true;
     root.userData.id = "cfg-" + configIdx + "-" + copyIdx;
     root.userData.configIdx = configIdx;
@@ -373,11 +385,10 @@
   var frozenCamPos = null;
   var frozenTarget = null;
   var nativeControlsUpdate = null;
-  var lastDragClientX = 0;
-  var lastDragClientY = 0;
-  var panScratchRight = new THREE.Vector3();
-  var panScratchUp = new THREE.Vector3();
-  var panScratch = new THREE.Vector3();
+  var dragOffset = new THREE.Vector3();
+  var lockedRotX = 0;
+  var lockedRotZ = 0;
+  var lockedScale = new THREE.Vector3(1, 1, 1);
 
   function lockCamera() {
     if (typeof controls === "undefined" || !controls || typeof camera === "undefined" || cameraLocked) return;
@@ -399,7 +410,6 @@
     if (!nativeControlsUpdate) {
       nativeControlsUpdate = controls.update.bind(controls);
     }
-    // Bildschirm-/Kamerablick bleibt fix – nur das Möbel bewegt sich
     controls.update = function () {
       camera.position.copy(frozenCamPos);
       controls.target.copy(frozenTarget);
@@ -435,20 +445,12 @@
     }
   }
 
-  // Finger-/Mausbewegung auf dem Bildschirm → Verschiebung in der Bildebene (XZ am Boden)
-  function panFromScreenDelta(dx, dy) {
-    var el = (typeof renderer !== "undefined" && renderer.domElement) ? renderer.domElement : container;
-    var clientH = (el && el.clientHeight) || 1;
-    var dist = frozenCamPos.distanceTo(frozenTarget);
-    dist *= Math.tan((camera.fov / 2) * Math.PI / 180);
-    var moveX = 2 * dx * dist / clientH;
-    var moveY = 2 * dy * dist / clientH;
-    camera.updateMatrixWorld();
-    panScratchRight.setFromMatrixColumn(camera.matrix, 0).multiplyScalar(-moveX);
-    panScratchUp.setFromMatrixColumn(camera.matrix, 1).multiplyScalar(moveY);
-    panScratch.copy(panScratchRight).add(panScratchUp);
-    panScratch.y = 0;
-    return panScratch;
+  function preserveRigidBody(obj) {
+    // CAD: beim Verschieben keine Rotation/Skalierung, nur Translation
+    obj.rotation.x = lockedRotX;
+    obj.rotation.z = lockedRotZ;
+    obj.scale.copy(lockedScale);
+    obj.position.y = furnitureGroundY(obj);
   }
 
   function isUiTarget(event) {
@@ -461,7 +463,8 @@
     return localRay.ray.intersectPlane(groundPlane, hitPoint) ? hitPoint : null;
   }
 
-  function angleAroundObject(obj, point) {
+  function angleAroundCenter(obj, point) {
+    // Pivot = Objektursprung = innerer Bauteilmittelpunkt
     return Math.atan2(point.x - obj.position.x, point.z - obj.position.z);
   }
 
@@ -473,29 +476,32 @@
       return false;
     }
 
-    // OrbitControls nicht starten – Ansicht (ganzer Bildschirm) bleibt, nur dieses Möbel reagiert
     event.preventDefault();
     event.stopImmediatePropagation();
 
     setSelected(hit);
-    lastDragClientX = clientX;
-    lastDragClientY = typeof clientY === "number" ? clientY : event.clientY;
+    lockedRotX = hit.rotation.x;
+    lockedRotZ = hit.rotation.z;
+    lockedScale.copy(hit.scale);
     rotating = !!(rotateMode || event.shiftKey);
     dragging = !rotating;
     lockCamera();
+
+    var gp = groundHitFromEvent(event);
     if (rotating) {
-      var gp = groundHitFromEvent(event);
       if (gp) {
-        rotateStartAngle = angleAroundObject(hit, gp);
+        rotateStartAngle = angleAroundCenter(hit, gp);
         rotateStartRotY = hit.rotation.y;
       }
+    } else if (gp) {
+      // Versatz Finger → Mittelpunkt, reine Translation auf dem Boden
+      dragOffset.set(hit.position.x - gp.x, 0, hit.position.z - gp.z);
     }
     return true;
   }
 
   function onPointerDown(event) {
     if (isUiTarget(event)) return;
-    // Touch läuft über touchstart – doppelte Starts vermeiden
     if (event.pointerType === "touch") return;
     beginFurnitureInteract(event, event.clientX, event.clientY);
   }
@@ -517,23 +523,24 @@
     if (!selected || (!dragging && !rotating)) return;
     event.preventDefault();
     event.stopImmediatePropagation();
+
+    var gp = groundHitFromEvent(event);
+    if (!gp) return;
+
     if (rotating) {
-      var gp = groundHitFromEvent(event);
-      if (!gp) return;
-      // Nur das ausgewählte Möbel um den eigenen Mittelpunkt drehen
-      selected.rotation.y = rotateStartRotY + (angleAroundObject(selected, gp) - rotateStartAngle);
+      // Nur Yaw um den inneren Mittelpunkt – kein Orbit um äußeren Punkt
+      selected.rotation.y = rotateStartRotY + (angleAroundCenter(selected, gp) - rotateStartAngle);
+      selected.rotation.x = lockedRotX;
+      selected.rotation.z = lockedRotZ;
+      selected.scale.copy(lockedScale);
+      selected.position.y = furnitureGroundY(selected);
       return;
     }
-    // Nur das ausgewählte Möbel verschieben – Bildschirmbewegung, Kamera bleibt
-    var dx = event.clientX - lastDragClientX;
-    var dy = event.clientY - lastDragClientY;
-    lastDragClientX = event.clientX;
-    lastDragClientY = event.clientY;
-    if (!dx && !dy) return;
-    var pan = panFromScreenDelta(dx, dy);
-    selected.position.x += pan.x;
-    selected.position.z += pan.z;
-    selected.position.y = groundY;
+
+    // CAD-Verschieben: nur Position XZ, Rotation und Scale unverändert
+    selected.position.x = gp.x + dragOffset.x;
+    selected.position.z = gp.z + dragOffset.z;
+    preserveRigidBody(selected);
   }
 
   function onTouchMove(event) {
