@@ -308,8 +308,19 @@ Object.keys(coordinates).forEach((index) => {
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.1;
-controls.minDistance = 70;  // Minimale Zoom-Distanz
-controls.maxDistance = 200; // Maximale Zoom-Distanz
+controls.minDistance = 40;
+controls.maxDistance = 1500; // Weit herauszoomen möglich
+controls.screenSpacePanning = true; // Verschieben ohne Perspektivwechsel
+// Horizontal/vertikal verschieben = Pan (Perspektive bleibt), Drehen per Rechtsklick / 2 Finger
+controls.mouseButtons = {
+  LEFT: THREE.MOUSE.PAN,
+  MIDDLE: THREE.MOUSE.DOLLY,
+  RIGHT: THREE.MOUSE.ROTATE
+};
+controls.touches = {
+  ONE: THREE.TOUCH.PAN,
+  TWO: THREE.TOUCH.DOLLY_ROTATE
+};
 
 // --- Mouse Move Handler ---
 window.addEventListener('mousemove', (event) => {
