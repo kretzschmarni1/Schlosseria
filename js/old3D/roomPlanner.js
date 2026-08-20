@@ -22,8 +22,6 @@
   var dragging = false;
   var rotating = false;
   var rotateMode = false;
-  var dragOffset = new THREE.Vector3();
-  var lastPointerX = 0;
   var rotateStartAngle = 0;
   var rotateStartRotY = 0;
   var pointer = new THREE.Vector2();
@@ -401,7 +399,7 @@
     if (!nativeControlsUpdate) {
       nativeControlsUpdate = controls.update.bind(controls);
     }
-    // Animate-Loop: eingefrorene / mitgeführte Kamera halten (kein Orbit-Damping)
+    // Bildschirm-/Kamerablick bleibt fix – nur das Möbel bewegt sich
     controls.update = function () {
       camera.position.copy(frozenCamPos);
       controls.target.copy(frozenTarget);
@@ -437,7 +435,7 @@
     }
   }
 
-  // Bildschirm-Delta → Boden-Pan (XZ), wie OrbitControls screenSpacePanning, ohne Höhenänderung
+  // Finger-/Mausbewegung auf dem Bildschirm → Verschiebung in der Bildebene (XZ am Boden)
   function panFromScreenDelta(dx, dy) {
     var el = (typeof renderer !== "undefined" && renderer.domElement) ? renderer.domElement : container;
     var clientH = (el && el.clientHeight) || 1;
@@ -451,17 +449,6 @@
     panScratch.copy(panScratchRight).add(panScratchUp);
     panScratch.y = 0;
     return panScratch;
-  }
-
-  function followCameraByPan(pan) {
-    if (!frozenCamPos || !frozenTarget) return;
-    frozenCamPos.x += pan.x;
-    frozenCamPos.z += pan.z;
-    frozenTarget.x += pan.x;
-    frozenTarget.z += pan.z;
-    camera.position.copy(frozenCamPos);
-    controls.target.copy(frozenTarget);
-    camera.lookAt(controls.target);
   }
 
   function isUiTarget(event) {
@@ -486,12 +473,11 @@
       return false;
     }
 
-    // OrbitControls (pointer + touch) nicht starten – sonst ändert sich die Kameraperspektive
+    // OrbitControls nicht starten – Ansicht (ganzer Bildschirm) bleibt, nur dieses Möbel reagiert
     event.preventDefault();
     event.stopImmediatePropagation();
 
     setSelected(hit);
-    lastPointerX = clientX;
     lastDragClientX = clientX;
     lastDragClientY = typeof clientY === "number" ? clientY : event.clientY;
     rotating = !!(rotateMode || event.shiftKey);
@@ -534,11 +520,11 @@
     if (rotating) {
       var gp = groundHitFromEvent(event);
       if (!gp) return;
-      // Drehung um den eigenen Mittelpunkt (Bodenprojektion), Kamera bleibt
+      // Nur das ausgewählte Möbel um den eigenen Mittelpunkt drehen
       selected.rotation.y = rotateStartRotY + (angleAroundObject(selected, gp) - rotateStartAngle);
       return;
     }
-    // Verschieben: Möbel + Kamera gemeinsam → gleicher Blickwinkel aufs Bauteil
+    // Nur das ausgewählte Möbel verschieben – Bildschirmbewegung, Kamera bleibt
     var dx = event.clientX - lastDragClientX;
     var dy = event.clientY - lastDragClientY;
     lastDragClientX = event.clientX;
@@ -548,7 +534,6 @@
     selected.position.x += pan.x;
     selected.position.z += pan.z;
     selected.position.y = groundY;
-    followCameraByPan(pan);
   }
 
   function onTouchMove(event) {
