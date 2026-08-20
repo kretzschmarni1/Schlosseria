@@ -24,6 +24,8 @@
   var rotateMode = false;
   var dragOffset = new THREE.Vector3();
   var lastPointerX = 0;
+  var rotateStartAngle = 0;
+  var rotateStartRotY = 0;
   var pointer = new THREE.Vector2();
   var localRay = new THREE.Raycaster();
   var hitPoint = new THREE.Vector3();
@@ -262,9 +264,16 @@
     addWoodAt(-h / 2, boardBottom);
 
     model.scale.set(SCALE, SCALE, SCALE);
-    // Bottom of frame sits on y=0 in root space
+    // Bottom of frame sits on y=0 in root space; XZ-Mittelpunkt = Drehachse
     model.position.y = (h / 2) * SCALE;
     root.add(model);
+    root.updateMatrixWorld(true);
+    var bounds = new THREE.Box3().setFromObject(model);
+    var center = bounds.getCenter(new THREE.Vector3());
+    model.position.x -= center.x;
+    model.position.z -= center.z;
+    bounds.setFromObject(model);
+    model.position.y -= bounds.min.y;
     root.userData.height = h * SCALE;
     root.userData.modelHeight = h;
     return root;
@@ -427,6 +436,16 @@
     return !!(event.target.closest && (event.target.closest(".cRoomToolbar") || event.target.closest(".cClose3D")));
   }
 
+  function groundHitFromEvent(event) {
+    updatePointer(event);
+    localRay.setFromCamera(pointer, camera);
+    return localRay.ray.intersectPlane(groundPlane, hitPoint) ? hitPoint : null;
+  }
+
+  function angleAroundObject(obj, point) {
+    return Math.atan2(point.x - obj.position.x, point.z - obj.position.z);
+  }
+
   function beginFurnitureInteract(event, clientX) {
     updatePointer(event);
     var hit = findFurnitureHit();
@@ -444,9 +463,12 @@
     rotating = !!(rotateMode || event.shiftKey);
     dragging = !rotating;
     lockCamera();
-    localRay.setFromCamera(pointer, camera);
-    if (dragging && localRay.ray.intersectPlane(groundPlane, hitPoint)) {
-      dragOffset.copy(hit.position).sub(hitPoint);
+    var gp = groundHitFromEvent(event);
+    if (rotating && gp) {
+      rotateStartAngle = angleAroundObject(hit, gp);
+      rotateStartRotY = hit.rotation.y;
+    } else if (dragging && gp) {
+      dragOffset.copy(hit.position).sub(gp);
       dragOffset.y = 0;
     }
     return true;
@@ -476,19 +498,16 @@
     if (!selected || (!dragging && !rotating)) return;
     event.preventDefault();
     event.stopImmediatePropagation();
+    var gp = groundHitFromEvent(event);
+    if (!gp) return;
     if (rotating) {
-      var dx = event.clientX - lastPointerX;
-      lastPointerX = event.clientX;
-      selected.rotation.y += dx * 0.01;
+      // Drehung um den eigenen Mittelpunkt (Bodenprojektion)
+      selected.rotation.y = rotateStartRotY + (angleAroundObject(selected, gp) - rotateStartAngle);
       return;
     }
-    updatePointer(event);
-    localRay.setFromCamera(pointer, camera);
-    if (localRay.ray.intersectPlane(groundPlane, hitPoint)) {
-      selected.position.x = hitPoint.x + dragOffset.x;
-      selected.position.z = hitPoint.z + dragOffset.z;
-      selected.position.y = groundY;
-    }
+    selected.position.x = gp.x + dragOffset.x;
+    selected.position.z = gp.z + dragOffset.z;
+    selected.position.y = groundY;
   }
 
   function onTouchMove(event) {
