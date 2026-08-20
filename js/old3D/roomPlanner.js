@@ -361,38 +361,127 @@
     btn.setAttribute("aria-pressed", rotateMode ? "true" : "false");
   }
 
-  function onPointerDown(event) {
-    if (!container.contains(event.target) || event.target.closest(".cRoomToolbar") || event.target.closest(".cClose3D")) {
-      return;
+  var savedControlsState = null;
+  var cameraLocked = false;
+  var frozenCamPos = null;
+  var frozenTarget = null;
+  var nativeControlsUpdate = null;
+
+  function lockCamera() {
+    if (typeof controls === "undefined" || !controls || typeof camera === "undefined" || cameraLocked) return;
+    cameraLocked = true;
+    savedControlsState = {
+      enabled: controls.enabled,
+      enablePan: controls.enablePan,
+      enableRotate: controls.enableRotate,
+      enableZoom: controls.enableZoom,
+      enableDamping: controls.enableDamping
+    };
+    frozenCamPos = camera.position.clone();
+    frozenTarget = controls.target.clone();
+    controls.enabled = false;
+    controls.enablePan = false;
+    controls.enableRotate = false;
+    controls.enableZoom = false;
+    controls.enableDamping = false;
+    if (!nativeControlsUpdate) {
+      nativeControlsUpdate = controls.update.bind(controls);
     }
+    // Animate-Loop darf Kamera/Target während Möbel-Drag nicht bewegen
+    controls.update = function () {
+      camera.position.copy(frozenCamPos);
+      controls.target.copy(frozenTarget);
+      camera.lookAt(controls.target);
+      return false;
+    };
+    controls.update();
+  }
+
+  function unlockCamera() {
+    if (!cameraLocked) return;
+    cameraLocked = false;
+    if (typeof camera !== "undefined" && typeof controls !== "undefined" && frozenCamPos && frozenTarget) {
+      camera.position.copy(frozenCamPos);
+      controls.target.copy(frozenTarget);
+      camera.lookAt(controls.target);
+    }
+    frozenCamPos = null;
+    frozenTarget = null;
+    if (typeof controls !== "undefined" && controls) {
+      if (nativeControlsUpdate) {
+        controls.update = nativeControlsUpdate;
+      }
+      if (savedControlsState) {
+        controls.enabled = savedControlsState.enabled;
+        controls.enablePan = savedControlsState.enablePan;
+        controls.enableRotate = savedControlsState.enableRotate;
+        controls.enableZoom = savedControlsState.enableZoom;
+        controls.enableDamping = savedControlsState.enableDamping;
+        savedControlsState = null;
+      }
+      controls.update();
+    }
+  }
+
+  function isUiTarget(event) {
+    return !!(event.target.closest && (event.target.closest(".cRoomToolbar") || event.target.closest(".cClose3D")));
+  }
+
+  function beginFurnitureInteract(event, clientX) {
     updatePointer(event);
     var hit = findFurnitureHit();
     if (!hit) {
       setSelected(null);
-      return;
+      return false;
     }
+
+    // OrbitControls (pointer + touch) nicht starten – sonst ändert sich die Kameraperspektive
+    event.preventDefault();
+    event.stopImmediatePropagation();
+
     setSelected(hit);
-    lastPointerX = event.clientX;
+    lastPointerX = clientX;
     rotating = !!(rotateMode || event.shiftKey);
     dragging = !rotating;
-    controls.enabled = false;
+    lockCamera();
     localRay.setFromCamera(pointer, camera);
     if (dragging && localRay.ray.intersectPlane(groundPlane, hitPoint)) {
       dragOffset.copy(hit.position).sub(hitPoint);
       dragOffset.y = 0;
     }
-    event.preventDefault();
+    return true;
+  }
+
+  function onPointerDown(event) {
+    if (isUiTarget(event)) return;
+    // Touch läuft über touchstart – doppelte Starts vermeiden
+    if (event.pointerType === "touch") return;
+    beginFurnitureInteract(event, event.clientX);
+  }
+
+  function onTouchStart(event) {
+    if (isUiTarget(event)) return;
+    if (!event.touches || !event.touches.length) return;
+    var t = event.touches[0];
+    beginFurnitureInteract({
+      clientX: t.clientX,
+      clientY: t.clientY,
+      shiftKey: event.shiftKey,
+      preventDefault: function () { event.preventDefault(); },
+      stopImmediatePropagation: function () { event.stopImmediatePropagation(); }
+    }, t.clientX);
   }
 
   function onPointerMove(event) {
-    if (!selected) return;
+    if (!selected || (!dragging && !rotating)) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
     if (rotating) {
       var dx = event.clientX - lastPointerX;
       lastPointerX = event.clientX;
       selected.rotation.y += dx * 0.01;
       return;
     }
-    if (!dragging) return;
     updatePointer(event);
     localRay.setFromCamera(pointer, camera);
     if (localRay.ray.intersectPlane(groundPlane, hitPoint)) {
@@ -402,11 +491,25 @@
     }
   }
 
+  function onTouchMove(event) {
+    if (!selected || (!dragging && !rotating)) return;
+    if (!event.touches || !event.touches.length) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    var t = event.touches[0];
+    onPointerMove({
+      clientX: t.clientX,
+      clientY: t.clientY,
+      preventDefault: function () {},
+      stopImmediatePropagation: function () {}
+    });
+  }
+
   function onPointerUp() {
     if (!dragging && !rotating) return;
     dragging = false;
     rotating = false;
-    controls.enabled = true;
+    unlockCamera();
     persistPositions();
   }
 
@@ -461,9 +564,16 @@
       syncRotateBtn();
     }
 
-    container.addEventListener("pointerdown", onPointerDown);
-    window.addEventListener("pointermove", onPointerMove);
-    window.addEventListener("pointerup", onPointerUp);
+    var canvas = (typeof renderer !== "undefined" && renderer.domElement) ? renderer.domElement : container;
+    // Capture-Phase: vor OrbitControls, damit die Kamera beim Möbel-Drag nicht mitwandert
+    canvas.addEventListener("pointerdown", onPointerDown, true);
+    canvas.addEventListener("touchstart", onTouchStart, { capture: true, passive: false });
+    window.addEventListener("pointermove", onPointerMove, true);
+    window.addEventListener("touchmove", onTouchMove, { capture: true, passive: false });
+    window.addEventListener("pointerup", onPointerUp, true);
+    window.addEventListener("pointercancel", onPointerUp, true);
+    window.addEventListener("touchend", onPointerUp, true);
+    window.addEventListener("touchcancel", onPointerUp, true);
 
     var layout = loadLayout();
     applyBackground(layout.background || null);
