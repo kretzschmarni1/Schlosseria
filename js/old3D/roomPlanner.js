@@ -97,8 +97,6 @@
     }
     selected = null;
     saveLayout({ items: [] });
-    var hint = document.getElementById("iRoomHint");
-    if (hint) hint.textContent = "Möbel antippen und ziehen zum Positionieren";
   }
 
   function persistPositions() {
@@ -185,8 +183,6 @@
       }
     });
     persistPositions();
-    var hint = document.getElementById("iRoomHint");
-    if (hint) hint.textContent = furnitureGroup.children.length + " Möbel platziert – antippen und ziehen";
   }
 
   function restoreSavedFurniture() {
