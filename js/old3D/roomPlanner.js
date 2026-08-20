@@ -107,10 +107,6 @@
           node.material.emissive.setHex(0x223344);
         }
       });
-      if (typeof controls !== "undefined" && controls.target) {
-        controls.target.copy(selected.position);
-        controls.update();
-      }
     }
   }
 
@@ -394,9 +390,6 @@
       var dx = event.clientX - lastPointerX;
       lastPointerX = event.clientX;
       selected.rotation.y += dx * 0.01;
-      if (typeof controls !== "undefined" && controls.target) {
-        controls.target.copy(selected.position);
-      }
       return;
     }
     if (!dragging) return;
@@ -406,9 +399,6 @@
       selected.position.x = hitPoint.x + dragOffset.x;
       selected.position.z = hitPoint.z + dragOffset.z;
       selected.position.y = groundY;
-      if (typeof controls !== "undefined" && controls.target) {
-        controls.target.copy(selected.position);
-      }
     }
   }
 

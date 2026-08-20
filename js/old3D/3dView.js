@@ -319,7 +319,7 @@ controls.mouseButtons = {
 };
 controls.touches = {
   ONE: THREE.TOUCH.PAN,
-  TWO: THREE.TOUCH.DOLLY_ROTATE
+  TWO: THREE.TOUCH.DOLLY_PAN
 };
 
 // --- Mouse Move Handler ---
