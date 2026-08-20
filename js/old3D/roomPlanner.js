@@ -136,6 +136,7 @@
         configIdx: mesh.userData.configIdx,
         copyIdx: mesh.userData.copyIdx,
         x: mesh.position.x,
+        y: mesh.position.y,
         z: mesh.position.z,
         rotY: mesh.rotation.y
       };
@@ -286,7 +287,7 @@
     var root = buildFurnitureModel(config);
     root.position.set(
       pos && typeof pos.x === "number" ? pos.x : (configIdx * 50 + copyIdx * 25) - 70,
-      furnitureGroundY(root),
+      pos && typeof pos.y === "number" ? pos.y : furnitureGroundY(root),
       pos && typeof pos.z === "number" ? pos.z : configIdx * 35
     );
     if (pos && typeof pos.rotY === "number") {
@@ -451,10 +452,9 @@
     obj.rotation.y = lockedRotY;
     obj.rotation.z = lockedRotZ;
     obj.scale.copy(lockedScale);
-    obj.position.y = furnitureGroundY(obj);
   }
 
-  // Pixel-Delta → Welt-Verschiebung in der Bildebene, auf den Boden projiziert (kein Bodenstrahl)
+  // Pixel-Delta → Welt-Verschiebung parallel zur Bildebene (Abstand zur Kamera bleibt)
   function panFromScreenDelta(dx, dy, obj) {
     var el = (typeof renderer !== "undefined" && renderer.domElement) ? renderer.domElement : container;
     var clientH = (el && el.clientHeight) || 1;
@@ -466,7 +466,6 @@
     panScratchRight.setFromMatrixColumn(camera.matrix, 0).multiplyScalar(-moveX);
     panScratchUp.setFromMatrixColumn(camera.matrix, 1).multiplyScalar(moveY);
     panScratch.copy(panScratchRight).add(panScratchUp);
-    panScratch.y = 0;
     return panScratch;
   }
 
@@ -535,14 +534,12 @@
       selected.rotation.y = lockedRotY;
       selected.rotation.z = lockedRotZ;
       selected.scale.copy(lockedScale);
-      selected.position.y = furnitureGroundY(selected);
       return;
     }
 
-    // CAD-Verschieben: Bildebene, Rotation/Scale fest, Kamera fest
+    // Echte Bildschirm-Verschiebung: Right+Up, Rotation/Scale und Kamerablick fest
     var pan = panFromScreenDelta(dx, dy, selected);
-    selected.position.x += pan.x;
-    selected.position.z += pan.z;
+    selected.position.add(pan);
     preserveRigidBody(selected);
   }
 
