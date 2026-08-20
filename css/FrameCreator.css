@@ -380,65 +380,60 @@ canvas {
     pointer-events: auto;
   }
 
+  .cLevelAddRow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-width: 200px;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-soft);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 6px 8px 6px 12px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #1A1A1A;
+    box-sizing: border-box;
+  }
+
   .cLevelAddBtn {
     position: relative;
-    width: 40px;
-    height: 40px;
-    min-width: 40px;
-    min-height: 40px;
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
     border-radius: 50%;
     border: none !important;
     background: var(--color-surface);
     color: #1A1A1A;
-    font-size: 28px;
-    font-weight: 600;
+    font-size: 18px;
+    font-weight: 700;
     line-height: 1;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
-    box-shadow: var(--shadow-soft);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    box-shadow: none;
   }
 
   .cLevelAddBtn:hover {
     background: #1A1A1A;
     color: #fff;
     transform: none;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-  }
-
-  .cLevelAddBtn::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: calc(100% + 8px);
-    top: auto;
-    left: 0;
-    transform: none;
-    white-space: nowrap;
-    background: rgba(28, 28, 28, 0.92);
-    color: #fff;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 6px 10px;
-    border-radius: 8px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s ease;
-  }
-
-  .cLevelAddBtn:hover::after {
-    opacity: 1;
+    box-shadow: none;
   }
 
   .cLevelList {
     display: flex;
     flex-direction: column;
     gap: 6px;
-    min-width: 170px;
-    width: 100%;
+    min-width: 200px;
+    width: 200px;
   }
 
   .cLevelRow {
@@ -456,6 +451,8 @@ canvas {
     font-size: 13px;
     font-weight: 600;
     color: #1A1A1A;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .cLevelWoodBtn {
@@ -528,40 +525,40 @@ canvas {
   .cDisplayLine,
   .cView3D {
     background: var(--color-surface) !important;
-    border: none !important;
+    border: 1px solid var(--color-border) !important;
     color: #1A1A1A !important;
     box-shadow: var(--shadow-soft);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-radius: var(--radius-sm);
-    height: 40px;
-    min-height: 40px;
-    max-height: 40px;
-    padding: 0 14px;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    padding: 6px 12px;
     box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: center;
-    line-height: 1;
+    line-height: 1.2;
+    font-size: 13px;
+    font-weight: 600;
+    width: 200px;
+    min-width: 200px;
   }
 
   .cDisplayLine {
     right: 14px; /* gleicher Abstand wie nach unten */
     bottom: 14px; /* gleiche Höhe wie + */
     position: absolute;
-    min-width: 210px;
-    font-size: 16px;
     z-index: 6;
   }
 
     
   .cView3D{
     right: 14px; /* mit Hilfslinien ausgerichtet */
-    /* 14px Boden + 40px Hilfslinien + 8px Gap (wie + zu Oben) */
-    bottom: calc(14px + 40px + 8px);
+    /* Abstand wie zwischen Ebenen-Zeilen + Hilfslinien-Button */
+    bottom: calc(14px + 32px + 8px);
     position: absolute;
-    min-width: 210px;
-    font-size: 16px;
     z-index: 6;
   }
 

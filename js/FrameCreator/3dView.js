@@ -342,8 +342,10 @@ rebuildFrameDefinition();
     });
 
     if (addLevelBtn) {
-      addLevelBtn.style.display = shelfLevels.length >= MAX_EXTRA_LEVELS ? "none" : "flex";
-      addLevelBtn.setAttribute("data-tooltip", "Ebene hinzufügen");
+      var addRow = document.getElementById("iLevelAddRow");
+      var showAdd = shelfLevels.length < MAX_EXTRA_LEVELS;
+      addLevelBtn.style.display = showAdd ? "flex" : "none";
+      if (addRow) addRow.style.display = showAdd ? "flex" : "none";
     }
     updateLevelHeightSliders();
   }

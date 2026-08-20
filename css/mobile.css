@@ -497,15 +497,16 @@
 
   .cDisplayLine,
   .cView3D {
-    font-size: 12px !important;
-    padding: 0 10px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 5px 8px !important;
     min-width: 0 !important;
+    width: min(200px, calc(50% - 16px)) !important;
     max-width: calc(50% - 16px);
-    width: auto;
-    height: 40px !important;
-    min-height: 40px !important;
-    max-height: 40px !important;
-    line-height: 1;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    line-height: 1.2;
     box-sizing: border-box;
   }
 
@@ -518,8 +519,13 @@
   .cView3D {
     left: auto;
     right: 8px;
-    /* 8px Boden + 40px Hilfslinien + 8px Gap (wie + zu Oben) */
-    bottom: calc(8px + 40px + 8px);
+    bottom: calc(8px + 28px + 8px);
+  }
+
+  .cLevelAddRow {
+    font-size: 11px;
+    padding: 5px 6px 5px 8px;
+    min-width: 0;
   }
 
   .cBottomTools {
